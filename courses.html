@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Курсы • ГипноФилин</title>
     <link rel="icon" type="image/png" sizes="48x48" href="favicon.png">
+    <link rel="stylesheet" href="navbar.css">
     <style>
 * {
     margin: 0;
@@ -25,47 +26,6 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 10px;
-}
-
-/* Navbar */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: rgba(13, 13, 16, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    z-index: 1000;
-    padding: 12px 0;
-}
-
-.navbar .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.nav-brand {
-    display: none;
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 20px;
-}
-
-.nav-link {
-    color: rgba(255, 255, 255, 0.45);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.nav-link.active {
-    color: rgba(255, 255, 255, 0.95);
 }
 
 /* Hero */
@@ -293,14 +253,13 @@ body {
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar center-menu">
         <div class="container">
-            <div class="nav-brand"></div>
             <ul class="nav-menu">
-                <li><a href="index.html" class="nav-link">Главная</a></li>
-                <li><a href="courses.html" class="nav-link active">Курсы</a></li>
-                <li><a href="games.html" class="nav-link">Игры</a></li>
-                <li><a href="about.html" class="nav-link">Обо мне</a></li>
+                <li><a href="index.html" class="nav-link" data-page="index">Главная</a></li>
+                <li><a href="courses.html" class="nav-link" data-page="courses">Курсы</a></li>
+                <li><a href="games.html" class="nav-link" data-page="games">Игры</a></li>
+                <li><a href="about.html" class="nav-link" data-page="about">Обо мне</a></li>
             </ul>
         </div>
     </nav>
@@ -415,6 +374,17 @@ body {
             <a href="index.html#bookingForm" class="cta-button">Оставить заявку</a>
         </div>
     </section>
+
+<script>
+    const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+    const links = document.querySelectorAll('.nav-link');
+    links.forEach(link => {
+        const page = link.getAttribute('data-page');
+        if (page === currentPage) {
+            link.classList.add('active');
+        }
+    });
+</script>
 
 </body>
 </html>
