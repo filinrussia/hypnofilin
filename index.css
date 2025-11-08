@@ -587,6 +587,7 @@
     .step-card-centered {
         grid-column: 1;
         max-width: 100%;
+        margin: 0;
     }
 
     .how-it-works-section {
