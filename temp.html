@@ -1339,6 +1339,70 @@
             </section>
         </div>
 
+        <!-- НОВЫЙ ВАРИАНТ 6 - С экспертностью автора (БЕЗ социалки студентов) -->
+        <div class="variant-container">
+            <div class="variant-label">Новый Вариант 6 — Экспертность автора (для новых курсов)</div>
+            <section class="how-it-works-section">
+                <div class="course-card-new6">
+                    <div class="course-badge-new6">
+                        <span class="badge-dot-new6"></span>
+                        Идёт набор • Старт 15 марта
+                    </div>
+
+                    <h2 class="course-title-new6">Преодоление тревожности</h2>
+                    <p class="course-subtitle-new6">Для тех, кто устал жить в постоянном напряжении</p>
+
+                    <div class="results-block-new6">
+                        <h4>После курса вы сможете:</h4>
+                        <ul>
+                            <li>Останавливать тревогу за 5 минут через работу с бессознательным</li>
+                            <li>Находить корень тревоги и устранять причину, а не симптом</li>
+                            <li>Спокойно засыпать без прокручивания сценариев в голове</li>
+                            <li>Жить в расслабленном состоянии по умолчанию</li>
+                        </ul>
+                    </div>
+
+                    <div class="course-meta-new6">
+                        <div class="meta-col-new6">
+                            <span class="meta-label-new6">Длительность</span>
+                            <span class="meta-value-new6">8 недель</span>
+                        </div>
+                        <div class="meta-col-new6">
+                            <span class="meta-label-new6">Формат</span>
+                            <span class="meta-value-new6">Онлайн</span>
+                        </div>
+                        <div class="meta-col-new6">
+                            <span class="meta-label-new6">Цена</span>
+                            <span class="meta-value-new6">15 000 ₽</span>
+                        </div>
+                    </div>
+
+                    <div class="author-expertise-new6">
+                        <div class="expertise-header-new6">
+                            <div class="author-avatar-new6">С</div>
+                            <div class="author-info-new6">
+                                <div class="author-name-new6">Сергей Толкачев</div>
+                                <div class="author-title-new6">Гипнотерапевт • Консультирую с 2011 года</div>
+                            </div>
+                        </div>
+                        <div class="expertise-stats-new6">
+                            <div class="stat-item-new6">
+                                <span class="stat-number-new6">5000+</span>
+                                <span class="stat-label-new6">часов практики</span>
+                            </div>
+                            <div class="stat-divider-new6"></div>
+                            <div class="stat-item-new6">
+                                <span class="stat-number-new6">150+</span>
+                                <span class="stat-label-new6">клиентов с тревожностью</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="#" class="course-cta-new6">Записаться на курс</a>
+                </div>
+            </section>
+        </div>
+
     </div>
 
 <style>
@@ -2142,6 +2206,214 @@
 
     .cta-block-new5 {
         flex-direction: column;
+    }
+}
+
+/* Новый вариант 6 - С экспертностью автора */
+.course-card-new6 {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.course-badge-new6 {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 6px;
+    font-size: 12px;
+    color: #4caf50;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.badge-dot-new6 {
+    width: 6px;
+    height: 6px;
+    background: #4caf50;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.course-title-new6 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.course-subtitle-new6 {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 24px;
+}
+
+.results-block-new6 h4 {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.results-block-new6 ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 24px;
+}
+
+.results-block-new6 li {
+    padding-left: 24px;
+    position: relative;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.5;
+}
+
+.results-block-new6 li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #4caf50;
+    font-weight: 700;
+}
+
+.course-meta-new6 {
+    display: flex;
+    gap: 24px;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 20px;
+}
+
+.meta-col-new6 {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meta-label-new6 {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.meta-value-new6 {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Блок экспертности автора - ГЛАВНОЕ ОТЛИЧИЕ */
+.author-expertise-new6 {
+    background: rgba(10, 132, 255, 0.05);
+    border: 1px solid rgba(10, 132, 255, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.expertise-header-new6 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.author-avatar-new6 {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0a84ff, #0066cc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.author-info-new6 {
+    flex: 1;
+}
+
+.author-name-new6 {
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 2px;
+}
+
+.author-title-new6 {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.expertise-stats-new6 {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat-item-new6 {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.stat-number-new6 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0a84ff;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label-new6 {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.3;
+}
+
+.stat-divider-new6 {
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.course-cta-new6 {
+    display: block;
+    text-align: center;
+    padding: 14px 28px;
+    background: #0a84ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+
+.course-cta-new6:hover {
+    background: #0066cc;
+}
+
+@media (max-width: 600px) {
+    .expertise-stats-new6 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .stat-divider-new6 {
+        display: none;
     }
 }
 </style>
