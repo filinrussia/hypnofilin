@@ -1,0 +1,540 @@
+/* ===================================
+   СТИЛИ ТОЛЬКО ДЛЯ ГЛАВНОЙ СТРАНИЦЫ
+   =================================== */
+
+/* === HERO СЕКЦИЯ === */
+.hero {
+    padding: 40px 0 60px;
+}
+
+.hero-container {
+    width: 100%;
+    max-width: 690px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.hero-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 48px;
+    font-weight: 500;
+}
+
+.video-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    animation: bounceDown 1.5s ease-in-out infinite;
+}
+
+.cta-arrow {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.video-cta p {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.problems-section .video-cta {
+    margin: 30px 0 20px;
+    padding: 0 20px;
+}
+
+/* === КАРУСЕЛЬ ОТЗЫВОВ === */
+.reviews-section {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.reviews-carousel {
+    position: relative;
+    max-width: 690px;
+    margin: 40px auto 0;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.review-slide {
+    display: none;
+    padding: 32px;
+    background: rgba(255,255,255,0.03);
+    min-height: 220px;
+}
+
+.review-slide.active {
+    display: block;
+    animation: fadeIn 0.6s ease;
+}
+
+.review-content {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.review-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+.review-text {
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.7;
+    margin-bottom: 16px;
+    font-style: italic;
+}
+
+.review-author {
+    font-size: 15px;
+    color: #0a84ff;
+    font-weight: 600;
+}
+
+.carousel-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.carousel-prev, 
+.carousel-next {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-prev:hover, 
+.carousel-next:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.1);
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.carousel-dots .dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.carousel-dots .dot.active {
+    background: #0a84ff;
+    transform: scale(1.15);
+}
+
+/* === БЛОК ПРОБЛЕМ === */
+.problems-section {
+    padding: 60px 0;
+}
+
+.problems-container {
+    max-width: 690px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.section-subtitle {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.level-labels {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    font-size: 11px;
+    flex-wrap: wrap;
+}
+
+.level-label {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.level-label.l1 { background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: white; }
+.level-label.l2 { background: linear-gradient(135deg, #ffeb3b 0%, #fdd835 100%); color: #1a1a1a; }
+.level-label.l3 { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; }
+.level-label.l4 { background: linear-gradient(135deg, #f44336 0%, #e53935 100%); color: white; }
+.level-label.l5 { background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%); color: white; }
+
+.category-block {
+    margin-bottom: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.category-header {
+    padding: 20px 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.category-header:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.category-block.open .category-header {
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.category-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-emoji {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.category-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+.category-arrow {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.category-block.open .category-arrow {
+    transform: rotate(180deg);
+}
+
+.category-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: none;
+}
+
+.category-block.open .category-content {
+    max-height: 4000px;
+}
+
+/* Подкатегории */
+.subcategory-block {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.subcategory-header {
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease;
+}
+
+.subcategory-header:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.subcategory-block.open .subcategory-header {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.subcategory-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.subcategory-emoji {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.subcategory-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: -0.2px;
+}
+
+.subcategory-arrow {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
+    transition: transform 0.3s ease;
+}
+
+.subcategory-block.open .subcategory-arrow {
+    transform: rotate(180deg);
+}
+
+.subcategory-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.subcategory-block.open .subcategory-content {
+    max-height: 3000px;
+}
+
+/* Элементы проблем */
+.problem-item {
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.problem-item:last-child {
+    border-bottom: none;
+}
+
+.problem-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.problem-emoji {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.problem-title {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Чекбоксы уровней боли */
+.checkbox-row {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.pain-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+.pain-checkbox:hover {
+    transform: scale(1.1);
+}
+
+.pain-checkbox.level-1 { border-color: #4caf50; }
+.pain-checkbox.level-2 { border-color: #ffeb3b; }
+.pain-checkbox.level-3 { border-color: #ff9800; }
+.pain-checkbox.level-4 { border-color: #f44336; }
+.pain-checkbox.level-5 { border-color: #d32f2f; }
+
+.pain-checkbox.level-1.active { background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); }
+.pain-checkbox.level-2.active { background: linear-gradient(135deg, #ffeb3b 0%, #fdd835 100%); }
+.pain-checkbox.level-3.active { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); }
+.pain-checkbox.level-4.active { background: linear-gradient(135deg, #f44336 0%, #e53935 100%); }
+.pain-checkbox.level-5.active { background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%); }
+
+/* === ФОРМА БРОНИРОВАНИЯ === */
+.booking-section {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.booking-container {
+    max-width: 690px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.booking-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.booking-description {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.booking-container form {
+    text-align: left;
+}
+
+.submit-button {
+    width: 100%;
+    background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.25);
+}
+
+.submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10, 132, 255, 0.35);
+}
+
+.submit-button:active {
+    transform: scale(0.98);
+}
+
+/* === АДАПТИВ === */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 28px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .problems-section .video-cta {
+        margin: 25px 0 15px;
+        padding: 0 15px;
+    }
+    
+    .review-content { 
+        flex-direction: column; 
+        text-align: center; 
+    }
+    
+    .review-photo { 
+        margin: 0 auto 16px; 
+    }
+    
+    .review-text { 
+        font-size: 14px; 
+    }
+    
+    .carousel-dots .dot { 
+        width: 22px; 
+        height: 22px; 
+    }
+    
+    .carousel-prev, 
+    .carousel-next { 
+        width: 32px; 
+        height: 32px; 
+        font-size: 16px; 
+    }
+    
+    .section-title, 
+    .booking-title {
+        font-size: 24px;
+    }
+    
+    .category-title {
+        font-size: 16px;
+    }
+    
+}
+
+/* === ФИКС ФОРМЫ === */
+.form-group {
+    text-align: left;
+}
+
+.form-label {
+    text-align: left;
+}
+
+.form-note {
+    text-align: left !important;
+}
+
+.form-note a {
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.form-note a:hover {
+    color: rgba(255, 255, 255, 0.85);
+}

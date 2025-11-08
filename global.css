@@ -1,0 +1,544 @@
+/* ===================================
+   ГЛОБАЛЬНЫЕ СТИЛИ
+   Универсальное оформление для всех страниц
+   =================================== */
+
+/* === БАЗОВЫЕ НАСТРОЙКИ === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+/* === HERO СЕКЦИЯ БЕЗ КОНТЕЙНЕРА === */
+.hero {
+    text-align: center;
+}
+
+.hero-container {
+    width: 100%;
+    max-width: 690px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.hero-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 48px;
+    font-weight: 500;
+}
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    background: #0d0d10;
+    color: rgba(255, 255, 255, 0.95);
+    padding: 56px 0 0 0; /* Отступ под навбар */
+    line-height: 1.6;
+}
+
+::selection {
+    background: #0a84ff;
+    color: white;
+}
+
+/* === КОНТЕЙНЕРЫ === */
+.container {
+    width: 100%;
+    max-width: 690px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.container-wide {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* === СЕКЦИИ === */
+section {
+    padding: 60px 0;
+}
+
+.section-dark {
+    background: #0d0d10;
+}
+
+.section-light {
+    background: linear-gradient(180deg, #0d0d10 0%, #15151a 100%);
+}
+
+/* === ТИПОГРАФИКА === */
+
+/* Заголовки */
+h1, .h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+h2, .h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+h3, .h3 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+h4, .h4 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+/* Подзаголовки */
+.subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 500;
+    margin-bottom: 48px;
+}
+
+.section-subtitle {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* Описания */
+.description {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
+}
+
+.description-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.description-list li {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.65);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+}
+
+.description-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Примечания */
+.note {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.5;
+}
+
+.note a {
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.note a:hover {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* === ТЕКСТОВЫЕ УТИЛИТЫ === */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* === ФОРМЫ === */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #0a84ff;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.form-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.5;
+}
+
+.form-note a {
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.form-note a:hover {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* === КНОПКИ === */
+.btn {
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10, 132, 255, 0.35);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* === КАРТОЧКИ === */
+.card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.card-text {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
+}
+
+/* === МОДАЛЬНЫЕ ОКНА === */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: rgba(13, 13, 16, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    animation: slideUp 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: white;
+    margin: 0 auto 24px;
+    font-weight: bold;
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.modal-text {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 28px;
+    line-height: 1.5;
+}
+
+/* === УТИЛИТЫ ОТСТУПОВ === */
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mt-32 { margin-top: 32px; }
+.mt-48 { margin-top: 48px; }
+
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-32 { margin-bottom: 32px; }
+.mb-48 { margin-bottom: 48px; }
+
+.py-60 { padding: 60px 0; }
+.py-80 { padding: 80px 0; }
+
+/* === ПЛЕЙСХОЛДЕРЫ (для разработки) === */
+.placeholder {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.placeholder-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.35;
+}
+
+.placeholder-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: -0.5px;
+}
+
+.placeholder-text {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* === ВИДЕО/МЕДИА === */
+.video-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+}
+
+/* === АНИМАЦИИ === */
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+}
+
+.bounce-down {
+    animation: bounceDown 1.5s ease-in-out infinite;
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    body {
+        padding-top: 48px;
+    }
+    
+    section {
+        padding: 40px 0;
+    }
+    
+    h1, .h1 {
+        font-size: 28px;
+    }
+    
+    h2, .h2 {
+        font-size: 24px;
+    }
+    
+    h3, .h3 {
+        font-size: 16px;
+    }
+    
+    .subtitle {
+        font-size: 16px;
+        margin-bottom: 32px;
+    }
+    
+    .section-subtitle {
+        font-size: 14px;
+        margin-bottom: 32px;
+    }
+    
+    .btn {
+        padding: 14px 24px;
+        font-size: 15px;
+    }
+    
+    .placeholder {
+        padding: 60px 15px;
+    }
+    
+    .placeholder-icon {
+        font-size: 48px;
+    }
+    
+    .placeholder-title {
+        font-size: 24px;
+    }
+    
+    .placeholder-text {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1, .h1 {
+        font-size: 24px;
+    }
+    
+    h2, .h2 {
+        font-size: 20px;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    
+    .modal-content {
+        padding: 32px 24px;
+    }
+}
+

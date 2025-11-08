@@ -1,0 +1,141 @@
+/* ===================================
+   УНИВЕРСАЛЬНЫЙ НАВБАР
+   Единый стиль для всех страниц сайта
+   =================================== */
+
+/* Основной контейнер навбара */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 13, 16, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1000;
+    padding: 12px 0 !important;
+}
+
+/* Контейнер для содержимого навбара */
+.navbar .container {
+    max-width: 1200px !important;
+    margin: 0 auto;
+    padding: 0 20px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Логотип/Бренд */
+.nav-brand {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.nav-brand:hover {
+    color: #0a84ff;
+}
+
+/* Скрыть бренд, если нужно центрировать меню */
+.navbar.center-menu .nav-brand {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.navbar.center-menu .container {
+    justify-content: center;
+}
+
+/* Меню навигации */
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 24px !important;
+    margin: 0;
+    padding: 0;
+    line-height: 1 !important;
+}
+
+/* Ссылки в меню */
+.nav-link {
+    color: rgba(255, 255, 255, 0.45);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    position: relative;
+    line-height: 1 !important;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.nav-link.active {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Индикатор активной страницы (подчеркивание) */
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #0a84ff;
+    border-radius: 2px;
+}
+
+/* Адаптив для планшетов */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 0 !important;
+    }
+    
+    .navbar .container {
+        padding: 0 15px !important;
+    }
+    
+    .nav-menu {
+        gap: 16px !important;
+        line-height: 1 !important;
+    }
+    
+    .nav-link {
+        font-size: 12px !important;
+        line-height: 1 !important;
+    }
+    
+    .nav-brand {
+        font-size: 14px;
+    }
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 480px) {
+    .nav-menu {
+        gap: 12px !important;
+        line-height: 1 !important;
+    }
+    
+    .nav-link {
+        font-size: 11px !important;
+        line-height: 1 !important;
+    }
+}
+
+/* Отступ для контента под фиксированным навбаром */
+body {
+    padding-top: 56px;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 48px;
+    }
+}

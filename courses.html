@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Курсы • ГипноФилин</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png">
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+    background: #0d0d10;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 13, 16, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1000;
+    padding: 12px 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-brand {
+    display: none;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.45);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-link.active {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Hero */
+.hero {
+    padding: 40px 0 60px;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.65);
+    max-width: 600px;
+    margin: 0 auto;
+    font-weight: 500;
+}
+
+/* Courses Section */
+.courses-section {
+    padding: 20px 0 80px;
+}
+
+.courses-container {
+    max-width: 690px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+/* Course Card */
+.course-card {
+    margin-bottom: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+}
+
+.course-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.course-header {
+    position: relative;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.course-icon {
+    font-size: 80px;
+    opacity: 0.6;
+}
+
+.coming-soon-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.course-content {
+    padding: 32px 28px;
+}
+
+.course-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.course-description {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.course-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.feature-icon {
+    font-size: 18px;
+    opacity: 0.6;
+}
+
+.course-cta {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.95);
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.course-cta:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.course-cta.primary {
+    background: #0a84ff;
+    border-color: #0a84ff;
+}
+
+.course-cta.primary:hover {
+    background: #0073e6;
+    border-color: #0073e6;
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.cta-description {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 32px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 16px 40px;
+    background: #0a84ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.cta-button:hover {
+    background: #0073e6;
+    transform: translateY(-2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero {
+        padding: 40px 0 40px;
+    }
+    
+    .hero-title {
+        font-size: 28px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .course-header {
+        height: 240px;
+    }
+    
+    .course-icon {
+        font-size: 60px;
+    }
+    
+    .course-content {
+        padding: 24px 20px;
+    }
+    
+    .course-title {
+        font-size: 24px;
+    }
+    
+    .cta-title {
+        font-size: 26px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand"></div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Главная</a></li>
+                <li><a href="courses.html" class="nav-link active">Курсы</a></li>
+                <li><a href="games.html" class="nav-link">Игры</a></li>
+                <li><a href="about.html" class="nav-link">Обо мне</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Онлайн-курсы</h1>
+            <p class="hero-subtitle">Глубокое погружение в трансовые практики и гипноз.<br>От основ до мастерства.</p>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses-section">
+        <div class="courses-container">
+            
+            <!-- Course 1: Чайные медитации -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-icon">🍵</div>
+                    <div class="coming-soon-badge">Скоро</div>
+                </div>
+                <div class="course-content">
+                    <h2 class="course-title">Чайные медитации</h2>
+                    <p class="course-description">Древняя практика осознанности через чайную церемонию. Научитесь входить в медитативное состояние, используя ритуал заваривания чая.</p>
+                    
+                    <div class="course-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">⏱️</span>
+                            <span>8 недель обучения</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎥</span>
+                            <span>Видео-уроки + практики</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🧘</span>
+                            <span>Ежедневные медитации</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="course-cta">Узнать больше</a>
+                </div>
+            </div>
+
+            <!-- Course 2: Самогипноз -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-icon">🌀</div>
+                    <div class="coming-soon-badge">Скоро</div>
+                </div>
+                <div class="course-content">
+                    <h2 class="course-title">Самогипноз</h2>
+                    <p class="course-description">Овладейте техниками самогипноза для работы с собственным бессознательным. Измените убеждения, избавьтесь от ограничений, достигайте целей.</p>
+                    
+                    <div class="course-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">⏱️</span>
+                            <span>6 недель интенсива</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <span>Практические техники</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🧠</span>
+                            <span>Работа с убеждениями</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="course-cta">Узнать больше</a>
+                </div>
+            </div>
+
+            <!-- Course 3: Разговорный гипноз -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-icon">💬</div>
+                    <div class="coming-soon-badge">Скоро</div>
+                </div>
+                <div class="course-content">
+                    <h2 class="course-title">Разговорный гипноз</h2>
+                    <p class="course-description">Эриксоновский гипноз и техники скрытого влияния. Учитесь работать с клиентами через естественный разговор без формальной индукции транса.</p>
+                    
+                    <div class="course-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">⏱️</span>
+                            <span>10 недель + практикум</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎭</span>
+                            <span>Языковые паттерны</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">👥</span>
+                            <span>Работа в парах</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="course-cta">Узнать больше</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2 class="cta-title">Хотите узнать о старте курсов?</h2>
+            <p class="cta-description">Оставьте заявку, и я сообщу вам о запуске первого курса</p>
+            <a href="index.html#bookingForm" class="cta-button">Оставить заявку</a>
+        </div>
+    </section>
+
+</body>
+</html>

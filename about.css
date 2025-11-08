@@ -1,0 +1,360 @@
+/* ===================================
+   СТИЛИ ДЛЯ СТРАНИЦЫ "ОБО МНЕ"
+   =================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    background: #0d0d10;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* КОНТЕЙНЕР ДЛЯ КОНТЕНТА СТРАНИЦЫ (не navbar!) */
+.about-section .container {
+    max-width: 760px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+}
+
+.about-section {
+    padding: 40px 0 60px;
+}
+
+.hero-intro {
+    text-align: center;
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.hero-image {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 32px;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.hero-intro h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.hero-intro .subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.hero-intro .tagline {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 8px;
+}
+
+.content-block {
+    margin-bottom: 60px;
+}
+
+.content-block h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+}
+
+.content-block h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    margin-top: 32px;
+    letter-spacing: -0.3px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.content-block p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 16px;
+    line-height: 1.7;
+}
+
+.content-block strong {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+}
+
+.list-styled {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.list-styled li {
+    padding-left: 24px;
+    position: relative;
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
+}
+
+.list-styled li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #0a84ff;
+    font-weight: 600;
+}
+
+.highlight-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+}
+
+.highlight-box p:last-child {
+    margin-bottom: 0;
+}
+
+.section-image {
+    max-width: 600px;
+    margin: 32px auto;
+}
+
+.section-image img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 48px 0;
+}
+
+/* === СТАТИСТИКА === */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 32px 0;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0a84ff;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* === ДОСТИЖЕНИЯ === */
+.achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.achievement-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.75);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* === ИГРЫ === */
+.game-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.game-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.game-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.game-card h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.game-card p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0;
+}
+
+/* === ГАЛЕРЕЯ === */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+}
+
+.gallery-item {
+    min-height: 200px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* === CTA BOX === */
+.cta-box {
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.1) 0%, rgba(10, 132, 255, 0.05) 100%);
+    border: 1px solid rgba(10, 132, 255, 0.2);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    margin: 48px 0;
+}
+
+.cta-box h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    margin-top: 0;
+}
+
+.cta-box p {
+    margin-bottom: 24px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* === СОЦИАЛЬНЫЕ ССЫЛКИ === */
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.social-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+}
+
+.social-link svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    .about-section .container {
+        padding: 0 15px !important;
+    }
+
+    .hero-intro h1 {
+        font-size: 32px;
+    }
+
+    .content-block h2 {
+        font-size: 24px;
+    }
+
+    .content-block h3 {
+        font-size: 18px;
+    }
+
+    .content-block p,
+    .list-styled li {
+        font-size: 15px;
+    }
+
+    .highlight-box {
+        padding: 20px;
+    }
+
+    .cta-box {
+        padding: 24px 20px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-number {
+        font-size: 28px;
+    }
+    
+    .social-links {
+        flex-direction: column;
+    }
+    
+    .social-link {
+        width: 100%;
+        justify-content: center;
+    }
+}
