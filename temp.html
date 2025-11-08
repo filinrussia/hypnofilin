@@ -47,11 +47,24 @@
         /* Вариант 1 - Сетка карточек */
         .steps-grid-v1 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             max-width: 900px;
             margin: 0 auto;
             padding: 0 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .steps-grid-v1 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .steps-grid-v1 {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
         }
 
         .step-card-v1 {
@@ -69,16 +82,14 @@
         }
 
         .step-number-v1 {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            font-weight: 700;
-            color: white;
+            font-size: 24px;
             margin-bottom: 16px;
         }
 
@@ -315,11 +326,6 @@
         }
 
         @media (max-width: 768px) {
-            .steps-grid-v1 {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
             .steps-timeline-v2::before {
                 left: 19px;
             }
@@ -355,39 +361,45 @@
 
                 <div class="steps-grid-v1">
                     <div class="step-card-v1">
-                        <div class="step-number-v1">1</div>
+                        <div class="step-number-v1">💡</div>
                         <h3 class="step-title-v1">Осознаете проблему</h3>
                         <p class="step-description-v1">Понимаете, с чем нужно поработать и что хотите изменить</p>
                     </div>
 
                     <div class="step-card-v1">
-                        <div class="step-number-v1">2</div>
+                        <div class="step-number-v1">📝</div>
                         <h3 class="step-title-v1">Оставляете заявку</h3>
                         <p class="step-description-v1">Заполняете форму ниже, я связываюсь с вами</p>
                     </div>
 
                     <div class="step-card-v1">
-                        <div class="step-number-v1">3</div>
+                        <div class="step-number-v1">🤝</div>
                         <h3 class="step-title-v1">Встречаемся</h3>
                         <p class="step-description-v1">Собираем полную картину: проблемы, их взаимосвязи, текущее положение</p>
                     </div>
 
                     <div class="step-card-v1">
-                        <div class="step-number-v1">4</div>
+                        <div class="step-number-v1">🎯</div>
                         <h3 class="step-title-v1">Находим решение</h3>
                         <p class="step-description-v1">Составляем план работы под вашу ситуацию</p>
                     </div>
 
                     <div class="step-card-v1">
-                        <div class="step-number-v1">5</div>
+                        <div class="step-number-v1">✅</div>
                         <h3 class="step-title-v1">Принимаете решение</h3>
                         <p class="step-description-v1">Оцениваете условия и формат работы, решаете — идём дальше или нет</p>
                     </div>
 
                     <div class="step-card-v1">
-                        <div class="step-number-v1">6</div>
+                        <div class="step-number-v1">🚀</div>
                         <h3 class="step-title-v1">Делаем работу</h3>
                         <p class="step-description-v1">Реализуем план и достигаем результата</p>
+                    </div>
+
+                    <div class="step-card-v1">
+                        <div class="step-number-v1">⭐</div>
+                        <h3 class="step-title-v1">Вы восхитительны!</h3>
+                        <p class="step-description-v1">Вы прошли весь путь и достигли цели. Поздравляем!</p>
                     </div>
                 </div>
             </section>
