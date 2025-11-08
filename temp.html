@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Варианты блока "Как это работает"</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="navbar.css">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+
+        .variant-container {
+            margin-bottom: 80px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px 20px;
+        }
+
+        .variant-label {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Общие стили */
+        .how-it-works-section {
+            padding: 40px 0;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Вариант 1 - Сетка карточек */
+        .steps-grid-v1 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        .step-card-v1 {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 24px;
+            transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .step-card-v1:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .step-number-v1 {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .step-title-v1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: -0.3px;
+        }
+
+        .step-description-v1 {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.5;
+        }
+
+        /* Вариант 2 - Вертикальная линия */
+        .steps-timeline-v2 {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .steps-timeline-v2::before {
+            content: '';
+            position: absolute;
+            left: 39px;
+            top: 40px;
+            bottom: 40px;
+            width: 2px;
+            background: linear-gradient(180deg, #0a84ff 0%, rgba(10, 132, 255, 0.2) 100%);
+        }
+
+        .step-item-v2 {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .step-number-v2 {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-content-v2 {
+            flex: 1;
+            padding-top: 4px;
+        }
+
+        .step-title-v2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .step-description-v2 {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.5;
+        }
+
+        /* Вариант 3 - Горизонтальный скролл */
+        .steps-scroll-v3 {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 20px 10px;
+            margin: 0 -10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .steps-scroll-v3::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .steps-scroll-v3::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .steps-scroll-v3::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .step-card-v3 {
+            min-width: 280px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .step-number-v3 {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .step-title-v3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .step-description-v3 {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.5;
+        }
+
+        /* Вариант 4 - Крупные блоки */
+        .steps-large-v4 {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .step-block-v4 {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .step-number-v4 {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .step-content-v4 {
+            flex: 1;
+        }
+
+        .step-title-v4 {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .step-description-v4 {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.6;
+        }
+
+        /* Вариант 5 - Минималистичный */
+        .steps-minimal-v5 {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .step-item-v5 {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 24px 0;
+        }
+
+        .step-item-v5:last-child {
+            border-bottom: none;
+        }
+
+        .step-header-v5 {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .step-number-v5 {
+            width: 28px;
+            height: 28px;
+            background: rgba(10, 132, 255, 0.15);
+            border: 2px solid #0a84ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #0a84ff;
+            flex-shrink: 0;
+        }
+
+        .step-title-v5 {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .step-description-v5 {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.6;
+            padding-left: 44px;
+        }
+
+        @media (max-width: 768px) {
+            .steps-grid-v1 {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .steps-timeline-v2::before {
+                left: 19px;
+            }
+
+            .step-block-v4 {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 1000px;">
+
+        <!-- ВАРИАНТ 1 -->
+        <div class="variant-container">
+            <div class="variant-label">Вариант 1 — Сетка карточек</div>
+            <section class="how-it-works-section">
+                <h2 class="section-title">Как это работает</h2>
+                <p class="section-subtitle">Простой путь от запроса до результата</p>
+
+                <div class="steps-grid-v1">
+                    <div class="step-card-v1">
+                        <div class="step-number-v1">1</div>
+                        <h3 class="step-title-v1">Осознаете проблему</h3>
+                        <p class="step-description-v1">Понимаете, с чем нужно поработать и что хотите изменить</p>
+                    </div>
+
+                    <div class="step-card-v1">
+                        <div class="step-number-v1">2</div>
+                        <h3 class="step-title-v1">Оставляете заявку</h3>
+                        <p class="step-description-v1">Заполняете форму ниже, я связываюсь с вами</p>
+                    </div>
+
+                    <div class="step-card-v1">
+                        <div class="step-number-v1">3</div>
+                        <h3 class="step-title-v1">Встречаемся</h3>
+                        <p class="step-description-v1">Собираем полную картину: проблемы, их взаимосвязи, текущее положение</p>
+                    </div>
+
+                    <div class="step-card-v1">
+                        <div class="step-number-v1">4</div>
+                        <h3 class="step-title-v1">Находим решение</h3>
+                        <p class="step-description-v1">Составляем план работы под вашу ситуацию</p>
+                    </div>
+
+                    <div class="step-card-v1">
+                        <div class="step-number-v1">5</div>
+                        <h3 class="step-title-v1">Принимаете решение</h3>
+                        <p class="step-description-v1">Оцениваете условия и формат работы, решаете — идём дальше или нет</p>
+                    </div>
+
+                    <div class="step-card-v1">
+                        <div class="step-number-v1">6</div>
+                        <h3 class="step-title-v1">Делаем работу</h3>
+                        <p class="step-description-v1">Реализуем план и достигаем результата</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ВАРИАНТ 2 -->
+        <div class="variant-container">
+            <div class="variant-label">Вариант 2 — Вертикальная линия (timeline)</div>
+            <section class="how-it-works-section">
+                <h2 class="section-title">Как мы работаем</h2>
+                <p class="section-subtitle">От первой встречи до результата</p>
+
+                <div class="steps-timeline-v2">
+                    <div class="step-item-v2">
+                        <div class="step-number-v2">1</div>
+                        <div class="step-content-v2">
+                            <h3 class="step-title-v2">Вы понимаете, что нужна помощь</h3>
+                            <p class="step-description-v2">Осознаёте проблему и готовы с ней работать</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item-v2">
+                        <div class="step-number-v2">2</div>
+                        <div class="step-content-v2">
+                            <h3 class="step-title-v2">Оставляете заявку</h3>
+                            <p class="step-description-v2">Заполняете форму, я связываюсь для уточнения деталей</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item-v2">
+                        <div class="step-number-v2">3</div>
+                        <div class="step-content-v2">
+                            <h3 class="step-title-v2">Первая встреча — диагностика</h3>
+                            <p class="step-description-v2">Разбираем текущую ситуацию, проблемы и их связи. Смотрим на полную картину</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item-v2">
+                        <div class="step-number-v2">4</div>
+                        <div class="step-content-v2">
+                            <h3 class="step-title-v2">Составляем план</h3>
+                            <p class="step-description-v2">Находим решение и формируем стратегию работы под вашу задачу</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item-v2">
+                        <div class="step-number-v2">5</div>
+                        <div class="step-content-v2">
+                            <h3 class="step-title-v2">Вы принимаете решение</h3>
+                            <p class="step-description-v2">Смотрите на условия, формат работы и решаете — подходит или нет</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item-v2">
+                        <div class="step-number-v2">6</div>
+                        <div class="step-content-v2">
+                            <h3 class="step-title-v2">Начинаем работу</h3>
+                            <p class="step-description-v2">Идём по плану и двигаемся к результату</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ВАРИАНТ 3 -->
+        <div class="variant-container">
+            <div class="variant-label">Вариант 3 — Горизонтальный скролл (для мобильных)</div>
+            <section class="how-it-works-section">
+                <h2 class="section-title">Процесс работы</h2>
+                <p class="section-subtitle">6 шагов от заявки до результата</p>
+
+                <div class="steps-scroll-v3">
+                    <div class="step-card-v3">
+                        <div class="step-number-v3">1</div>
+                        <h3 class="step-title-v3">Осознание</h3>
+                        <p class="step-description-v3">Понимаете, что пора что-то менять</p>
+                    </div>
+
+                    <div class="step-card-v3">
+                        <div class="step-number-v3">2</div>
+                        <h3 class="step-title-v3">Заявка</h3>
+                        <p class="step-description-v3">Оставляете контакты в форме ниже</p>
+                    </div>
+
+                    <div class="step-card-v3">
+                        <div class="step-number-v3">3</div>
+                        <h3 class="step-title-v3">Первая встреча</h3>
+                        <p class="step-description-v3">Собираем картину: что болит, как связано, где точки роста</p>
+                    </div>
+
+                    <div class="step-card-v3">
+                        <div class="step-number-v3">4</div>
+                        <h3 class="step-title-v3">План работы</h3>
+                        <p class="step-description-v3">Формируем стратегию решения вашей задачи</p>
+                    </div>
+
+                    <div class="step-card-v3">
+                        <div class="step-number-v3">5</div>
+                        <h3 class="step-title-v3">Ваше решение</h3>
+                        <p class="step-description-v3">Оцениваете формат и условия, принимаете решение</p>
+                    </div>
+
+                    <div class="step-card-v3">
+                        <div class="step-number-v3">6</div>
+                        <h3 class="step-title-v3">Работа</h3>
+                        <p class="step-description-v3">Идём к цели по плану</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ВАРИАНТ 4 -->
+        <div class="variant-container">
+            <div class="variant-label">Вариант 4 — Крупные блоки</div>
+            <section class="how-it-works-section">
+                <h2 class="section-title">Путь к результату</h2>
+                <p class="section-subtitle">Честно и прозрачно о том, как проходит работа</p>
+
+                <div class="steps-large-v4">
+                    <div class="step-block-v4">
+                        <div class="step-number-v4">1</div>
+                        <div class="step-content-v4">
+                            <h3 class="step-title-v4">Вы осознаёте запрос</h3>
+                            <p class="step-description-v4">Понимаете, с чем хотите поработать и что хотите изменить в жизни</p>
+                        </div>
+                    </div>
+
+                    <div class="step-block-v4">
+                        <div class="step-number-v4">2</div>
+                        <div class="step-content-v4">
+                            <h3 class="step-title-v4">Оставляете заявку</h3>
+                            <p class="step-description-v4">Заполняете форму ниже. Я связываюсь с вами, уточняю детали и назначаю встречу</p>
+                        </div>
+                    </div>
+
+                    <div class="step-block-v4">
+                        <div class="step-number-v4">3</div>
+                        <div class="step-content-v4">
+                            <h3 class="step-title-v4">Встречаемся и разбираем ситуацию</h3>
+                            <p class="step-description-v4">Собираем картину целиком: какие проблемы есть, как они связаны между собой, где вы сейчас находитесь</p>
+                        </div>
+                    </div>
+
+                    <div class="step-block-v4">
+                        <div class="step-number-v4">4</div>
+                        <div class="step-content-v4">
+                            <h3 class="step-title-v4">Находим решение и составляем план</h3>
+                            <p class="step-description-v4">Определяем стратегию работы и формируем пошаговый план под вашу задачу</p>
+                        </div>
+                    </div>
+
+                    <div class="step-block-v4">
+                        <div class="step-number-v4">5</div>
+                        <div class="step-content-v4">
+                            <h3 class="step-title-v4">Вы принимаете решение</h3>
+                            <p class="step-description-v4">Смотрите на условия, формат работы, сроки. Решаете — подходит вам или нет. Идём дальше только если вам комфортно</p>
+                        </div>
+                    </div>
+
+                    <div class="step-block-v4">
+                        <div class="step-number-v4">6</div>
+                        <div class="step-content-v4">
+                            <h3 class="step-title-v4">Делаем работу</h3>
+                            <p class="step-description-v4">Реализуем план, двигаемся к результату. Работаем до достижения цели</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ВАРИАНТ 5 -->
+        <div class="variant-container">
+            <div class="variant-label">Вариант 5 — Минималистичный</div>
+            <section class="how-it-works-section">
+                <h2 class="section-title">Как начать работу</h2>
+                <p class="section-subtitle">Шесть простых шагов</p>
+
+                <div class="steps-minimal-v5">
+                    <div class="step-item-v5">
+                        <div class="step-header-v5">
+                            <div class="step-number-v5">1</div>
+                            <h3 class="step-title-v5">Осознаёте проблему</h3>
+                        </div>
+                        <p class="step-description-v5">Понимаете, что нужна помощь и готовы действовать</p>
+                    </div>
+
+                    <div class="step-item-v5">
+                        <div class="step-header-v5">
+                            <div class="step-number-v5">2</div>
+                            <h3 class="step-title-v5">Оставляете заявку</h3>
+                        </div>
+                        <p class="step-description-v5">Заполняете форму, я выхожу на связь</p>
+                    </div>
+
+                    <div class="step-item-v5">
+                        <div class="step-header-v5">
+                            <div class="step-number-v5">3</div>
+                            <h3 class="step-title-v5">Первая встреча</h3>
+                        </div>
+                        <p class="step-description-v5">Разбираем полную картину: проблемы, их взаимосвязи, текущее состояние</p>
+                    </div>
+
+                    <div class="step-item-v5">
+                        <div class="step-header-v5">
+                            <div class="step-number-v5">4</div>
+                            <h3 class="step-title-v5">План работы</h3>
+                        </div>
+                        <p class="step-description-v5">Находим решение и составляем стратегию под вашу задачу</p>
+                    </div>
+
+                    <div class="step-item-v5">
+                        <div class="step-header-v5">
+                            <div class="step-number-v5">5</div>
+                            <h3 class="step-title-v5">Ваше решение</h3>
+                        </div>
+                        <p class="step-description-v5">Оцениваете формат, условия, цену — решаете, идём дальше или нет</p>
+                    </div>
+
+                    <div class="step-item-v5">
+                        <div class="step-header-v5">
+                            <div class="step-number-v5">6</div>
+                            <h3 class="step-title-v5">Работаем</h3>
+                        </div>
+                        <p class="step-description-v5">Реализуем план и достигаем результата вместе</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
+</body>
+</html>
