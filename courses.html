@@ -174,47 +174,6 @@ body {
     border-color: #0073e6;
 }
 
-/* CTA Section */
-.cta-section {
-    padding: 80px 20px;
-    text-align: center;
-}
-
-.cta-content {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.cta-title {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: -0.5px;
-}
-
-.cta-description {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.65);
-    margin-bottom: 32px;
-}
-
-.cta-button {
-    display: inline-block;
-    padding: 16px 40px;
-    background: #0a84ff;
-    color: white;
-    text-decoration: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.2s;
-}
-
-.cta-button:hover {
-    background: #0073e6;
-    transform: translateY(-2px);
-}
-
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .hero {
@@ -243,10 +202,6 @@ body {
 
     .course-title {
         font-size: 24px;
-    }
-
-    .cta-title {
-        font-size: 26px;
     }
 }
 
@@ -710,15 +665,6 @@ body {
             </div>
         </div>
     </div>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="cta-content">
-            <h2 class="cta-title">Хотите узнать о старте курсов?</h2>
-            <p class="cta-description">Оставьте заявку, и я сообщу вам о запуске первого курса</p>
-            <a href="index.html#bookingForm" class="cta-button">Оставить заявку</a>
-        </div>
-    </section>
 
 <script>
     const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
