@@ -196,7 +196,9 @@
     gap: 10px;
     margin-bottom: 30px;
     font-size: 11px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .level-label {
@@ -513,7 +515,17 @@
     .category-title {
         font-size: 16px;
     }
-    
+
+    .level-labels {
+        gap: 6px;
+        font-size: 10px;
+        padding: 0 10px;
+    }
+
+    .level-label {
+        padding: 5px 8px;
+    }
+
 }
 
 /* === ФИКС ФОРМЫ === */
