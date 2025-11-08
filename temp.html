@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="navbar.css">
     <style>
-        body {
-            padding-top: 20px;
-        }
 
         .variant-container {
             margin-bottom: 80px;
@@ -334,7 +331,20 @@
     </style>
 </head>
 <body>
-    <div class="container" style="max-width: 1000px;">
+    <!-- Navigation -->
+    <nav class="navbar center-menu">
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link" data-page="index">Главная</a></li>
+                <li><a href="courses.html" class="nav-link" data-page="courses">Курсы</a></li>
+                <li><a href="games.html" class="nav-link" data-page="games">Игры</a></li>
+                <li><a href="about.html" class="nav-link" data-page="about">Обо мне</a></li>
+                <li><a href="temp.html" class="nav-link" data-page="temp">Темп</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 1000px; padding-top: 20px;">
 
         <!-- ВАРИАНТ 1 -->
         <div class="variant-container">
@@ -608,5 +618,17 @@
         </div>
 
     </div>
+
+<script>
+    const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+    const links = document.querySelectorAll('.nav-link');
+    links.forEach(link => {
+        const page = link.getAttribute('data-page');
+        if (page === currentPage) {
+            link.classList.add('active');
+        }
+    });
+</script>
+
 </body>
 </html>
