@@ -1,0 +1,521 @@
+/* Подключение шрифта Molot */
+@font-face {
+    font-family: 'Molot';
+    src: url('https://hypnofilin.ru/fonts/Molot.woff2') format('woff2'),
+         url('https://hypnofilin.ru/fonts/Molot.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Поддержка Telegram Web App */
+:root {
+    --tg-theme-bg-color: #000000;
+    --tg-theme-text-color: #FFFFFF;
+    --tg-theme-button-color: #007AFF;
+    --spacing: 10px;
+    --side-padding: 10px;
+    --max-width: 375px; /* Максимальная ширина для смартфонного вида */
+}
+
+/* Общие стили */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--tg-theme-bg-color, #000000);
+    color: var(--tg-theme-text-color, #FFFFFF);
+    font-family: 'SF Pro Text', -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    padding: 0 var(--side-padding);
+}
+
+#game-container {
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: var(--spacing);
+    width: 100%;
+    max-width: var(--max-width); /* Ограничиваем максимальную ширину */
+    box-sizing: border-box;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+#scenario {
+    display: block;
+    padding: 0 !important;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-family: 'Molot', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: var(--spacing);
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+}
+
+h1 .kiss {
+    font-size: 32px;
+    display: block;
+}
+
+h1 .plus-one {
+    font-size: 34px;
+    display: block;
+}
+
+h1 .title {
+    display: block;
+}
+
+h1 .title span {
+    display: block;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing);
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    align-items: center;
+}
+
+button {
+    padding: 0 10px !important;
+    font-size: 17px;
+    font-weight: 500;
+    color: #FFFFFF;
+    background: var(--tg-theme-button-color, #007AFF);
+    border: none !important;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    text-align: center;
+    width: 100% !important;
+    max-width: var(--max-width); /* Ограничиваем ширину кнопок */
+    height: 44px;
+    line-height: 44px;
+    font-family: 'Molot', Arial, sans-serif;
+    box-sizing: border-box;
+    margin: 0 auto !important;
+}
+
+/* Уточняем стили для кнопок в #scenario */
+#scenario .button-container {
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+#scenario .button-container button {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+}
+
+button:hover {
+    background: #005BB5;
+}
+
+.tiles-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.tile-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing);
+}
+
+.tile-label {
+    font-family: 'Molot', Arial, sans-serif;
+    font-size: 28px;
+    color: #8E8E93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+.tile,
+.guy-tile,
+.girl-tile {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Делаем плитки квадратными */
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    object-fit: cover;
+}
+
+.tile:hover,
+.guy-tile:hover,
+.girl-tile:hover {
+    opacity: 0.8;
+}
+
+.tile-title {
+    padding: var(--spacing);
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    border-radius: 10px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Molot', Arial, sans-serif;
+    cursor: pointer;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: var(--spacing) 0;
+}
+
+.popup,
+.premium-popup,
+.gallery-popup,
+#situation-popup,
+#finish-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: var(--side-padding);
+    right: var(--side-padding);
+    transform: translateY(-50%);
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: var(--spacing) !important;
+    width: calc(100% - 2 * var(--side-padding));
+    max-width: var(--max-width); /* Ограничиваем максимальную ширину */
+    margin: 0 auto;
+    color: #FFFFFF;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+.popup-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: var(--spacing);
+    font-family: 'Molot', Arial, sans-serif;
+}
+
+.popup-content,
+#situation-content,
+#finish-content {
+    font-size: 16px;
+    color: #D1D1D6;
+    line-height: 1.4;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.card-content img {
+    max-width: 150px !important;
+    height: 150px !important;
+    border-radius: 10px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.card-content .description {
+    font-size: 14px;
+    line-height: 1.3;
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: center;
+    margin: 0;
+}
+
+#popup-description {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    color: #D1D1D6 !important;
+}
+
+#popup-description * {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+}
+
+.description-section {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    color: #D1D1D6 !important;
+}
+
+.description-section:not(:last-child) {
+    margin-bottom: var(--spacing) !important;
+}
+
+.description-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.description-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    color: #D1D1D6 !important;
+}
+
+.description-item:not(:last-child) {
+    margin-bottom: 5px !important;
+}
+
+.description-section strong {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    display: block !important;
+    margin-bottom: 5px !important;
+}
+
+.popup-content img,
+#situation-content img,
+#finish-content img {
+    max-width: 150px !important;
+    height: 150px !important;
+    border-radius: 10px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.premium-buttons,
+#situation-buttons,
+.popup-buttons,
+.gallery-buttons,
+.finish-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing);
+    width: 100%;
+    margin: var(--spacing) auto 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup button,
+.premium-popup button,
+#situation-popup button,
+.gallery-popup button,
+#finish-popup button {
+    padding: 0 10px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: var(--max-width); /* Ограничиваем ширину кнопок */
+    height: 44px;
+    border-radius: 12px;
+    line-height: 44px;
+    box-sizing: border-box;
+}
+
+.gallery-popup {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.gallery-item {
+    position: relative;
+    width: 100%;
+    height: 100px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.gallery-item img:hover {
+    opacity: 0.8;
+}
+
+.gallery-item .label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-family: 'Molot', Arial, sans-serif;
+    padding: 4px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grayscale {
+    filter: grayscale(100%);
+    opacity: 0.6;
+}
+
+.category-block {
+    margin-bottom: var(--spacing);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.category-header.character-category {
+    justify-content: space-between;
+}
+
+.category-title {
+    font-family: 'Molot', Arial, sans-serif;
+    font-size: 18px;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.category-checkbox {
+    margin-left: var(--spacing);
+    display: flex;
+    align-items: center;
+    visibility: visible;
+}
+
+.category-checkbox input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: block;
+    visibility: visible;
+}
+
+.category-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.checkbox-container {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10;
+}
+
+.checkbox-container input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+#situation-content {
+    font-size: 14px;
+    line-height: 1.3;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.cards-preview {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--spacing);
+    margin: 0 auto var(--spacing);
+    width: 100%;
+    justify-content: center;
+}
+
+.card-preview-img {
+    width: 70px !important;
+    height: 70px !important;
+    border-radius: 8px;
+    object-fit: cover;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block;
+    border: none !important;
+}
+
+/* Стили для текста загрузки */
+.loading-text {
+    font-family: 'Molot', Arial, sans-serif;
+}
