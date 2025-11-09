@@ -531,7 +531,18 @@
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
             </svg>
         </div>
+        <div class="tab-btn" onclick="exportData()">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+            </svg>
+        </div>
+        <div class="tab-btn" onclick="document.getElementById('importFileInput').click();">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6-.67l2.59 2.58L17 12.5l-5-5-5 5 1.41 1.41L11 11.33V21h2z"/>
+            </svg>
+        </div>
     </div>
+    <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importData(event)">
 
     <!-- Переключатель вкладок -->
     <div class="tab-switcher">
@@ -698,6 +709,78 @@
         let currentCategory = null;
         let editingPlace = null;
 
+        // Функции для работы с localStorage
+        function saveData() {
+            const data = {
+                categories: categories,
+                route: route
+            };
+            localStorage.setItem('logistics_data', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('logistics_data');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.categories) categories = data.categories;
+                    if (data.route) route = data.route;
+                } catch (e) {
+                    console.error('Ошибка загрузки данных:', e);
+                }
+            }
+        }
+
+        // Экспорт данных в файл
+        function exportData() {
+            const data = {
+                categories: categories,
+                route: route,
+                exportDate: new Date().toISOString()
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `logistics_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Импорт данных из файла
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.categories) {
+                        categories = data.categories;
+                        route = data.route || [];
+                        saveData();
+                        renderCategories();
+                        drawMap();
+                        alert('Данные успешно импортированы!');
+                    } else {
+                        alert('Неверный формат файла');
+                    }
+                } catch (err) {
+                    console.error('Ошибка импорта:', err);
+                    alert('Ошибка чтения файла');
+                }
+            };
+            reader.readAsText(file);
+
+            // Сбросить input чтобы можно было импортировать тот же файл снова
+            event.target.value = '';
+        }
+
+        // Загружаем данные при старте
+        loadData();
+
         // Canvas
         const canvas = document.getElementById('mapCanvas');
         const ctx = canvas.getContext('2d');
@@ -710,6 +793,9 @@
 
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
+
+        // Отрисовываем загруженные данные
+        renderCategories();
 
         // Переключение вкладок
         function switchTab(tab) {
@@ -773,6 +859,7 @@
         function togglePlaceSelection(categoryId, placeIdx) {
             const category = categories.find(c => c.id === categoryId);
             category.places[placeIdx].selected = !category.places[placeIdx].selected;
+            saveData();
             renderCategories();
             drawMap();
         }
@@ -890,32 +977,30 @@
             } else {
                 // Добавляем новое место
                 // Зоны генерации: Знакомства слева 25%, Свидания центр 50%, Секс справа 25%
-                let xMin, xMax;
-                const padding = 100;
-                const usableWidth = canvas.width - padding * 2;
+                let xPercentMin, xPercentMax;
 
                 if (category.name === 'Знакомства') {
                     // Слева 25%
-                    xMin = padding;
-                    xMax = padding + usableWidth * 0.25;
+                    xPercentMin = 0.1;
+                    xPercentMax = 0.35;
                 } else if (category.name === 'Свидания') {
                     // Центр 50%
-                    xMin = padding + usableWidth * 0.25;
-                    xMax = padding + usableWidth * 0.75;
+                    xPercentMin = 0.25;
+                    xPercentMax = 0.75;
                 } else if (category.name === 'Секс') {
                     // Справа 25%
-                    xMin = padding + usableWidth * 0.75;
-                    xMax = canvas.width - padding;
+                    xPercentMin = 0.65;
+                    xPercentMax = 0.9;
                 } else {
                     // Для других категорий - по всей ширине
-                    xMin = padding;
-                    xMax = canvas.width - padding;
+                    xPercentMin = 0.1;
+                    xPercentMax = 0.9;
                 }
 
                 const place = {
                     name,
-                    x: xMin + Math.random() * (xMax - xMin),
-                    y: 100 + Math.random() * (canvas.height - 200),
+                    xPercent: xPercentMin + Math.random() * (xPercentMax - xPercentMin),
+                    yPercent: 0.15 + Math.random() * 0.7,
                     ratings,
                     selected: false
                 };
@@ -923,6 +1008,7 @@
             }
 
             closePlaceModal();
+            saveData();
             renderCategories();
             drawMap();
         }
@@ -945,6 +1031,22 @@
             renderCategories();
         }
 
+        // Вспомогательная функция для получения абсолютных координат
+        function getAbsoluteCoords(place) {
+            // Обратная совместимость - если есть старые координаты, конвертируем в проценты
+            if (place.x !== undefined && place.xPercent === undefined) {
+                place.xPercent = place.x / canvas.width;
+                place.yPercent = place.y / canvas.height;
+                delete place.x;
+                delete place.y;
+            }
+
+            return {
+                x: place.xPercent * canvas.width,
+                y: place.yPercent * canvas.height
+            };
+        }
+
         // Карта
         function drawMap() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -956,18 +1058,20 @@
                 ctx.lineWidth = 2;
                 ctx.setLineDash([8, 8]);
                 ctx.beginPath();
-                ctx.moveTo(route[0].place.x, route[0].place.y);
+                const firstCoords = getAbsoluteCoords(route[0].place);
+                ctx.moveTo(firstCoords.x, firstCoords.y);
                 for (let i = 1; i < route.length; i++) {
-                    ctx.lineTo(route[i].place.x, route[i].place.y);
+                    const coords = getAbsoluteCoords(route[i].place);
+                    ctx.lineTo(coords.x, coords.y);
                 }
                 ctx.stroke();
                 ctx.setLineDash([]);
 
                 // Стрелки между точками
                 for (let i = 0; i < route.length - 1; i++) {
-                    const from = route[i].place;
-                    const to = route[i + 1].place;
-                    drawArrow(from.x, from.y, to.x, to.y);
+                    const fromCoords = getAbsoluteCoords(route[i].place);
+                    const toCoords = getAbsoluteCoords(route[i + 1].place);
+                    drawArrow(fromCoords.x, fromCoords.y, toCoords.x, toCoords.y);
                 }
             }
 
@@ -976,6 +1080,8 @@
                 const categoryColor = categoryColors[category.name] || '#888';
                 category.places.forEach(place => {
                     if (!place.selected) return; // Показываем только выбранные
+
+                    const coords = getAbsoluteCoords(place);
 
                     // Проверяем, входит ли точка в маршрут
                     const isInRoute = route.some(r => r.place === place);
@@ -986,7 +1092,7 @@
                         ctx.shadowBlur = 25;
                         ctx.fillStyle = categoryColor;
                         ctx.beginPath();
-                        ctx.arc(place.x, place.y, 20, 0, Math.PI * 2);
+                        ctx.arc(coords.x, coords.y, 20, 0, Math.PI * 2);
                         ctx.fill();
                     }
 
@@ -998,14 +1104,40 @@
 
                     ctx.fillStyle = categoryColor;
                     ctx.beginPath();
-                    ctx.arc(place.x, place.y, 20, 0, Math.PI * 2);
+                    ctx.arc(coords.x, coords.y, 20, 0, Math.PI * 2);
                     ctx.fill();
 
                     ctx.shadowBlur = 0;
 
+                    // Рисуем название под кружком с переносом строк
                     ctx.fillStyle = 'white';
-                    ctx.font = 'bold 12px -apple-system';
-                    ctx.fillText(place.name, place.x + 20, place.y + 5);
+                    ctx.font = 'bold 11px -apple-system';
+                    ctx.textAlign = 'center';
+
+                    const maxWidth = 100;
+                    const lineHeight = 14;
+                    const words = place.name.split(' ');
+                    let lines = [];
+                    let currentLine = words[0];
+
+                    for (let i = 1; i < words.length; i++) {
+                        const testLine = currentLine + ' ' + words[i];
+                        const metrics = ctx.measureText(testLine);
+                        if (metrics.width > maxWidth) {
+                            lines.push(currentLine);
+                            currentLine = words[i];
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    lines.push(currentLine);
+
+                    // Рисуем каждую строку
+                    lines.forEach((line, index) => {
+                        ctx.fillText(line, coords.x, coords.y + 30 + index * lineHeight);
+                    });
+
+                    ctx.textAlign = 'left';
                 });
             });
 
@@ -1075,8 +1207,9 @@
             for (let category of categories) {
                 for (let place of category.places) {
                     if (!place.selected) continue; // Только выбранные места
-                    const dx = x - place.x;
-                    const dy = y - place.y;
+                    const coords = getAbsoluteCoords(place);
+                    const dx = x - coords.x;
+                    const dy = y - coords.y;
                     if (dx * dx + dy * dy < 400) { // 20 * 20 = 400
                         return { category, place };
                     }
@@ -1115,8 +1248,9 @@
                 if (dx * dx + dy * dy > 100) {
                     isDragging = true;
                     e.preventDefault();
-                    draggedPlace.x = x;
-                    draggedPlace.y = y;
+                    draggedPlace.xPercent = x / canvas.width;
+                    draggedPlace.yPercent = y / canvas.height;
+                    saveData();
                     drawMap();
                 }
             }
@@ -1167,8 +1301,9 @@
                 const dy = y - touchStartY;
                 if (dx * dx + dy * dy > 25) {
                     isDragging = true;
-                    draggedPlace.x = x;
-                    draggedPlace.y = y;
+                    draggedPlace.xPercent = x / canvas.width;
+                    draggedPlace.yPercent = y / canvas.height;
+                    saveData();
                     drawMap();
                 }
             }
@@ -1200,6 +1335,7 @@
             const infoBtn = document.getElementById('placeInfoBtn');
             if (infoBtn) infoBtn.style.display = 'flex';
 
+            saveData();
             drawMap();
         }
 
@@ -1211,6 +1347,7 @@
             const infoBtn = document.getElementById('placeInfoBtn');
             if (infoBtn) infoBtn.style.display = 'none';
 
+            saveData();
             drawMap();
         }
 
