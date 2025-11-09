@@ -855,6 +855,10 @@
                 } else {
                     console.log('Нет сохраненных данных, используем дефолтные');
                 }
+
+                // Рендерим UI после загрузки данных
+                renderCategories();
+                drawMap();
             }
 
             // Если CloudStorage доступен - загружаем из него
@@ -1762,10 +1766,6 @@
                 exitLinkingMode();
             }
         });
-
-        // Инициализация
-        renderCategories();
-        drawMap();
     </script>
 </body>
 </html>
