@@ -1198,7 +1198,7 @@
             // Рисуем маршрут
             if (route.length > 1) {
                 // Пунктирная линия
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.strokeStyle = '#666666';
                 ctx.lineWidth = 2;
                 ctx.setLineDash([8, 8]);
                 ctx.beginPath();
@@ -1325,7 +1325,7 @@
             const midX = (fromX + toX) / 2;
             const midY = (fromY + toY) / 2;
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillStyle = '#666666';
             ctx.beginPath();
             ctx.moveTo(midX, midY);
             ctx.lineTo(midX - headlen * Math.cos(angle - Math.PI / 6), midY - headlen * Math.sin(angle - Math.PI / 6));
