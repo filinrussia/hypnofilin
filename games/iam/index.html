@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#000000">
+    <title>Я</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700;800&display=swap&subset=cyrillic" rel="stylesheet">
+    <style>
+        html, body { position: fixed; width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden !important; touch-action: manipulation; background: #0f1014; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Fira Sans Condensed', sans-serif; font-weight: 700; -webkit-tap-highlight-color: transparent; }
+        .container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f1014; padding: 10px 10px max(20px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 10px; overflow: hidden !important; }
+        .top-bar { position: absolute; top: max(20px, env(safe-area-inset-top)); right: max(20px, env(safe-area-inset-right)); display: flex; justify-content: flex-end; gap: 8px; z-index: 1000; }
+        .icon-btn { background: transparent; border: none; color: rgba(255, 255, 255, 0.5); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .premium-btn { color: #ff9f1c; }
+        .svg-icon { width: 16px; height: 16px; fill: currentColor; }
+        .premium-btn .svg-icon { width: 17px; height: 17px; }
+        .menu-dropdown { position: fixed; top: max(60px, calc(env(safe-area-inset-top) + 40px)); right: max(20px, env(safe-area-inset-right)); background: #1a1c23; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 8px; display: none; flex-direction: column; gap: 4px; z-index: 999; min-width: 200px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
+        .menu-dropdown.visible { display: flex; animation: slideDown 0.2s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .menu-item { display: flex; align-items: center; gap: 12px; background: transparent; border: none; color: rgba(255, 255, 255, 0.7); padding: 12px 16px; border-radius: 10px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: left; }
+        .menu-item:hover { background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.9); }
+        .menu-item .svg-icon { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+        .menu-item span { font-size: 15px; }
+        .top-section { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; position: relative; margin-top: max(20px, env(safe-area-inset-top)); }
+        .quality-wrapper { position: relative; display: flex; align-items: center; justify-content: center; min-height: 52px; }
+        .quality { font-size: 42px; color: #ffffff; text-align: center; letter-spacing: -0.02em; line-height: 1.2; padding: 5px 10px; cursor: pointer; border-radius: 8px; transition: background 0.3s; white-space: nowrap; }
+        .quality:hover { background: rgba(255, 255, 255, 0.05); }
+        .quality.editing { display: none; }
+        .quality-input { display: none; font-size: 42px; color: #ffffff; text-align: center; background: transparent; border: none; outline: none; text-transform: uppercase; min-width: 200px; max-width: 400px; font-family: 'Fira Sans Condensed', sans-serif; font-weight: 700; letter-spacing: -0.02em; caret-color: #a3c617; padding: 5px 10px; line-height: 1.2; white-space: nowrap; margin: 0; box-sizing: border-box; }
+        .quality-input.visible { display: inline-block; }
+        .quality-hint { font-size: 11px; color: rgba(255, 255, 255, 0.3); text-align: center; margin-top: 5px; display: none; }
+        .button-container { position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
+        .progress-ring { position: absolute; top: 0; left: 0; width: 140px; height: 140px; transform: rotate(-90deg); }
+        .progress-ring-bg { fill: none; stroke: rgba(255, 255, 255, 0.04); stroke-width: 4; }
+        .progress-ring-progress { fill: none; stroke: #a3c617; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 408.41; stroke-dashoffset: 408.41; transition: stroke-dashoffset 0.8s ease; }
+        .action-btn { background: linear-gradient(135deg, #a3c617 0%, #8fb015 100%); color: #000000; border: none; border-radius: 50%; width: 120px; height: 120px; font-size: 48px; cursor: pointer; box-shadow: 0 0 20px rgba(163, 198, 23, 0.6); transition: transform 0.1s ease, box-shadow 0.1s ease; touch-action: manipulation; position: relative; z-index: 10; font-weight: 600; }
+        .action-btn:hover { transform: scale(1.05); }
+        .action-btn.animate { animation: pulse-glow 0.4s ease; }
+        @keyframes pulse-glow { 0% { transform: scale(0.85); box-shadow: 0 0 16px rgba(163, 198, 23, 0.5); } 50% { transform: scale(1.2); box-shadow: 0 0 40px rgba(163, 198, 23, 1); } 100% { transform: scale(1); box-shadow: 0 0 16px rgba(163, 198, 23, 0.5); } }
+        .reason { width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+        .reason textarea { width: 100%; flex: 1; min-height: 100px; border: none; background: #0f1014; padding: 16px; font-size: 24px; color: #ffffff; resize: none; text-align: center; outline: none; line-height: 1.3; border-radius: 8px; touch-action: manipulation; }
+        .reason textarea::placeholder { color: #999999; text-align: center; }
+        .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(20px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal.visible { display: flex; }
+        .modal-content { background: #0f1014; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; padding: 32px 28px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+        .modal-title { font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.45); text-transform: uppercase; letter-spacing: 1px; }
+        .close-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.85); width: 32px; height: 32px; border-radius: 16px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .section { margin-bottom: 24px; }
+        .section-title { font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.45); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .section-content { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; }
+        .goal-control { display: flex; align-items: center; justify-content: center; gap: 16px; }
+        .goal-btn { background: rgba(163, 198, 23, 0.08); border: 1px solid rgba(163, 198, 23, 0.2); color: #a3c617; width: 48px; height: 48px; border-radius: 50%; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .goal-value { font-size: 36px; color: #a3c617; min-width: 64px; text-align: center; }
+        .list-select { width: 100%; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.85); padding: 14px; border-radius: 12px; font-size: 15px; margin-bottom: 12px; font-family: 'Fira Sans Condensed', sans-serif; font-weight: 700; }
+        .list-delete { width: 100%; background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.2); color: #ff3b30; padding: 14px; border-radius: 12px; font-size: 14px; cursor: pointer; margin-bottom: 20px; }
+        .quality-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .quality-item { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .quality-item span { color: rgba(255, 255, 255, 0.85); font-size: 15px; }
+        .quality-item button { background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.2); color: #ff3b30; width: 32px; height: 32px; border-radius: 16px; font-size: 18px; cursor: pointer; }
+        .add-quality { display: flex; gap: 8px; }
+        .add-quality input { flex: 1; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.85); padding: 14px; border-radius: 12px; font-size: 15px; text-transform: uppercase; outline: none; font-family: 'Fira Sans Condensed', sans-serif; font-weight: 700; }
+        .add-quality button { background: rgba(163, 198, 23, 0.12); border: 1px solid rgba(163, 198, 23, 0.3); color: #a3c617; padding: 14px 24px; border-radius: 12px; font-size: 20px; cursor: pointer; }
+        .history-day { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+        .history-day-title { font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.45); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .history-entry { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+        .history-entry:last-child { margin-bottom: 0; }
+        .history-entry-quality { font-size: 15px; color: #a3c617; margin-bottom: 6px; }
+        .history-entry-reason { font-size: 14px; color: rgba(255, 255, 255, 0.7); margin-bottom: 6px; line-height: 1.4; }
+        .history-entry-time { font-size: 12px; color: rgba(255, 255, 255, 0.35); }
+        .history-empty { text-align: center; color: rgba(255, 255, 255, 0.35); padding: 40px 20px; }
+        .period-tabs { display: flex; gap: 6px; margin-bottom: 20px; }
+        .period-tab { flex: 1; padding: 12px; text-align: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; font-size: 13px; color: rgba(255, 255, 255, 0.5); cursor: pointer; }
+        .period-tab.active { background: rgba(163, 198, 23, 0.12); border-color: rgba(163, 198, 23, 0.3); color: #a3c617; }
+        .stat-item { display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+        .stat-quality { font-size: 15px; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px; }
+        .stat-bar { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.04); border-radius: 3px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; background: linear-gradient(90deg, #a3c617 0%, #8fb015 100%); border-radius: 3px; transition: width 0.6s ease; }
+        .stat-count { font-size: 18px; color: #a3c617; min-width: 44px; text-align: right; }
+        .info-text { font-size: 15px; color: rgba(255, 255, 255, 0.65); line-height: 1.6; margin-bottom: 20px; }
+        .info-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+        .info-box-title { font-size: 15px; color: #a3c617; margin-bottom: 10px; }
+        .info-box-text { font-size: 14px; color: rgba(255, 255, 255, 0.6); line-height: 1.6; }
+        .premium-content { text-align: center; padding: 20px 0; }
+        .premium-icon { font-size: 64px; margin-bottom: 20px; }
+        .premium-title { font-size: 22px; color: rgba(255, 255, 255, 0.85); margin-bottom: 12px; }
+        .premium-text { font-size: 15px; color: rgba(255, 255, 255, 0.5); line-height: 1.6; margin-bottom: 28px; }
+        .premium-btn-large { background: rgba(163, 198, 23, 0.12); border: 1px solid rgba(163, 198, 23, 0.3); color: #a3c617; padding: 16px 32px; border-radius: 16px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <button class="icon-btn" id="menuBtn" aria-label="Меню">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            </button>
+        </div>
+
+        <div class="menu-dropdown" id="menuDropdown">
+            <button class="menu-item" id="histBtn">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                <span>История</span>
+            </button>
+            <button class="menu-item" id="statBtn">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                <span>Статистика</span>
+            </button>
+            <button class="menu-item" id="listBtn">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/></svg>
+                <span>Списки качеств</span>
+            </button>
+            <button class="menu-item premium-btn" id="premBtn">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <span>Premium</span>
+            </button>
+            <button class="menu-item" id="infoBtn">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                <span>О приложении</span>
+            </button>
+            <button class="menu-item" id="setBtn">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>Настройки</span>
+            </button>
+        </div>
+
+        <div class="top-section">
+            <div class="quality-wrapper">
+                <div class="quality" id="quality">ДОБРЫЙ</div>
+                <input type="text" class="quality-input" id="qualityInput" maxlength="17" placeholder="КАЧЕСТВО">
+            </div>
+            <div class="quality-hint" id="qualityHint">Нажми чтобы изменить</div>
+        </div>
+
+        <div class="button-container">
+            <svg class="progress-ring" viewBox="0 0 140 140">
+                <circle class="progress-ring-bg" cx="70" cy="70" r="65"/>
+                <circle class="progress-ring-progress" id="prog" cx="70" cy="70" r="65"/>
+            </svg>
+            <button class="action-btn" id="actionBtn" aria-label="Я!">Я!</button>
+        </div>
+
+        <div class="reason">
+            <textarea id="reason" placeholder="Потому что..."></textarea>
+        </div>
+    </div>
+
+<div id="setMod" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><div class="modal-title">Настройки</div><button class="close-btn" id="closeSet">×</button></div>
+        <div class="section">
+            <div class="section-title">Цель на день</div>
+            <div class="section-content">
+                <div class="goal-control">
+                    <button class="goal-btn" id="decGoal">−</button>
+                    <div class="goal-value" id="goalVal">5</div>
+                    <button class="goal-btn" id="incGoal">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="listMod" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><div class="modal-title">Списки качеств</div><button class="close-btn" id="closeList">×</button></div>
+        <select class="list-select" id="listSel"></select>
+        <button class="list-delete" id="delList">Удалить список</button>
+        <div class="quality-list" id="qualList"></div>
+        <div class="add-quality">
+            <input type="text" id="newQual" placeholder="НОВОЕ КАЧЕСТВО" maxlength="17">
+            <button id="addQual">+</button>
+        </div>
+    </div>
+</div>
+
+<div id="histMod" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><div class="modal-title">История</div><button class="close-btn" id="closeHist">×</button></div>
+        <div id="histCont"></div>
+    </div>
+</div>
+
+<div id="statMod" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><div class="modal-title">Статистика</div><button class="close-btn" id="closeStat">×</button></div>
+        <div class="period-tabs">
+            <div class="period-tab active" data-period="7">7 дней</div>
+            <div class="period-tab" data-period="30">30 дней</div>
+            <div class="period-tab" data-period="all">Всё время</div>
+        </div>
+        <div id="statCont"></div>
+    </div>
+</div>
+
+<div id="infoMod" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><div class="modal-title">О приложении</div><button class="close-btn" id="closeInfo">×</button></div>
+        <p class="info-text">Приложение для развития осознанности и работы над собой через ежедневные записи о своих качествах.</p>
+        <div class="info-box"><div class="info-box-title">Как пользоваться</div><div class="info-box-text">1. Нажми на качество чтобы изменить его<br>2. Опишите ситуацию, где вы его проявили<br>3. Нажмите "Я!" чтобы сохранить<br>4. Стремитесь к цели каждый день</div></div>
+        <div class="info-box"><div class="info-box-title">Синхронизация</div><div class="info-box-text">Все данные автоматически синхронизируются через Telegram Cloud Storage между вашими устройствами.</div></div>
+    </div>
+</div>
+
+<div id="premMod" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><div class="modal-title">Premium</div><button class="close-btn" id="closePrem">×</button></div>
+        <div class="premium-content">
+            <div class="premium-icon">⭐</div>
+            <div class="premium-title">Скоро здесь будет Premium</div>
+            <p class="premium-text">Мы работаем над премиум-функциями, которые сделают ваш опыт ещё лучше. Следите за обновлениями!</p>
+            <button class="premium-btn-large" id="premOk">Понятно</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const tg=window.Telegram?.WebApp;let cloud=false,goal=5,cnt=0,lists={"УВЕРЕННОСТЬ":["СМЕЛЫЙ","РЕШИТЕЛЬНЫЙ","УПОРНЫЙ"],"ДОБРОТА":["ДОБРЫЙ","ЗАБОТЛИВЫЙ"],"БЫСТРЫЙ ВВОД":[]},curList="УВЕРЕННОСТЬ",lastQ=null,entries=[],statPeriod=7,customQuality=null;function init(){if(tg){try{tg.ready();setTimeout(()=>tg.expand(),100);if(tg.CloudStorage){cloud=true;loadCloud()}}catch(e){}}setTimeout(()=>{const r=document.getElementById('reason');if(r)r.focus()},300)}function getDate(){return new Date().toISOString().split('T')[0]}function save(){try{localStorage.setItem('data',JSON.stringify({date:getDate(),count:cnt,goal:goal,lists:lists,curList:curList,entries:entries}));sync()}catch(e){}}function load(){try{const d=localStorage.getItem('data');if(d){const p=JSON.parse(d);const t=getDate();if(p.date!==t){cnt=0}else{cnt=p.count||0}goal=p.goal||5;if(p.lists){lists=p.lists;if(!lists["БЫСТРЫЙ ВВОД"])lists["БЫСТРЫЙ ВВОД"]=[]}if(p.curList)curList=p.curList;if(p.entries)entries=p.entries}else{cnt=0;goal=5}}catch(e){}}function updProg(){const c=document.getElementById('prog');const p=Math.min(cnt/goal,1);c.style.strokeDashoffset=408.41-(408.41*p);document.getElementById('goalVal').textContent=goal}function updGoal(n){if(n>=1&&n<=50){goal=n;save();updProg()}}function updList(){const l=document.getElementById('qualList');l.innerHTML='';(lists[curList]||[]).forEach((q,i)=>{const d=document.createElement('div');d.className='quality-item';const moveBtn=Object.keys(lists).length>1?`<select onchange="moveQual(${i},this.value)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);padding:4px 8px;border-radius:6px;font-size:12px;margin-right:8px;"><option value="">→</option>${Object.keys(lists).filter(n=>n!==curList).map(n=>`<option value="${n}">${n}</option>`).join('')}</select>`:'';d.innerHTML=`<span>${q}</span><div style="display:flex;align-items:center;gap:8px;">${moveBtn}<button onclick="delQual(${i})">−</button></div>`;l.appendChild(d)})}function updSel(){const s=document.getElementById('listSel');s.innerHTML='';Object.keys(lists).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;if(n===curList)o.selected=true;s.appendChild(o)})}function addQual(){const i=document.getElementById('newQual');let q=i.value.trim().toUpperCase();if(q){if(q.length>17)q=q.substring(0,17);if(!lists[curList].includes(q)){lists[curList].push(q);save();updList();i.value=''}else{alert('Уже есть!');i.value=''}}}function delQual(i){if(lists[curList].length>1){lists[curList].splice(i,1);save();updList()}else{alert('Нельзя удалить последнее!')}}function moveQual(i,targetList){if(!targetList)return;const q=lists[curList][i];if(!lists[targetList].includes(q)){lists[targetList].push(q);lists[curList].splice(i,1);save();updList()}else{alert('В целевом списке уже есть это качество!')}}function delList(){if(curList==="БЫСТРЫЙ ВВОД"){alert('Нельзя удалить список "БЫСТРЫЙ ВВОД"!');return}if(Object.keys(lists).length>2){delete lists[curList];curList=Object.keys(lists)[0];save();updSel();updList()}else{alert('Должен остаться хотя бы один список кроме "БЫСТРЫЙ ВВОД"!')}}function addEntry(q,r){entries.unshift({id:Date.now().toString(),date:getDate(),timestamp:Date.now(),quality:q,reason:r,listName:curList});save()}function renderHist(){const h=document.getElementById('histCont');h.innerHTML='';if(entries.length===0){h.innerHTML='<div class="history-empty">Пока нет записей</div>';return}const g={};entries.forEach(e=>{if(!g[e.date])g[e.date]=[];g[e.date].push(e)});Object.keys(g).sort((a,b)=>b.localeCompare(a)).forEach(d=>{const div=document.createElement('div');div.className='history-day';const dt=new Date(d+'T00:00:00');const td=getDate();const yd=new Date(Date.now()-86400000).toISOString().split('T')[0];let lbl=d;if(d===td)lbl='Сегодня';else if(d===yd)lbl='Вчера';else{lbl=dt.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}div.innerHTML=`<div class="history-day-title">${lbl} • ${g[d].length}</div>`;g[d].forEach(e=>{const ed=document.createElement('div');ed.className='history-entry';const tm=new Date(e.timestamp).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});ed.innerHTML=`<div class="history-entry-quality">${e.quality}</div><div class="history-entry-reason">${e.reason}</div><div class="history-entry-time">${tm}</div>`;div.appendChild(ed)});h.appendChild(div)})}function renderStat(){const s=document.getElementById('statCont');s.innerHTML='';let filtered=entries;if(statPeriod!=='all'){const cutoff=Date.now()-(statPeriod*86400000);filtered=entries.filter(e=>e.timestamp>=cutoff)}if(filtered.length===0){s.innerHTML='<div class="history-empty">Нет данных за выбранный период</div>';return}const counts={};filtered.forEach(e=>{counts[e.quality]=(counts[e.quality]||0)+1});const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);const max=sorted[0][1];sorted.forEach(([q,c])=>{const item=document.createElement('div');item.className='stat-item';const pct=(c/max)*100;item.innerHTML=`<div style="flex:1"><div class="stat-quality">${q}</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct}%"></div></div></div><div class="stat-count">${c}×</div>`;s.appendChild(item)})}function sync(){if(!cloud||!tg||!tg.CloudStorage)return;const d={goal:goal,lists:lists,curList:curList,entries:entries};try{tg.CloudStorage.setItem('data',JSON.stringify(d))}catch(e){}}function loadCloud(){if(!cloud||!tg||!tg.CloudStorage)return;tg.CloudStorage.getItem('data',(err,val)=>{if(!err&&val){try{const d=JSON.parse(val);if(d.goal)goal=d.goal;if(d.lists){lists=d.lists;if(!lists["БЫСТРЫЙ ВВОД"])lists["БЫСТРЫЙ ВВОД"]=[]}if(d.curList)curList=d.curList;if(d.entries)entries=d.entries;localStorage.setItem('data',JSON.stringify({date:getDate(),count:cnt,goal:goal,lists:lists,curList:curList,entries:entries}));load();updProg();updSel();updList()}catch(e){}}})}function showQualityInput(){const qel=document.getElementById('quality');const inp=document.getElementById('qualityInput');qel.classList.add('editing');inp.classList.add('visible');inp.value='';inp.focus()}function hideQualityInput(){const qel=document.getElementById('quality');const inp=document.getElementById('qualityInput');inp.classList.remove('visible');qel.classList.remove('editing')}function gen(){const txt=document.getElementById('reason');const r=txt.value.trim();const qel=document.getElementById('quality');const inp=document.getElementById('qualityInput');let finalQuality=customQuality||qel.textContent;if(!lists[curList]||lists[curList].length===0){lists[curList]=["ДОБРЫЙ"];save()}const qs=lists[curList];let rq;if(r===''){if(customQuality){rq=customQuality;customQuality=null}else{if(qs.length>1){const av=qs.filter(q=>q!==lastQ);rq=av[Math.floor(Math.random()*av.length)]}else{rq=qs[0]}}qel.textContent=rq;txt.value='';lastQ=rq;return}if(customQuality){rq=customQuality;if(!lists["БЫСТРЫЙ ВВОД"])lists["БЫСТРЫЙ ВВОД"]=[];if(!lists["БЫСТРЫЙ ВВОД"].includes(rq)){lists["БЫСТРЫЙ ВВОД"].unshift(rq);if(lists["БЫСТРЫЙ ВВОД"].length>10)lists["БЫСТРЫЙ ВВОД"].pop()}customQuality=null}else{if(qs.length>1){const av=qs.filter(q=>q!==lastQ);rq=av[Math.floor(Math.random()*av.length)]}else{rq=qs[0]}}addEntry(rq,r);qel.textContent=rq;txt.value='';cnt++;save();updProg();lastQ=rq;if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light')}function closeMods(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('visible'));document.getElementById('menuDropdown').classList.remove('visible')}function toggleMenu(){document.getElementById('menuDropdown').classList.toggle('visible')}window.addEventListener('load',()=>{init();load();updProg();updSel();updList()});document.getElementById('menuBtn').addEventListener('click',toggleMenu);document.getElementById('quality').addEventListener('click',showQualityInput);document.getElementById('qualityInput').addEventListener('blur',function(){const val=this.value.trim().toUpperCase();if(val){if(val.length>17){customQuality=val.substring(0,17)}else{customQuality=val}document.getElementById('quality').textContent=customQuality}hideQualityInput()});document.getElementById('qualityInput').addEventListener('keypress',function(e){if(e.key==='Enter'){this.blur()}});document.getElementById('actionBtn').addEventListener('click',()=>{gen();document.getElementById('actionBtn').classList.add('animate');setTimeout(()=>document.getElementById('actionBtn').classList.remove('animate'),400)});document.getElementById('setBtn').addEventListener('click',()=>{closeMods();document.getElementById('setMod').classList.add('visible')});document.getElementById('listBtn').addEventListener('click',()=>{closeMods();updSel();updList();document.getElementById('listMod').classList.add('visible')});document.getElementById('histBtn').addEventListener('click',()=>{closeMods();renderHist();document.getElementById('histMod').classList.add('visible')});document.getElementById('statBtn').addEventListener('click',()=>{closeMods();renderStat();document.getElementById('statMod').classList.add('visible')});document.getElementById('infoBtn').addEventListener('click',()=>{closeMods();document.getElementById('infoMod').classList.add('visible')});document.getElementById('premBtn').addEventListener('click',()=>{closeMods();document.getElementById('premMod').classList.add('visible')});document.getElementById('closeSet').addEventListener('click',closeMods);document.getElementById('closeList').addEventListener('click',closeMods);document.getElementById('closeHist').addEventListener('click',closeMods);document.getElementById('closeStat').addEventListener('click',closeMods);document.getElementById('closeInfo').addEventListener('click',closeMods);document.getElementById('closePrem').addEventListener('click',closeMods);document.getElementById('premOk').addEventListener('click',closeMods);document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',(e)=>{if(e.target===m)closeMods()}));document.querySelectorAll('.period-tab').forEach(t=>t.addEventListener('click',function(){document.querySelectorAll('.period-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active');statPeriod=this.dataset.period==='all'?'all':parseInt(this.dataset.period);renderStat()}));document.getElementById('incGoal').addEventListener('click',()=>updGoal(goal+1));document.getElementById('decGoal').addEventListener('click',()=>updGoal(goal-1));document.getElementById('addQual').addEventListener('click',addQual);document.getElementById('newQual').addEventListener('keypress',(e)=>{if(e.key==='Enter')addQual()});document.getElementById('delList').addEventListener('click',delList);document.getElementById('listSel').addEventListener('change',(e)=>{curList=e.target.value;save();updList()});document.addEventListener('click',(e)=>{const menu=document.getElementById('menuDropdown');const btn=document.getElementById('menuBtn');if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('visible')}});setInterval(()=>{if(cloud)sync()},300000);
+</script>
+
+</body>
+</html>

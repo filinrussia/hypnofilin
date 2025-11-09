@@ -1,0 +1,347 @@
+
+/* Подключение шрифта Molot */
+@font-face {
+    font-family: 'Molot';
+    src: url('https://hypnofilin.ru/fonts/Molot.woff2') format('woff2'),
+         url('https://hypnofilin.ru/fonts/Molot.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Переменная для отступов */
+:root {
+    --spacing: 10px;
+}
+
+body {
+    font-family: 'SF Pro Text', -apple-system, sans-serif;
+    background: #000000;
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+#game-container {
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: var(--spacing);
+    max-width: 375px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+h1 {
+    font-family: 'Molot', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 20px;
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+}
+
+h1 .title {
+    display: block;
+}
+
+h1 .title span {
+    display: block;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing);
+    width: 355px !important;
+    max-width: 355px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+button {
+    padding: 0 10px !important;
+    font-size: 17px;
+    font-weight: 500;
+    color: #FFFFFF;
+    background: rgb(255, 185, 15);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    text-align: center;
+    width: 355px !important;
+    max-width: 355px !important;
+    min-width: 355px !important;
+    margin: 0 auto !important;
+    height: 44px;
+    line-height: 44px;
+}
+
+button:hover {
+    background: rgb(255, 150, 0);
+}
+
+#scenario {
+    display: none;
+    padding: 0 !important;
+    width: 100%;
+    max-width: 355px;
+    margin: 0 auto;
+}
+
+#scenario .button-container {
+    width: 355px !important;
+    max-width: 355px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+#scenario .button-container button {
+    width: 355px !important;
+    max-width: 355px !important;
+    min-width: 355px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    height: 44px;
+    line-height: 44px;
+}
+
+.tiles-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+    width: 100%;
+    max-width: 355px;
+    margin: 0 auto;
+}
+
+.tile-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing);
+}
+
+.tile {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    background: #FFD700;
+}
+
+.tile img {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.tile:hover {
+    opacity: 0.8;
+}
+
+.tile-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: #FFFFFF;
+    font-size: 16px;
+    font-family: 'Molot', sans-serif;
+    padding: 4px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tile-title {
+    padding: 8px;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    border-radius: 10px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    font-family: 'Molot', sans-serif;
+    cursor: pointer;
+}
+
+.price-budget-btn {
+    padding: 14px;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    border-radius: 10px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    font-family: 'Molot', sans-serif;
+    cursor: default;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: var(--spacing) 0;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: var(--spacing) !important;
+    width: 100%;
+    max-width: 375px;
+    margin: 0 auto;
+    color: #FFFFFF;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.popup-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+    font-family: 'Molot', sans-serif;
+}
+
+.popup-content {
+    font-size: 16px;
+    color: #D1D1D6;
+    line-height: 1.5;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    max-width: 355px;
+}
+
+.popup-content img {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.popup button {
+    padding: 12px;
+    font-size: 17px;
+    background: rgb(255, 185, 15);
+    border-radius: 10px;
+    width: 355px !important;
+    max-width: 355px !important;
+    min-width: 355px !important;
+    margin: 0 auto !important;
+    height: 44px;
+    line-height: 44px;
+}
+
+.gallery-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: var(--spacing) !important;
+    width: 100%;
+    max-width: 375px;
+    margin: 0 auto;
+    color: #FFFFFF;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+    width: 100%;
+    max-width: 355px;
+    margin: 0 auto;
+}
+
+.gallery-item {
+    position: relative;
+    width: 100%;
+    height: 100px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.gallery-item img:hover {
+    opacity: 0.8;
+}
+
+.gallery-item .label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-family: 'Molot', sans-serif;
+    padding: 4px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grayscale {
+    filter: grayscale(100%);
+    opacity: 0.6;
+}
+
+/* Адаптивность для узких экранов */
+@media (max-width: 375px) {
+    #game-container,
+    #scenario,
+    .button-container,
+    button,
+    .tiles-container,
+    .gallery-grid,
+    .popup-content {
+        max-width: 100% !important;
+        width: calc(100% - 20px) !important;
+    }
+}

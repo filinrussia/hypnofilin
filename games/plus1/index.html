@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>💋 +1</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <h1>
+            <span class="plus-one">+1💋</span>
+            <span class="title"><span>тренажер</span><span>соблазнения</span></span>
+        </h1>
+        <div class="divider"></div>
+        <div class="button-container">
+            <button onclick="generateScenario()">НОВАЯ ИГРА</button>
+            <button onclick="showRules()">КАК ИГРАТЬ</button>
+            <button onclick="showPremiumPopup()" id="premium-btn">ПРЕМИУМ</button>
+        </div>
+        <div id="scenario"></div>
+    </div>
+    <div id="popup" class="popup">
+        <div id="popup-title" class="popup-title"></div>
+        <div id="popup-content" class="popup-content card-content">
+            <img id="popup-image" style="display: none;">
+            <div id="popup-description" class="description"></div>
+        </div>
+        <div class="popup-buttons">
+            <button onclick="closePopup()">ЗАКРЫТЬ</button>
+        </div>
+    </div>
+    <div id="premium-popup" class="popup">
+        <div id="premium-title" class="popup-title">Премиум</div>
+        <div id="premium-content" class="popup-content">
+            Разблокируй всё: персонажей, ситуации, задания!<br><br>
+            Собери идеальный набор под свою задачу.
+        </div>
+        <div class="premium-buttons">
+            <button onclick="subscribe('month')">139₽/МЕСЯЦ</button>
+            <button onclick="subscribe('year')">995₽/ГОД</button>
+            <button onclick="closePremiumPopup()">ЗАКРЫТЬ</button>
+        </div>
+    </div>
+    <div id="finish-popup" class="popup">
+        <div id="finish-content">Обсуди с друзьями! Что получилось, а что можно улучшить?</div>
+        <div class="finish-buttons">
+            <button onclick="closeFinishPopup()">Сыграть ещё</button>
+        </div>
+    </div>
+    <div id="gallery-popup" class="gallery-popup">
+        <div id="gallery-title" class="popup-title"></div>
+        <div id="gallery-content" class="gallery-grid"></div>
+        <div class="gallery-buttons">
+            <button onclick="closeGalleryPopup()">Закрыть</button>
+        </div>
+    </div>
+    <div id="situation-popup" class="popup">
+        <div id="situation-popup-title" class="popup-title">Ситуация</div>
+        <div id="situation-content" class="popup-content card-content">
+            <img id="situation-image" style="display: none;">
+            <div id="situation-description" class="description"></div>
+        </div>
+        <div id="situation-buttons">
+            <button id="more-button" onclick="handleGenerateSituation()" style="display: none;">Ещё</button>
+            <button onclick="closeSituationPopup()">Закрыть</button>
+        </div>
+    </div>
+
+    <script src="situations.js"></script>
+    <script src="quests.js"></script>
+    <script src="guys.js"></script>
+    <script src="girls.js"></script>
+    <script src="ai.js"></script>
+    <script src="premium.js"></script>
+    <script src="script.js"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'933f56799e33afa7',t:'MTc0NTI2NDI2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

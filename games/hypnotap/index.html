@@ -1,0 +1,1911 @@
+<!DOCTYPE html>  
+
+<html lang="ru">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">  
+<meta name="apple-mobile-web-app-capable" content="yes">  
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+<meta name="theme-color" content="#000000">  
+<meta name="color-scheme" content="dark">  
+<title>HypnoTap EMDR</title>  
+<script src="translations.js"></script>  
+<script src="paytranslations.js"></script>  
+<script src="pricing.js"></script>  
+<style>  
+* {  
+margin: 0;  
+padding: 0;  
+box-sizing: border-box;  
+-webkit-tap-highlight-color: transparent;  
+}
+
+body {  
+font-family: -apple-system, BlinkMacSystemFont, ‘SF Pro Rounded’, sans-serif;  
+background: #1a1a1e;  
+color: #fff;  
+overflow: hidden;  
+height: 100vh;  
+height: 100dvh;  
+color-scheme: dark;  
+}
+
+#app {  
+height: 100vh;  
+height: 100dvh;  
+display: flex;  
+flex-direction: column;  
+}
+
+#canvas-area {  
+flex: 1;  
+position: relative;  
+background: #1a1a1e;  
+}
+
+canvas {  
+display: block;  
+width: 100%;  
+height: 100%;  
+position: relative;  
+z-index: 1;  
+}
+
+.top-bar {  
+position: absolute;  
+top: max(20px, env(safe-area-inset-top));  
+left: max(20px, env(safe-area-inset-left));  
+right: max(20px, env(safe-area-inset-right));  
+display: flex;  
+justify-content: space-between;  
+align-items: center;  
+z-index: 100;  
+}
+
+#timer-progress {
+    background: rgba(50, 75, 115, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(50, 75, 115, 0.25);
+    border-radius: 16px;
+    height: 8px;
+    min-width: 120px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#timer-progress.visible {  
+opacity: 1;  
+}
+
+.timer-progress-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(50, 75, 115, 0.25);
+    border-radius: 16px;
+    transition: width 0.1s linear;
+}
+
+.top-buttons {
+display: flex;
+gap: 8px;
+}
+
+.icon-btn {
+background: transparent;
+border: none;
+color: rgba(255, 255, 255, 0.5);
+width: 32px;
+height: 32px;
+border-radius: 6px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 16px;
+}
+
+.premium-btn {
+color: rgba(255, 159, 10, 0.95);
+width: 33px;
+height: 33px;
+}
+
+.svg-icon {
+width: 16px;
+height: 16px;
+fill: currentColor;
+}
+
+
+.premium-btn .svg-icon {
+    width: 17px;
+    height: 17px;
+}
+
+.icon-btn.session-active {
+background: transparent !important;
+border: none !important;
+color: rgba(50, 75, 115, 0.5) !important;
+}
+
+.premium-btn.session-active {
+color: rgba(50, 75, 115, 0.5) !important;
+}
+
+
+#placement-hint {  
+position: absolute;  
+top: 50%;  
+left: 50%;  
+transform: translate(-50%, -50%);  
+font-size: 18px;  
+color: rgba(255, 255, 255, 0.6);  
+text-align: center;  
+pointer-events: none;  
+z-index: 50;  
+}
+
+#placement-hint.hidden {  
+display: none;  
+}
+
+/* ===== START SCREEN (BREATHING DESIGN) ===== */  
+#start-screen {  
+position: absolute;  
+inset: 0;  
+display: flex;  
+flex-direction: column;  
+align-items: center;  
+justify-content: center;  
+gap: 32px;  
+z-index: 70;  
+background: #1a1a1e;  
+padding: 40px;  
+}
+
+.breathing-circle {  
+width: 140px;  
+height: 140px;  
+border-radius: 50%;  
+background: radial-gradient(circle, rgba(100, 150, 255, 0.3), transparent);  
+border: 2px solid rgba(100, 150, 255, 0.2);  
+animation: breathe 4s ease-in-out infinite;  
+margin-bottom: 12px;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+font-size: 64px;  
+}
+
+@keyframes breathe {  
+0%, 100% { transform: scale(1); opacity: 0.5; }  
+50% { transform: scale(1.1); opacity: 0.8; }  
+}
+
+.logo {  
+font-size: 22px;  
+font-weight: 400;  
+color: rgba(255, 255, 255, 0.9);  
+letter-spacing: 4px;  
+text-transform: uppercase;  
+text-align: center;  
+margin-bottom: 20px;  
+}
+
+.mode-buttons {  
+display: flex;  
+flex-direction: column;  
+gap: 14px;  
+width: 140px;  
+}
+
+.mode-btn {  
+width: 100%;  
+padding: 20px;  
+border-radius: 18px;  
+font-size: 17px;  
+font-weight: 500;  
+border: 1.5px solid rgba(255, 255, 255, 0.12);  
+background: rgba(255, 255, 255, 0.03);  
+backdrop-filter: blur(20px);  
+color: rgba(255, 255, 255, 0.85);  
+cursor: pointer;  
+transition: all 0.3s ease;  
+}
+
+.mode-btn:active {  
+transform: scale(0.97);  
+background: rgba(255, 255, 255, 0.06);  
+border-color: rgba(255, 255, 255, 0.2);  
+}
+
+/* ===== CONTROLS PANEL ===== */  
+#controls-panel {  
+position: fixed;  
+inset: 0;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+z-index: 200;  
+opacity: 0;  
+pointer-events: none;  
+transition: opacity 0.3s ease;  
+padding: 5px;  
+}
+
+#controls-panel.visible {  
+opacity: 1;  
+pointer-events: all;  
+}
+
+.controls-content {  
+background: #0f1014;  
+border: 1px solid rgba(255, 255, 255, 0.08);  
+border-radius: 28px;  
+padding: 24px 28px;  
+width: 100%;  
+max-width: 400px;  
+max-height: 90vh;  
+overflow-y: auto;  
+position: relative;  
+}
+
+.panel-header {  
+display: flex;  
+justify-content: space-between;  
+align-items: center;  
+margin-bottom: 20px;  
+padding-bottom: 12px;  
+border-bottom: 1px solid rgba(255, 255, 255, 0.06);  
+}
+
+.panel-title {  
+font-size: 12px;  
+font-weight: 700;  
+color: rgba(255, 255, 255, 0.45);  
+text-transform: uppercase;  
+letter-spacing: 1px;  
+}
+
+.header-actions {  
+display: flex;  
+gap: 8px;  
+align-items: center;  
+}
+
+.close-btn {  
+background: rgba(255, 255, 255, 0.05);  
+border: 1px solid rgba(255, 255, 255, 0.1);  
+color: rgba(255, 255, 255, 0.85);  
+width: 32px;  
+height: 32px;  
+border-radius: 16px;  
+font-size: 18px;  
+cursor: pointer;  
+transition: all 0.3s ease;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+line-height: 1;  
+}
+
+.close-btn:active {  
+transform: scale(0.9);  
+}
+
+#stop-button {  
+display: none;  
+background: linear-gradient(135deg, #ff453a, #cc3730);  
+border: none;  
+color: #fff;  
+padding: 8px 20px;  
+border-radius: 16px;  
+font-size: 15px;  
+font-weight: 600;  
+cursor: pointer;  
+box-shadow: 0 4px 12px rgba(255, 69, 58, 0.3);  
+height: 32px;  
+}
+
+#stop-button:active {  
+transform: scale(0.95);  
+}
+
+.section {  
+margin-bottom: 20px;  
+}
+
+.section-title {  
+font-size: 12px;  
+font-weight: 700;  
+color: rgba(255, 255, 255, 0.45);  
+text-transform: uppercase;  
+letter-spacing: 1px;  
+margin-bottom: 12px;  
+}
+
+.control-row {  
+display: flex;  
+justify-content: space-between;  
+align-items: center;  
+padding: 12px 0;  
+border-bottom: none;  
+}
+
+.control-label {  
+font-size: 12px;  
+font-weight: 700;  
+color: rgba(255, 255, 255, 0.45);  
+text-transform: uppercase;  
+letter-spacing: 1px;  
+margin-right: 16px;  
+}
+
+.preset-buttons {  
+display: flex;  
+gap: 6px;  
+width: 100%;  
+}
+
+.preset-btn {
+flex: 1;
+padding: 10px 8px;
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.06);
+border-radius: 12px;
+color: rgba(255, 255, 255, 0.35);
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+transition: transform 0.2s ease;
+box-sizing: border-box;
+}
+
+.preset-btn:active {
+transform: scale(0.95);
+}
+
+.preset-btn.active {
+background: rgba(255, 255, 255, 0.08);
+border-color: rgba(255, 255, 255, 0.15);
+color: rgba(255, 255, 255, 0.75);
+}
+
+.colors-grid {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 10px;
+width: 100%;
+max-width: 100%;
+}
+
+.color-btn {
+width: 100%;
+aspect-ratio: 1;
+border-radius: 50%;
+border: 2px solid transparent;
+cursor: pointer;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+position: relative;
+box-sizing: border-box;
+}
+
+.color-btn::before {
+content: '';
+position: absolute;
+inset: -6px;
+border-radius: 50%;
+border: 2px solid transparent;
+transition: all 0.3s ease;
+}
+
+.color-btn.active::before {
+border-color: rgba(255, 255, 255, 0.8);
+}
+
+.patterns-grid {
+display: grid;
+grid-template-columns: repeat(5, 1fr);
+gap: 8px;
+width: 100%;
+max-width: 100%;
+}
+
+.pattern-btn {
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.06);
+color: rgba(255, 255, 255, 0.35);
+padding: 14px 8px;
+border-radius: 14px;
+font-size: 20px;
+cursor: pointer;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+display: flex;
+align-items: center;
+justify-content: center;
+aspect-ratio: 1;
+box-sizing: border-box;
+}
+
+.pattern-btn.active {
+background: rgba(255, 255, 255, 0.08);
+border-color: rgba(255, 255, 255, 0.15);
+color: rgba(255, 255, 255, 0.75);
+}
+
+.duration-preset {
+flex: 1;
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.06);
+color: rgba(255, 255, 255, 0.35);
+padding: 10px 8px;
+border-radius: 12px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+transition: transform 0.2s ease;
+box-sizing: border-box;
+}
+
+.duration-preset:active {
+transform: scale(0.95);
+}
+
+.duration-preset.active {
+background: rgba(255, 255, 255, 0.08);
+border-color: rgba(255, 255, 255, 0.15);
+color: rgba(255, 255, 255, 0.75);
+}
+
+input[type="number"] {
+width: 100px;
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.06);
+color: rgba(255, 255, 255, 0.75);
+padding: 10px 14px;
+border-radius: 12px;
+font-size: 14px;
+text-align: center;
+font-weight: 600;
+}
+
+select {  
+width: 100%;  
+padding: 14px;  
+background: rgba(255, 255, 255, 0.04);  
+border: 1px solid rgba(255, 255, 255, 0.08);  
+color: rgba(255, 255, 255, 0.9);  
+border-radius: 14px;  
+font-size: 16px;  
+font-weight: 500;  
+}
+
+.overlay {  
+position: fixed;  
+inset: 0;  
+background: rgba(26, 26, 30, 0.85);  
+backdrop-filter: blur(10px);  
+opacity: 0;  
+pointer-events: none;  
+transition: opacity 0.4s ease;  
+z-index: 98;  
+}
+
+.overlay.visible {  
+opacity: 1;  
+pointer-events: all;  
+}
+
+.modal {  
+position: fixed;  
+inset: 0;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+z-index: 200;  
+opacity: 0;  
+pointer-events: none;  
+transition: opacity 0.3s ease;  
+padding: 5px;  
+}
+
+.modal.visible {  
+opacity: 1;  
+pointer-events: all;  
+}
+
+.modal-content {  
+background: #0f1014;  
+border: 1px solid rgba(255, 255, 255, 0.08);  
+border-radius: 28px;  
+padding: 7px 28px;  
+width: 100%;  
+max-width: 400px;  
+text-align: center;  
+max-height: 80vh;  
+overflow-y: auto;  
+position: relative;  
+}
+
+.modal-close-btn {  
+position: absolute;  
+top: 20px;  
+right: 20px;  
+background: rgba(255, 255, 255, 0.04);  
+border: 1px solid rgba(255, 255, 255, 0.08);  
+color: rgba(255, 255, 255, 0.7);  
+width: 36px;  
+height: 36px;  
+border-radius: 18px;  
+font-size: 20px;  
+cursor: pointer;  
+transition: all 0.3s ease;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+line-height: 1;  
+}
+
+.modal-close-btn:active {  
+transform: scale(0.9);  
+background: rgba(255, 255, 255, 0.08);  
+}
+
+.modal h2 {  
+font-size: 26px;  
+font-weight: 600;  
+margin-bottom: 28px;  
+color: rgba(255, 255, 255, 0.95);  
+letter-spacing: 0.5px;  
+}
+
+.modal p {  
+font-size: 15px;  
+color: rgba(255, 255, 255, 0.6);  
+margin-bottom: 16px;  
+line-height: 1.7;  
+}
+
+.modal-button {  
+width: 100%;  
+background: rgba(100, 150, 255, 0.15);  
+border: 1px solid rgba(100, 150, 255, 0.3);  
+color: rgba(100, 150, 255, 1);  
+padding: 18px;  
+border-radius: 18px;  
+font-size: 17px;  
+font-weight: 600;  
+cursor: pointer;  
+transition: all 0.3s ease;  
+margin-top: 8px;  
+}
+
+.modal-button:active {  
+transform: scale(0.96);  
+background: rgba(100, 150, 255, 0.2);  
+}
+
+.info-box {  
+background: rgba(255, 255, 255, 0.05);  
+border: 1px solid rgba(255, 255, 255, 0.1);  
+border-radius: 12px;  
+padding: 16px;  
+margin-top: 20px;  
+}
+
+.info-box p {  
+color: rgba(255, 255, 255, 0.6);  
+font-size: 14px;  
+line-height: 1.6;  
+margin: 0;  
+}
+
+.resource-point {  
+position: absolute;  
+width: 15px;  
+height: 15px;  
+border-radius: 50%;  
+border: none;  
+cursor: move;  
+user-select: none;  
+transition: transform 0.2s ease;  
+z-index: 55;  
+pointer-events: none;  
+}
+
+.resource-point:active {  
+transform: scale(1.3);  
+}
+
+.resource-point.trauma {  
+background: rgba(255, 120, 110, 0.9);  
+box-shadow:  
+0 0 8px rgba(255, 120, 110, 0.5),  
+0 0 16px rgba(255, 120, 110, 0.3),  
+0 0 32px rgba(255, 120, 110, 0.15);  
+}
+
+.resource-point.resource {  
+background: rgba(100, 200, 130, 0.9);  
+box-shadow:  
+0 0 8px rgba(100, 200, 130, 0.5),  
+0 0 16px rgba(100, 200, 130, 0.3),  
+0 0 32px rgba(100, 200, 130, 0.15);  
+}
+
+#resource-start-btn {  
+position: absolute;  
+bottom: max(40px, env(safe-area-inset-bottom) + 20px);  
+left: 50%;  
+transform: translateX(-50%);  
+background: rgba(255, 255, 255, 0.03);  
+backdrop-filter: blur(20px);  
+border: 1.5px solid rgba(255, 255, 255, 0.12);  
+color: rgba(255, 255, 255, 0.85);  
+padding: 20px 60px;  
+border-radius: 18px;  
+font-size: 17px;  
+font-weight: 500;  
+cursor: pointer;  
+box-shadow: none;  
+z-index: 60;  
+display: none;  
+}
+
+#resource-start-btn:active {  
+transform: translateX(-50%) scale(0.97);  
+background: rgba(255, 255, 255, 0.06);  
+border-color: rgba(255, 255, 255, 0.2);  
+}
+
+/* ===== SUBSCRIPTION MODAL ===== */  
+#subscription-modal {  
+position: fixed;  
+inset: 0;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+z-index: 300;  
+opacity: 0;  
+pointer-events: none;  
+transition: opacity 0.3s ease;  
+padding: 20px;  
+}
+
+#subscription-modal.visible {  
+opacity: 1;  
+pointer-events: all;  
+}
+
+.subscription-content {  
+background: #0f1014;  
+border: 1px solid rgba(255, 255, 255, 0.08);  
+border-radius: 28px;  
+padding: 40px 32px;  
+width: 100%;  
+max-width: 380px;  
+position: relative;  
+}
+
+.subscription-close {  
+position: absolute;  
+top: 20px;  
+right: 20px;  
+background: rgba(255, 255, 255, 0.04);  
+border: 1px solid rgba(255, 255, 255, 0.08);  
+color: rgba(255, 255, 255, 0.7);  
+width: 36px;  
+height: 36px;  
+border-radius: 18px;  
+font-size: 20px;  
+cursor: pointer;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+transition: all 0.3s ease;  
+}
+
+.subscription-close:active {  
+transform: scale(0.9);  
+}
+
+.sub-title {  
+font-size: 24px;  
+font-weight: 600;  
+color: rgba(255, 255, 255, 0.95);  
+margin-bottom: 16px;  
+text-align: center;  
+}
+
+.sub-trial-badge {  
+background: transparent;  
+border: 1px solid rgba(255, 255, 255, 0.1);  
+color: rgba(255, 255, 255, 0.6);  
+padding: 10px 20px;  
+border-radius: 14px;  
+font-size: 12px;  
+font-weight: 600;  
+margin-bottom: 24px;  
+text-align: center;  
+text-transform: uppercase;  
+letter-spacing: 1px;  
+}
+
+.sub-plan-toggle {  
+display: flex;  
+background: rgba(255, 255, 255, 0.03);  
+border: 1px solid rgba(255, 255, 255, 0.06);  
+border-radius: 16px;  
+padding: 6px;  
+margin-bottom: 24px;  
+position: relative;  
+}
+
+.sub-plan-toggle::before {  
+content: ‘’;  
+position: absolute;  
+width: calc(33.333% - 8px);  
+height: calc(100% - 12px);  
+background: rgba(255, 255, 255, 0.05);  
+border: 1px solid rgba(255, 255, 255, 0.1);  
+border-radius: 12px;  
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  
+top: 6px;  
+left: 6px;  
+}
+
+.sub-plan-toggle[data-active=“1”]::before {  
+transform: translateX(0);  
+}
+
+.sub-plan-toggle[data-active=“2”]::before {  
+transform: translateX(calc(100% + 8px));  
+}
+
+.sub-plan-toggle[data-active=“3”]::before {  
+transform: translateX(calc(200% + 16px));  
+}
+
+.sub-toggle-option {  
+flex: 1;  
+padding: 14px 8px;  
+text-align: center;  
+cursor: pointer;  
+transition: all 0.3s ease;  
+position: relative;  
+z-index: 1;  
+}
+
+.sub-plan-badge {  
+position: absolute;  
+top: -8px;  
+right: -4px;  
+background: rgba(100, 200, 130, 0.12);  
+border: 1px solid rgba(100, 200, 130, 0.25);  
+color: rgba(100, 200, 130, 0.95);  
+font-size: 9px;  
+font-weight: 700;  
+text-transform: uppercase;  
+padding: 3px 8px;  
+border-radius: 8px;  
+letter-spacing: 0.3px;  
+}
+
+.sub-plan-badge.best {  
+background: rgba(255, 159, 10, 0.12);  
+border: 1px solid rgba(255, 159, 10, 0.25);  
+color: rgba(255, 159, 10, 0.95);  
+}
+
+.sub-toggle-option-title {  
+font-size: 14px;  
+font-weight: 600;  
+color: rgba(255, 255, 255, 0.45);  
+transition: color 0.3s ease;  
+}
+
+.sub-toggle-option.active .sub-toggle-option-title {  
+color: rgba(255, 255, 255, 0.9);  
+}
+
+.sub-toggle-option-price {  
+font-size: 11px;  
+color: rgba(255, 255, 255, 0.25);  
+margin-top: 2px;  
+transition: color 0.3s ease;  
+}
+
+.sub-toggle-option.active .sub-toggle-option-price {  
+color: rgba(255, 255, 255, 0.55);  
+}
+
+.sub-selected-plan {  
+background: transparent;  
+border: 1px solid rgba(255, 255, 255, 0.06);  
+border-radius: 18px;  
+padding: 24px;  
+margin-bottom: 20px;  
+text-align: center;  
+}
+
+.sub-selected-price {  
+font-size: 48px;  
+font-weight: 700;  
+color: rgba(255, 255, 255, 0.9);  
+line-height: 1;  
+margin-bottom: 12px;  
+}
+
+.sub-savings-badge {  
+display: inline-block;  
+background: rgba(100, 200, 130, 0.08);  
+border: 1px solid rgba(100, 200, 130, 0.2);  
+color: rgba(100, 200, 130, 0.85);  
+padding: 6px 14px;  
+border-radius: 10px;  
+font-size: 12px;  
+font-weight: 600;  
+}
+
+.sub-features {  
+display: grid;  
+grid-template-columns: 1fr 1fr;  
+gap: 10px;  
+margin-bottom: 24px;  
+}
+
+.sub-feature {  
+display: flex;  
+align-items: center;  
+gap: 8px;  
+font-size: 13px;  
+color: rgba(255, 255, 255, 0.55);  
+}
+
+.sub-feature-icon {  
+width: 16px;  
+height: 16px;  
+background: rgba(255, 255, 255, 0.06);  
+border-radius: 50%;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+font-size: 10px;  
+color: rgba(255, 255, 255, 0.45);  
+flex-shrink: 0;  
+}
+
+.sub-subscribe-btn {  
+width: 100%;  
+background: rgba(255, 255, 255, 0.05);  
+border: 1px solid rgba(255, 255, 255, 0.1);  
+color: rgba(255, 255, 255, 0.8);  
+padding: 16px;  
+border-radius: 16px;  
+font-size: 16px;  
+font-weight: 600;  
+cursor: pointer;  
+transition: all 0.3s ease;  
+margin-bottom: 12px;  
+}
+
+.sub-subscribe-btn:active {  
+transform: scale(0.98);  
+}
+
+.sub-restore-btn {  
+width: 100%;  
+background: transparent;  
+border: 1px solid rgba(255, 255, 255, 0.06);  
+color: rgba(255, 255, 255, 0.45);  
+padding: 14px;  
+border-radius: 14px;  
+font-size: 14px;  
+font-weight: 500;  
+cursor: pointer;  
+transition: all 0.3s ease;  
+}
+
+.sub-restore-btn:active {  
+transform: scale(0.98);  
+}
+
+::-webkit-scrollbar {  
+width: 0;  
+}  
+</style>
+
+</head>  
+<body>  
+<div id="app">  
+<div id="canvas-area">  
+<canvas id="canvas"></canvas>  
+<div class="top-bar">  
+<div id="timer-progress">  
+<div class="timer-progress-bar" id="timer-bar"></div>  
+</div>  
+<div class="top-buttons">  
+<button class="icon-btn premium-btn" id="premium-btn" title="Premium">  
+<svg class="svg-icon" viewBox="0 0 24 24">  
+<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>  
+</svg>  
+</button>  
+<button class="icon-btn" id="help-btn" title="Помощь">  
+<svg class="svg-icon" viewBox="0 0 24 24">  
+<path d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>  
+</svg>  
+</button>  
+<button class="icon-btn" id="settings-btn" title="Настройки">  
+<svg class="svg-icon" viewBox="0 0 24 24">  
+<path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>  
+</svg>  
+</button>  
+</div>  
+</div>  
+<div id="placement-hint" class="hidden">Поставьте точку проблемы</div>
+
+<!-- Start Screen -->  
+
+<div id="start-screen">  
+<div class="breathing-circle"></div>  
+<div class="logo">HypnoTap</div>  
+<div class="mode-buttons">  
+<button class="mode-btn" id="emdr-mode-btn" data-i18n="emdrMode">EMDR</button>  
+<button class="mode-btn" id="resource-mode-start-btn" data-i18n="resourceMode">Ресурсы</button>  
+</div>  
+</div>
+
+<button id="resource-start-btn">Начать</button>
+
+</div>  
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- Completion Modal -->  
+
+<div id="completion-modal" class="modal">  
+<div class="modal-content" style="padding: 40px 28px;">  
+<h2 data-i18n="sessionComplete" style="font-size: 24px; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin: 0 0 32px 0;">Отличная работа!</h2>  
+<div class="breathing-circle" style="margin: 0 auto 32px;">✓</div>  
+<button id="completion-done" data-i18n="done" class="mode-btn" style="width: 140px;">Готово</button>  
+</div>  
+</div>
+
+<!-- Help Modal -->  
+
+<div id="help-modal" class="modal">  
+<div class="modal-content" style="max-height: 82vh; overflow-y: auto; padding: 44px 28px 40px;">  
+<button class="modal-close-btn" id="help-close">×</button>
+
+<div style="display: flex; flex-direction: column; gap: 28px;">
+
+<!-- HYPNOTAP + Links (first) -->  
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">  
+<div style="font-size: 22px; font-weight: 400; color: rgba(255, 255, 255, 0.9); letter-spacing: 4px; text-transform: uppercase;">HYPNOTAP</div>  
+<div style="display: flex; justify-content: center; gap: 12px;">  
+<a href="https://t.me/hypnofilin" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50%; width: 56px; height: 56px; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;" title="Telegram" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.borderColor='rgba(255, 255, 255, 0.15)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.04)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.transform='translateY(0)';">  
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16.64 8.8C16.49 10.38 15.84 14.22 15.51 15.99C15.37 16.74 15.09 16.99 14.83 17.01C14.25 17.07 13.81 16.64 13.25 16.27C12.37 15.69 11.87 15.33 11.02 14.77C10.03 14.12 10.67 13.76 11.24 13.18C11.39 13.03 13.95 10.7 14 10.49C14.0069 10.4582 14.006 10.4252 13.9973 10.3938C13.9886 10.3624 13.9724 10.3337 13.95 10.31C13.89 10.26 13.81 10.28 13.74 10.29C13.65 10.31 12.25 11.24 9.52 13.08C9.12 13.35 8.76 13.49 8.44 13.48C8.08 13.47 7.4 13.28 6.89 13.11C6.26 12.91 5.77 12.8 5.81 12.45C5.83 12.27 6.08 12.09 6.55 11.9C9.47 10.63 11.41 9.79 12.38 9.39C15.16 8.23 15.73 8.03 16.11 8.03C16.19 8.03 16.38 8.05 16.5 8.15C16.6 8.23 16.63 8.34 16.64 8.42C16.63 8.48 16.65 8.66 16.64 8.8Z" fill="rgba(255, 255, 255, 0.7)"/></svg>  
+</a>  
+<a href="https://vk.com/hypnofilin" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50%; width: 56px; height: 56px; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;" title="VK" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.borderColor='rgba(255, 255, 255, 0.15)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.04)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.transform='translateY(0)';">  
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16.82 13.98C17.24 14.39 17.68 14.78 18.03 15.25C18.18 15.44 18.32 15.64 18.41 15.86C18.54 16.19 18.43 16.56 18.15 16.58L16.13 16.58C15.71 16.62 15.36 16.44 15.06 16.14C14.83 15.91 14.62 15.66 14.4 15.42C14.33 15.35 14.26 15.28 14.17 15.23C13.96 15.09 13.78 15.13 13.66 15.35C13.54 15.57 13.51 15.81 13.5 16.06C13.48 16.43 13.37 16.56 13 16.58C12.16 16.62 11.37 16.5 10.63 16.09C9.97 15.72 9.45 15.19 8.99 14.59C8.1 13.42 7.4 12.12 6.77 10.77C6.64 10.48 6.73 10.32 7.05 10.32C7.57 10.31 8.09 10.31 8.61 10.32C8.83 10.32 8.96 10.45 9.05 10.65C9.33 11.27 9.67 11.85 10.1 12.38C10.22 12.53 10.34 12.68 10.52 12.78C10.72 12.89 10.87 12.85 10.96 12.63C11.02 12.48 11.04 12.32 11.05 12.16C11.08 11.7 11.08 11.24 11.03 10.78C11 10.5 10.86 10.33 10.58 10.28C10.42 10.25 10.44 10.19 10.52 10.1C10.65 9.97 10.77 9.89 11.03 9.89L13.32 9.89C13.58 9.94 13.64 10.06 13.68 10.33L13.68 12.23C13.68 12.31 13.72 12.59 13.89 12.66C14.02 12.7 14.11 12.59 14.19 12.5C14.6 12.07 14.9 11.56 15.16 11.03C15.27 10.79 15.36 10.54 15.45 10.29C15.52 10.11 15.63 10.02 15.84 10.02L18.09 10.03C18.15 10.03 18.21 10.03 18.27 10.04C18.54 10.09 18.61 10.22 18.53 10.48C18.41 10.87 18.17 11.2 17.93 11.54C17.67 11.9 17.39 12.24 17.13 12.6C16.89 12.93 16.91 13.1 17.19 13.4L16.82 13.98Z" fill="rgba(255, 255, 255, 0.7)"/></svg>  
+</a>  
+<a href="https://youtube.com/@hypnofilin" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50%; width: 56px; height: 56px; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;" title="YouTube" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.borderColor='rgba(255, 255, 255, 0.15)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.04)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.transform='translateY(0)';">  
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 16.5V7.5L16 12L10 16.5Z" fill="rgba(255, 255, 255, 0.7)"/></svg>  
+</a>  
+<a href="https://hypnofilin.ru" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50%; width: 56px; height: 56px; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;" title="Сайт" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.borderColor='rgba(255, 255, 255, 0.15)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.04)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.transform='translateY(0)';">  
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.05 19.44 4 16.08 4 12C4 11.38 4.08 10.79 4.21 10.21L9 15V16C9 17.1 9.9 18 11 18V19.93ZM17.9 17.39C17.64 16.58 16.9 16 16 16H15V13C15 12.45 14.55 12 14 12H8V10H10C10.55 10 11 9.55 11 9V7H13C14.1 7 15 6.1 15 5V4.59C17.93 5.78 20 8.65 20 12C20 14.08 19.2 15.97 17.9 17.39Z" fill="rgba(255, 255, 255, 0.7)"/></svg>  
+</a>  
+</div>  
+</div>
+
+<!-- "Как пользоваться" title -->  
+
+<div data-i18n="helpTitle" style="color: rgba(255, 255, 255, 0.5); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Как пользоваться</div>
+
+<!-- Intro block -->  
+
+<div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 20px;">  
+<p data-i18n="helpIntro" style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin: 0; font-size: 13px; text-align: justify; white-space: pre-line;">Основано на научно доказанной методике EMDR с эффективностью 77-90%</p>  
+</div>
+
+<!-- Trance block -->  
+
+<div style="background: rgba(147, 112, 219, 0.06); border: 1px solid rgba(147, 112, 219, 0.12); border-radius: 16px; padding: 20px;">  
+<p data-i18n="helpTrance" style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin: 0 0 12px 0; font-size: 13px;">Перед самостоятельной работой стоит погрузиться в легкий транс:</p>  
+<div style="display: flex; flex-direction: column; gap: 10px;">  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.5); margin-top: 2px;">1</div>  
+<div data-i18n="tranceStep1" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Сделать 10 глубоких дыханий</div>  
+</div>  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.5); margin-top: 2px;">2</div>  
+<div data-i18n="tranceStep2" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Прочувствовать свое тело</div>  
+</div>  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(147, 112, 219, 0.15); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(147, 112, 219, 1); margin-top: 2px;">3</div>  
+<div data-i18n="tranceStep3" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Обратить внимание внутрь своего сознания</div>  
+</div>  
+</div>  
+</div>
+
+<!-- EMDR Section -->  
+
+<div style="background: rgba(100, 150, 255, 0.06); border: 1px solid rgba(100, 150, 255, 0.12); border-radius: 16px; padding: 20px;">  
+<h3 data-i18n="emdrModeTitle" style="font-size: 16px; color: rgba(100, 150, 255, 1); font-weight: 600; margin: 0 0 14px 0; text-align: center;">EMDR Режим</h3>  
+<div style="display: flex; flex-direction: column; gap: 10px;">  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(100, 150, 255, 0.15); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(100, 150, 255, 1); margin-top: 2px;">1</div>  
+<div data-i18n="emdrStep1" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Вспомните проблему</div>  
+</div>  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.5); margin-top: 2px;">2</div>  
+<div data-i18n="emdrStep2" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Следите за точкой глазами</div>  
+</div>  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.5); margin-top: 2px;">3</div>  
+<div data-i18n="emdrStep3" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Наблюдайте за изменениями</div>  
+</div>  
+</div>  
+</div>
+
+<!-- Resource Section -->  
+
+<div style="background: rgba(100, 200, 130, 0.06); border: 1px solid rgba(100, 200, 130, 0.12); border-radius: 16px; padding: 20px;">  
+<h3 data-i18n="resourceModeTitle" style="font-size: 16px; color: rgba(100, 200, 130, 1); font-weight: 600; margin: 0 0 14px 0; text-align: center;">Режим ресурсных точек</h3>  
+<div style="display: flex; flex-direction: column; gap: 10px;">  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 120, 110, 0.15); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255, 120, 110, 1); margin-top: 2px;">1</div>  
+<div data-i18n="resourceStep1" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Поставьте проблему (красная)</div>  
+</div>  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(100, 200, 130, 0.15); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(100, 200, 130, 1); margin-top: 2px;">2</div>  
+<div data-i18n="resourceStep2" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Добавьте ресурсы (зелёные)</div>  
+</div>  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.5); margin-top: 2px;">3</div>  
+<div data-i18n="resourceStep3" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Следите за точкой глазами</div>  
+</div>  
+<div style="display: flex; gap: 12px; align-items: flex-start;">  
+<div style="min-width: 24px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.5); margin-top: 2px;">4</div>  
+<div data-i18n="resourceStep4" style="flex: 1; font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); text-align: left;">Наблюдайте за изменениями</div>  
+</div>  
+</div>  
+</div>
+
+<!-- Disclaimer -->  
+
+<div style="background: rgba(255, 159, 10, 0.06); border: 1px solid rgba(255, 159, 10, 0.15); border-radius: 16px; padding: 18px;">  
+<p data-i18n="disclaimer" style="color: rgba(255, 255, 255, 0.65); font-size: 13px; margin: 0; line-height: 1.7;">⚠️ Приложение - это вспомогательный инструмент. При серьёзных психологических проблемах обратитесь к специалисту!</p>  
+</div>
+
+</div>  
+</div>  
+</div>
+
+<!-- Controls Panel -->  
+
+<div id="controls-panel">  
+<div class="controls-content">  
+<div class="panel-header">  
+<div class="panel-title" data-i18n="settings">Настройки</div>  
+<div class="header-actions">  
+<button id="stop-button" data-i18n="stop">Стоп</button>  
+<button class="close-btn" id="settings-close">×</button>  
+</div>  
+</div>
+
+<div class="section">  
+<div class="control-row">  
+<span class="control-label" data-i18n="size">Размер</span>  
+<div class="preset-buttons" id="size-presets">  
+<button class="preset-btn" data-value="15">S</button>  
+<button class="preset-btn" data-value="25">M</button>  
+<button class="preset-btn active" data-value="35">L</button>  
+<button class="preset-btn" data-value="50">XL</button>  
+<button class="preset-btn" data-value="65">XXL</button>  
+</div>  
+</div>  
+<div class="control-row">  
+<span class="control-label" data-i18n="speed">Скорость</span>  
+<div class="preset-buttons" id="speed-presets">  
+<button class="preset-btn active" data-value="1">×1</button>  
+<button class="preset-btn" data-value="2">×2</button>  
+<button class="preset-btn" data-value="3">×3</button>  
+<button class="preset-btn" data-value="4">×4</button>  
+<button class="preset-btn" data-value="5">×5</button>  
+</div>  
+</div>  
+<div class="control-row">  
+<span class="control-label" data-i18n="time">Время</span>  
+<input type="number" id="duration-input" min="10" max="600" value="60">  
+</div>  
+<div style="display: flex; gap: 8px; margin-top: 8px;">  
+<button class="duration-preset" data-duration="30">30 sec</button>  
+<button class="duration-preset" data-duration="60">1 min</button>  
+<button class="duration-preset" data-duration="120">2 min</button>  
+<button class="duration-preset" data-duration="300">5 min</button>  
+<button class="duration-preset" data-duration="600">10 min</button>  
+</div>  
+</div>
+
+<div class="section">  
+<div class="section-title" data-i18n="color">Цвет</div>  
+<div class="colors-grid" id="colors-grid"></div>  
+</div>
+
+<div class="section">  
+<div class="section-title" data-i18n="pattern">Паттерн</div>  
+<div class="patterns-grid" id="patterns-grid"></div>  
+</div>
+
+<div class="section">  
+    <div class="section-title" data-i18n="language">Язык / Language</div>  
+    <select id="language-select">  
+        <option value="ru">Русский</option>  
+        <option value="en">English</option>  
+        <option value="es">Español</option>  
+        <option value="de">Deutsch</option>  
+        <option value="fr">Français</option>  
+        <option value="zh">中文</option>  
+        <option value="pt">Português</option>  
+        <option value="ko">한국어</option>  
+        <option value="ja">日本語</option>  
+        <option value="it">Italiano</option>  
+    </select>  
+</div>  
+</div>  
+</div>
+
+<!-- Subscription Modal -->  
+
+<div id="subscription-modal">  
+<div class="subscription-content">  
+<button class="subscription-close" id="subscription-close">×</button>
+
+<h2 class="sub-title" data-pay-i18n="choosePlan">Выберите план</h2>
+
+<div class="sub-trial-badge" data-pay-i18n="trialBadge">7 дней бесплатно</div>
+
+<div class="sub-plan-toggle" data-active="2">  
+<div class="sub-toggle-option" data-plan="monthly">  
+<div class="sub-toggle-option-title" data-pay-i18n="oneMonth">1 мес</div>  
+<div class="sub-toggle-option-price" id="price-monthly">₽490</div>  
+</div>  
+<div class="sub-toggle-option active" data-plan="quarterly">  
+<span class="sub-plan-badge" data-pay-i18n="profitable">Выгодно</span>  
+<div class="sub-toggle-option-title" data-pay-i18n="threeMonths">3 мес</div>  
+<div class="sub-toggle-option-price" id="price-quarterly">₽990</div>  
+</div>  
+<div class="sub-toggle-option" data-plan="annual">  
+<span class="sub-plan-badge best" data-pay-i18n="best">Лучшее</span>  
+<div class="sub-toggle-option-title" data-pay-i18n="oneYear">Год</div>  
+<div class="sub-toggle-option-price" id="price-annual">₽2990</div>  
+</div>  
+</div>
+
+<div class="sub-selected-plan">  
+<div class="sub-selected-price" id="selected-price">₽990</div>  
+<span class="sub-savings-badge" id="savings-info">Экономия 30% • ₽330/мес</span>  
+</div>
+
+<div class="sub-features">  
+<div class="sub-feature">  
+<div class="sub-feature-icon">✓</div>  
+<span data-pay-i18n="unlimitedSessions">Безлимит сессий</span>  
+</div>  
+<div class="sub-feature">  
+<div class="sub-feature-icon">✓</div>  
+<span data-pay-i18n="sizeChoice">Выбор размера</span>  
+</div>  
+<div class="sub-feature">  
+<div class="sub-feature-icon">✓</div>  
+<span data-pay-i18n="allSpeeds">Все скорости</span>  
+</div>  
+<div class="sub-feature">  
+<div class="sub-feature-icon">✓</div>  
+<span data-pay-i18n="timeChoice">Время на выбор</span>  
+</div>  
+<div class="sub-feature">  
+<div class="sub-feature-icon">✓</div>  
+<span data-pay-i18n="allColors">Все цвета</span>  
+</div>  
+<div class="sub-feature">  
+<div class="sub-feature-icon">✓</div>  
+<span data-pay-i18n="allPatterns">Все паттерны</span>  
+</div>  
+</div>
+
+<button class="sub-subscribe-btn" id="subscribe-button" data-pay-i18n="startFree">Начать бесплатно</button>  
+<button class="sub-restore-btn" id="restore-button" data-pay-i18n="restorePurchases">Восстановить покупки</button>
+
+</div>  
+</div>
+
+<script>  
+// ==== i18n System ====  
+let currentLang = localStorage.getItem('emdr-language') || navigator.language.split('-')[0] || 'en';  
+if (!translations[currentLang]) currentLang = 'en';
+
+function updateLanguage(lang) {  
+currentLang = lang;  
+localStorage.setItem('emdr-language', lang);  
+document.querySelectorAll('[data-i18n]').forEach(el => {  
+const key = el.getAttribute('data-i18n');  
+if (translations[lang] && translations[lang][key]) {  
+el.innerHTML = translations[lang][key];  
+}  
+});  
+}
+
+// Elements  
+const canvas = document.getElementById('canvas');  
+const ctx = canvas.getContext('2d');  
+const premiumBtn = document.getElementById('premium-btn');  
+const settingsBtn = document.getElementById('settings-btn');  
+const settingsClose = document.getElementById('settings-close');  
+const helpBtn = document.getElementById('help-btn');  
+const controlsPanel = document.getElementById('controls-panel');  
+const overlay = document.getElementById('overlay');  
+const startScreen = document.getElementById('start-screen');  
+const emdrModeBtn = document.getElementById('emdr-mode-btn');  
+const resourceModeStartBtn = document.getElementById('resource-mode-start-btn');  
+const stopButton = document.getElementById('stop-button');  
+const timerProgress = document.getElementById('timer-progress');  
+const timerBar = document.getElementById('timer-bar');  
+const placementHint = document.getElementById('placement-hint');  
+const resourceStartBtn = document.getElementById('resource-start-btn');  
+const completionModal = document.getElementById('completion-modal');  
+const completionDone = document.getElementById('completion-done');  
+const helpModal = document.getElementById('help-modal');  
+const helpClose = document.getElementById('help-close');  
+const languageSelect = document.getElementById('language-select');  
+const subscriptionModal = document.getElementById('subscription-modal');  
+const subscriptionClose = document.getElementById('subscription-close');  
+const subscribeButton = document.getElementById('subscribe-button');  
+const restoreButton = document.getElementById('restore-button');
+
+// State  
+let animationId = null;  
+let isRunning = false;  
+let time = 0;  
+let sessionStartTime = 0;  
+let elapsedSeconds = 0;  
+let timerInterval = null;
+
+// Resource points mode  
+let resourceMode = false;  
+let resourcePoints = [];  
+let traumaPoint = null;
+
+// Load config  
+const savedSettings = localStorage.getItem('emdrSettings');  
+const config = savedSettings ? JSON.parse(savedSettings) : {  
+size: 35,  
+speed: 1,  
+color: '#0a84ff',  
+pattern: 'horizontal',  
+duration: 120  
+};
+
+function saveSettings() {  
+localStorage.setItem('emdrSettings', JSON.stringify(config));  
+}
+
+// Colors  
+const colors = [  
+'#0a84ff',  
+'#30d158',  
+'#ff453a',  
+'#ffd60a',  
+'#bf5af2',  
+'#ff9f0a',  
+'#64d2ff'  
+];
+
+// Patterns  
+const patterns = [  
+{ id: 'horizontal', icon: '↔' },  
+{ id: 'vertical', icon: '⇅' },  
+{ id: 'diagonal-lr', icon: '↘' },  
+{ id: 'diagonal-rl', icon: '↙' },  
+{ id: 'circle', icon: '○' },  
+{ id: 'figure8', icon: '8' },  
+{ id: 'square', icon: '□' },  
+{ id: 'wave', icon: '∿' },  
+{ id: 'infinity', icon: '∞' },  
+{ id: 'spiral', icon: '◉' }  
+];
+
+// Canvas resize  
+function resizeCanvas() {  
+canvas.width = window.innerWidth;  
+canvas.height = window.innerHeight;  
+}  
+resizeCanvas();  
+window.addEventListener('resize', resizeCanvas);
+
+// Initialize colors  
+const colorsGrid = document.getElementById('colors-grid');  
+colors.forEach((color) => {  
+const btn = document.createElement('div');  
+btn.className = 'color-btn' + (color === config.color ? ' active' : '');  
+btn.style.backgroundColor = color;  
+btn.addEventListener('click', () => {  
+document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));  
+btn.classList.add('active');  
+config.color = color;  
+saveSettings();  
+});  
+colorsGrid.appendChild(btn);  
+});
+
+// Initialize patterns  
+const patternsGrid = document.getElementById('patterns-grid');  
+patterns.forEach((pattern) => {  
+const btn = document.createElement('button');  
+btn.className = 'pattern-btn' + (pattern.id === config.pattern ? ' active' : '');  
+btn.textContent = pattern.icon;  
+btn.title = pattern.id;  
+btn.addEventListener('click', () => {  
+document.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active'));  
+btn.classList.add('active');  
+config.pattern = pattern.id;  
+time = 0;  
+saveSettings();  
+});  
+patternsGrid.appendChild(btn);  
+});
+
+// Size presets  
+const sizePresets = document.getElementById('size-presets');  
+const speedPresets = document.getElementById('speed-presets');  
+const durationInput = document.getElementById('duration-input');
+
+sizePresets.querySelectorAll('.preset-btn').forEach(btn => {  
+btn.addEventListener('click', () => {  
+sizePresets.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));  
+btn.classList.add('active');  
+config.size = parseInt(btn.dataset.value);  
+saveSettings();  
+});  
+});
+
+speedPresets.querySelectorAll('.preset-btn').forEach(btn => {  
+btn.addEventListener('click', () => {  
+speedPresets.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));  
+btn.classList.add('active');  
+config.speed = parseInt(btn.dataset.value);  
+saveSettings();  
+});  
+});
+
+durationInput.value = config.duration;  
+durationInput.addEventListener('change', (e) => {  
+let value = parseInt(e.target.value);  
+value = Math.max(10, Math.min(600, value));  
+config.duration = value;  
+durationInput.value = value;  
+saveSettings();  
+});
+
+document.querySelectorAll('.duration-preset').forEach(btn => {  
+btn.addEventListener('click', () => {  
+const duration = parseInt(btn.dataset.duration);  
+config.duration = duration;  
+durationInput.value = duration;  
+document.querySelectorAll('.duration-preset').forEach(b => b.classList.remove('active'));  
+btn.classList.add('active');  
+saveSettings();  
+});  
+});
+
+// Set initial active duration preset  
+function setActiveDurationPreset() {  
+document.querySelectorAll('.duration-preset').forEach(btn => {  
+if (parseInt(btn.dataset.duration) === config.duration) {  
+btn.classList.add('active');  
+}  
+});  
+}  
+setActiveDurationPreset();
+
+// Language  
+languageSelect.value = currentLang;  
+languageSelect.addEventListener('change', (e) => {  
+updateLanguage(e.target.value);  
+updatePayTranslations(e.target.value);  
+});
+
+document.addEventListener('DOMContentLoaded', () => {  
+updateLanguage(currentLang);  
+updatePayTranslations(currentLang);  
+});
+
+// Settings toggle  
+settingsBtn.addEventListener('click', () => {  
+controlsPanel.classList.add('visible');  
+overlay.classList.add('visible');  
+if (isRunning) {  
+stopButton.style.display = 'block';  
+}  
+});
+
+settingsClose.addEventListener('click', () => {  
+controlsPanel.classList.remove('visible');  
+overlay.classList.remove('visible');  
+stopButton.style.display = 'none';  
+});
+
+// Help  
+helpBtn.addEventListener('click', () => {  
+helpModal.classList.add('visible');  
+overlay.classList.add('visible');  
+});
+
+helpClose.addEventListener('click', () => {  
+helpModal.classList.remove('visible');  
+overlay.classList.remove('visible');  
+});
+
+// Premium  
+premiumBtn.addEventListener('click', () => {  
+subscriptionModal.classList.add('visible');  
+overlay.classList.add('visible');  
+});
+
+subscriptionClose.addEventListener('click', () => {  
+subscriptionModal.classList.remove('visible');  
+overlay.classList.remove('visible');  
+});
+
+overlay.addEventListener('click', () => {  
+controlsPanel.classList.remove('visible');  
+helpModal.classList.remove('visible');  
+subscriptionModal.classList.remove('visible');  
+overlay.classList.remove('visible');  
+stopButton.style.display = 'none';  
+});
+
+// Start screen  
+emdrModeBtn.addEventListener('click', () => {  
+startScreen.style.display = 'none';  
+resourceMode = false;  
+clearResourcePoints();  
+if (config.pattern === 'resource') {  
+config.pattern = 'horizontal';  
+}  
+placementHint.classList.add('hidden');  
+resourceStartBtn.style.display = 'none';  
+actuallyStartSession();  
+});
+
+resourceModeStartBtn.addEventListener('click', () => {  
+startScreen.style.display = 'none';  
+resourceMode = true;  
+resourcePoints = [];  
+traumaPoint = null;  
+clearResourcePoints();  
+resourceStartBtn.style.display = 'none';  
+placementHint.textContent = translations[currentLang].placeDots;  
+placementHint.classList.remove('hidden');  
+});
+
+// Canvas touch for resource mode  
+canvas.addEventListener('touchstart', handleResourceTouch);  
+canvas.addEventListener('mousedown', handleResourceTouch);
+
+function handleResourceTouch(e) {  
+if (!resourceMode || isRunning) return;  
+e.preventDefault();  
+const rect = canvas.getBoundingClientRect();  
+const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;  
+const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+if (!traumaPoint) {  
+traumaPoint = { x, y };  
+const point = document.createElement('div');  
+point.className = 'resource-point trauma';  
+point.style.left = (x - 7.5) + 'px';  
+point.style.top = (y - 7.5) + 'px';  
+point.style.pointerEvents = 'none';  
+point.style.position = 'absolute';  
+document.getElementById('canvas-area').appendChild(point);  
+placementHint.textContent = translations[currentLang].addResource;  
+} else if (resourcePoints.length < 5) {  
+resourcePoints.push({ x, y });  
+const point = document.createElement('div');  
+point.className = 'resource-point resource';  
+point.style.left = (x - 7.5) + 'px';  
+point.style.top = (y - 7.5) + 'px';  
+point.style.pointerEvents = 'none';  
+point.style.position = 'absolute';  
+document.getElementById('canvas-area').appendChild(point);
+
+if (resourcePoints.length >= 1) {  
+placementHint.classList.add('hidden');  
+resourceStartBtn.style.display = 'block';  
+}  
+}  
+}
+
+resourceStartBtn.addEventListener('click', () => {  
+if (resourceMode && traumaPoint && resourcePoints.length >= 1 && !isRunning) {  
+resourceStartBtn.style.display = 'none';  
+config.pattern = 'resource';  
+actuallyStartSession();  
+}  
+});
+
+function clearResourcePoints() {  
+document.querySelectorAll('.resource-point').forEach(el => el.remove());  
+resourcePoints = [];  
+traumaPoint = null;  
+placementHint.classList.add('hidden');  
+resourceStartBtn.style.display = 'none';  
+}
+
+// Pattern calculations  
+function getPosition(t) {  
+const w = canvas.width;  
+const h = canvas.height;  
+const margin = 60;  
+const centerX = w / 2;  
+const centerY = h / 2;  
+const adjustedT = t;  
+let x, y;
+
+if (config.pattern === 'resource' && traumaPoint && resourcePoints.length > 0) {  
+// НОРМАЛИЗОВАННАЯ СКОРОСТЬ  
+// Считаем общую длину всех сегментов  
+let totalDistance = 0;  
+const segments = [];
+
+// Создаём массив сегментов туда-обратно  
+for (let i = 0; i < resourcePoints.length; i++) {  
+  // От проблемы к ресурсу  
+  const dx1 = resourcePoints[i].x - traumaPoint.x;  
+  const dy1 = resourcePoints[i].y - traumaPoint.y;  
+  const dist1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);  
+  segments.push({ from: traumaPoint, to: resourcePoints[i], distance: dist1 });  
+  totalDistance += dist1;  
+          
+  // От ресурса к проблеме  
+  const dx2 = traumaPoint.x - resourcePoints[i].x;  
+  const dy2 = traumaPoint.y - resourcePoints[i].y;  
+  const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);  
+  segments.push({ from: resourcePoints[i], to: traumaPoint, distance: dist2 });  
+  totalDistance += dist2;  
+}
+
+// Эталонное расстояние (горизонтальный EMDR)  
+const referenceDistance = w - margin * 2;
+
+// Нормализуем скорость: средняя длина сегмента / эталонное расстояние  
+const avgSegmentDistance = totalDistance / segments.length;  
+const normalizedSpeed = avgSegmentDistance / referenceDistance;
+
+// Применяем нормализацию  
+const normalizedT = adjustedT / normalizedSpeed;
+
+// Упрощённая формула цикла  
+const fullCycle = Math.PI * 2 * segments.length;  
+const cyclePosition = normalizedT % fullCycle;  
+const segmentIndex = Math.floor((cyclePosition / fullCycle) * segments.length);  
+const currentSegment = segments[segmentIndex % segments.length];
+
+// Прогресс внутри текущего сегмента  
+const segmentProgress = ((cyclePosition / fullCycle) * segments.length) - segmentIndex;  
+const easedProgress = (Math.sin((segmentProgress - 0.5) * Math.PI) + 1) / 2;
+
+x = currentSegment.from.x + (currentSegment.to.x - currentSegment.from.x) * easedProgress;  
+y = currentSegment.from.y + (currentSegment.to.y - currentSegment.from.y) * easedProgress;  
+} else {  
+switch(config.pattern) {  
+case 'horizontal':  
+x = margin + (Math.sin(adjustedT) + 1) / 2 * (w - margin * 2);  
+y = centerY;  
+break;  
+case 'vertical':  
+x = centerX;  
+y = margin + (Math.sin(adjustedT) + 1) / 2 * (h - margin * 2);  
+break;  
+case 'diagonal-lr':  
+const p1 = (Math.sin(adjustedT) + 1) / 2;  
+x = margin + p1 * (w - margin * 2);  
+y = margin + p1 * (h - margin * 2);  
+break;  
+case 'diagonal-rl':  
+const p2 = (Math.sin(adjustedT) + 1) / 2;  
+x = margin + p2 * (w - margin * 2);  
+y = margin + (1 - p2) * (h - margin * 2);  
+break;  
+case 'circle':  
+const r = Math.min(w, h) * 0.35;  
+x = centerX + Math.cos(adjustedT) * r;  
+y = centerY + Math.sin(adjustedT) * r;  
+break;  
+case 'figure8':  
+const s8 = Math.min(w, h) * 0.25;  
+x = centerX + Math.sin(adjustedT * 2) * s8;  
+y = centerY + Math.sin(adjustedT) * s8 * 1.5;  
+break;  
+case 'square':  
+const side = Math.min(w, h) * 0.5;  
+const progress = (adjustedT % (Math.PI * 2)) / (Math.PI * 2);  
+if (progress < 0.25) {  
+x = centerX - side/2 + (progress * 4) * side;  
+y = centerY - side/2;  
+} else if (progress < 0.5) {  
+x = centerX + side/2;  
+y = centerY - side/2 + ((progress - 0.25) * 4) * side;  
+} else if (progress < 0.75) {  
+x = centerX + side/2 - ((progress - 0.5) * 4) * side;  
+y = centerY + side/2;  
+} else {  
+x = centerX - side/2;  
+y = centerY + side/2 - ((progress - 0.75) * 4) * side;  
+}  
+break;  
+case 'wave':  
+const waveWidth = w - margin * 2;  
+const waveHeight = Math.min(w, h) * 0.15;  
+const waveProgress = (Math.sin(adjustedT) + 1) / 2;  
+x = margin + waveProgress * waveWidth;  
+y = centerY + Math.sin(adjustedT * 3) * waveHeight;  
+break;  
+case 'infinity':  
+const scale = Math.min(w, h) * 0.2;  
+const infinityT = adjustedT;  
+x = centerX + (scale * 1.5 * Math.cos(infinityT)) / (1 + Math.sin(infinityT) * Math.sin(infinityT));  
+y = centerY + (scale * Math.cos(infinityT) * Math.sin(infinityT)) / (1 + Math.sin(infinityT) * Math.sin(infinityT));  
+break;  
+case 'spiral':  
+const maxR = Math.min(w, h) * 0.35;  
+const spiralCycle = adjustedT % (Math.PI * 8);  
+let spiralProgress;  
+if (spiralCycle < Math.PI * 4) {  
+spiralProgress = spiralCycle / (Math.PI * 4);  
+} else {  
+spiralProgress = 1 - (spiralCycle - Math.PI * 4) / (Math.PI * 4);  
+}  
+const spiralR = spiralProgress * maxR;  
+x = centerX + Math.cos(adjustedT * 2) * spiralR;  
+y = centerY + Math.sin(adjustedT * 2) * spiralR;  
+break;  
+}  
+}  
+return { x, y };  
+}
+
+// Animation  
+let lastFrameTime = performance.now();
+
+function animate() {  
+const now = performance.now();  
+const deltaTime = (now - lastFrameTime) / 1000;  
+lastFrameTime = now;
+
+ctx.fillStyle = '#1a1a1e';  
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+const pos = getPosition(time);
+
+// Draw glowing dot  
+const gradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, config.size * 1.5);  
+gradient.addColorStop(0, config.color);  
+gradient.addColorStop(0.4, config.color + 'cc');  
+gradient.addColorStop(1, config.color + '00');
+
+ctx.fillStyle = gradient;  
+ctx.beginPath();  
+ctx.arc(pos.x, pos.y, config.size * 1.5, 0, Math.PI * 2);  
+ctx.fill();
+
+// Core dot  
+ctx.fillStyle = config.color;  
+ctx.beginPath();  
+ctx.arc(pos.x, pos.y, config.size * 0.8, 0, Math.PI * 2);  
+ctx.fill();
+
+const pixelsPerSecond = config.speed;  
+const timeIncrement = (pixelsPerSecond / (Math.PI * 2)) * deltaTime;  
+time += timeIncrement;
+
+if (isRunning) {  
+animationId = requestAnimationFrame(animate);  
+}  
+}
+
+// Timer  
+function startTimer() {  
+sessionStartTime = Date.now();  
+elapsedSeconds = 0;  
+timerProgress.classList.add('visible');  
+timerBar.style.width = '100%';
+
+timerInterval = setInterval(() => {  
+elapsedSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);  
+const remaining = config.duration - elapsedSeconds;
+
+if (remaining <= 0) {  
+timerBar.style.width = '0%';  
+stopSession();  
+} else {  
+const progressPercent = (remaining / config.duration) * 100;  
+timerBar.style.width = progressPercent + '%';  
+}  
+}, 100);  
+}
+
+function stopTimer() {  
+if (timerInterval) {  
+clearInterval(timerInterval);  
+timerInterval = null;  
+}  
+timerProgress.classList.remove('visible');  
+elapsedSeconds = 0;  
+}
+
+function stopSession() {  
+isRunning = false;  
+document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('session-active'));
+ 
+stopTimer();  
+if (animationId) {  
+cancelAnimationFrame(animationId);  
+}  
+ctx.fillStyle = '#1a1a1e';  
+ctx.fillRect(0, 0, canvas.width, canvas.height);  
+time = 0;  
+stopButton.style.display = 'none';  
+completionModal.classList.add('visible');  
+overlay.classList.add('visible');  
+}
+
+function actuallyStartSession() {  
+isRunning = true;  
+document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.add('session-active'));
+ 
+controlsPanel.classList.remove('visible');  
+overlay.classList.remove('visible');  
+stopButton.style.display = 'none';
+
+if (resourceMode) {  
+document.querySelectorAll('.resource-point').forEach(point => {  
+point.style.opacity = '0';  
+point.style.visibility = 'hidden';  
+});  
+}
+
+lastFrameTime = performance.now();  
+startTimer();  
+animate();  
+}
+
+stopButton.addEventListener('click', () => {  
+stopSession();  
+// Закрываем панель настроек  
+controlsPanel.classList.remove('visible');  
+overlay.classList.remove('visible');  
+// Закрываем модалку завершения  
+completionModal.classList.remove('visible');  
+// Очищаем resource режим если был  
+if (resourceMode) {  
+clearResourcePoints();  
+resourceMode = false;  
+}  
+// Возвращаемся на стартовый экран  
+startScreen.style.display = 'flex';  
+resourceStartBtn.style.display = 'none';  
+placementHint.classList.add('hidden');  
+});
+
+completionDone.addEventListener('click', () => {  
+completionModal.classList.remove('visible');  
+overlay.classList.remove('visible');  
+if (resourceMode) {  
+clearResourcePoints();  
+resourceMode = false;  
+}  
+startScreen.style.display = 'flex';  
+resourceStartBtn.style.display = 'none';  
+placementHint.classList.add('hidden');  
+});
+
+// ===== SUBSCRIPTION FUNCTIONS =====  
+function updatePayTranslations(lang) {  
+if (!payTranslations[lang]) lang = 'en';  
+const t = payTranslations[lang];  
+const pricing = pricingConfig.getPricing(lang);
+
+document.querySelectorAll('[data-pay-i18n]').forEach(el => {  
+const key = el.getAttribute('data-pay-i18n');  
+if (t[key]) {  
+if (key === 'save30') {  
+el.textContent = pricingConfig.formatPrice(t[key], pricing.quarterly.perMonth);  
+} else if (key === 'save50') {  
+el.textContent = pricingConfig.formatPrice(t[key], pricing.annual.perMonth);  
+} else {  
+el.textContent = t[key];  
+}  
+}  
+});
+
+document.getElementById('price-monthly').textContent = pricing.monthly.formatted;  
+document.getElementById('price-quarterly').textContent = pricing.quarterly.formatted;  
+document.getElementById('price-annual').textContent = pricing.annual.formatted;
+
+updateSelectedPlan('quarterly', lang);  
+}
+
+function updateSelectedPlan(planType, lang) {  
+const t = payTranslations[lang] || payTranslations.en;  
+const pricing = pricingConfig.getPricing(lang);  
+const plan = pricing[planType];
+
+document.getElementById('selected-price').textContent = plan.formatted;
+
+const savingsInfo = document.getElementById('savings-info');  
+const savingsBadge = document.querySelector('.sub-savings-badge');
+
+if (planType === 'monthly') {  
+savingsInfo.textContent = t.basicPlan;  
+savingsBadge.style.background = 'rgba(255, 255, 255, 0.05)';  
+savingsBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';  
+savingsBadge.style.color = 'rgba(255, 255, 255, 0.5)';  
+} else if (planType === 'quarterly') {  
+savingsInfo.textContent = pricingConfig.formatPrice(t.save30, plan.perMonth);  
+savingsBadge.style.background = 'rgba(100, 200, 130, 0.08)';  
+savingsBadge.style.borderColor = 'rgba(100, 200, 130, 0.2)';  
+savingsBadge.style.color = 'rgba(100, 200, 130, 0.85)';  
+} else if (planType === 'annual') {  
+savingsInfo.textContent = pricingConfig.formatPrice(t.save50, plan.perMonth);  
+savingsBadge.style.background = 'rgba(255, 159, 10, 0.08)';  
+savingsBadge.style.borderColor = 'rgba(255, 159, 10, 0.2)';  
+savingsBadge.style.color = 'rgba(255, 159, 10, 0.85)';  
+}  
+}
+
+document.querySelectorAll('.sub-toggle-option').forEach(option => {  
+option.addEventListener('click', function() {  
+const planType = this.dataset.plan;  
+const toggle = document.querySelector('.sub-plan-toggle');  
+const planIndex = planType === 'monthly' ? '1' : planType === 'quarterly' ? '2' : '3';  
+toggle.dataset.active = planIndex;
+
+document.querySelectorAll('.sub-toggle-option').forEach(opt => opt.classList.remove('active'));  
+this.classList.add('active');
+
+updateSelectedPlan(planType, currentLang);  
+});  
+});
+
+subscribeButton.addEventListener('click', async () => {  
+const activePlan = document.querySelector('.sub-toggle-option.active');  
+const planType = activePlan.dataset.plan;
+
+console.log('Выбран план:', planType);  
+console.log('Product ID:', pricingConfig.productIds[planType]);
+
+alert('Покупка плана: ' + planType + '\nИнтеграция с платёжной системой будет добавлена позже.');  
+});
+
+restoreButton.addEventListener('click', async () => {  
+console.log('Восстановление покупок...');  
+alert('Функция восстановления покупок будет добавлена при интеграции с платёжной системой.');  
+});
+
+// Wake lock  
+if ('wakeLock' in navigator) {  
+navigator.wakeLock.request('screen').catch(() => {});  
+}  
+</script>
+
+</body>  
+</html>
