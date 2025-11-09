@@ -1128,8 +1128,11 @@
                     // Проверяем, входит ли точка в маршрут
                     const isInRoute = route.some(r => r.place === place);
 
-                    // Свечение для точек в маршруте
-                    if (isInRoute) {
+                    // Проверяем, выбрана ли точка для меню
+                    const isSelectedForMenu = selectedPlaceForMenu && selectedPlaceForMenu.place === place;
+
+                    // Свечение для точек в маршруте или выбранных для меню
+                    if (isInRoute || isSelectedForMenu) {
                         ctx.shadowColor = categoryColor;
                         ctx.shadowBlur = 25;
                         ctx.fillStyle = categoryColor;
@@ -1299,8 +1302,8 @@
         }
 
         function handleTouchEnd(e) {
-            if (draggedPlace && !isDragging) {
-                // Короткий тап - показываем меню действий
+            if (!isDragging) {
+                // Короткий тап
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.changedTouches[0];
                 const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
@@ -1308,10 +1311,16 @@
 
                 const result = getPlaceAt(x, y);
                 if (result) {
+                    // Клик по точке - показываем меню
                     showActionMenu(result);
                     // Скрыть подсказку после первого использования
                     const hint = document.getElementById('mapHint');
                     if (hint) hint.classList.add('hidden');
+                } else {
+                    // Клик мимо точки - скрываем меню
+                    if (selectedPlaceForMenu) {
+                        hideActionMenu();
+                    }
                 }
             }
             draggedPlace = null;
@@ -1352,17 +1361,23 @@
         }
 
         function handleMouseUp(e) {
-            if (draggedPlace && !isDragging) {
-                // Клик без драга - показываем меню действий
+            if (!isDragging) {
+                // Клик без драга
                 const rect = canvas.getBoundingClientRect();
                 const x = (e.clientX - rect.left) * (canvas.width / rect.width);
                 const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
                 const result = getPlaceAt(x, y);
                 if (result) {
+                    // Клик по точке - показываем меню
                     showActionMenu(result);
                     const hint = document.getElementById('mapHint');
                     if (hint) hint.classList.add('hidden');
+                } else {
+                    // Клик мимо точки - скрываем меню
+                    if (selectedPlaceForMenu) {
+                        hideActionMenu();
+                    }
                 }
             }
             draggedPlace = null;
@@ -1447,12 +1462,14 @@
         function showActionMenu(result) {
             selectedPlaceForMenu = result;
             document.getElementById('actionMenu').classList.add('show');
+            drawMap(); // Перерисовываем карту для подсветки
         }
 
         // Скрыть меню действий
         function hideActionMenu() {
             selectedPlaceForMenu = null;
             document.getElementById('actionMenu').classList.remove('show');
+            drawMap(); // Перерисовываем карту чтобы убрать подсветку
         }
 
         // Обработчики кнопок меню
