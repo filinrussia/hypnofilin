@@ -9,6 +9,7 @@
     <meta name="color-scheme" content="dark">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="telegram-web-app-expand" content="true">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <title>Логистика</title>
     <style>
         * {
@@ -654,9 +655,16 @@
 
     <script>
         // Telegram WebApp expansion
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                // Дополнительные настройки для Telegram
+                tg.enableClosingConfirmation();
+            }
+        } catch (e) {
+            console.log('Telegram WebApp не доступен:', e);
         }
 
         // Цвета для оценок (от красного к зеленому)
@@ -746,15 +754,28 @@
         ];
 
         let route = [];
+        let connections = [];
         let currentCategory = null;
         let editingPlace = null;
         let selectedPlaceForMenu = null;
+        let linkingMode = false;
+        let linkingFromPlace = null;
 
         // Функции для работы с localStorage
         function saveData() {
+            // Сохраняем connections как индексы
+            const connectionsData = connections.map(conn => {
+                const fromCat = categories.findIndex(cat => cat.places.includes(conn.from));
+                const fromPlace = categories[fromCat].places.indexOf(conn.from);
+                const toCat = categories.findIndex(cat => cat.places.includes(conn.to));
+                const toPlace = categories[toCat].places.indexOf(conn.to);
+                return { fromCat, fromPlace, toCat, toPlace };
+            });
+
             const data = {
                 categories: categories,
-                route: route
+                route: route,
+                connections: connectionsData
             };
             localStorage.setItem('logistics_data', JSON.stringify(data));
         }
@@ -777,7 +798,18 @@
                             route = data.route;
                         }
                     }
-                    console.log('Категорий:', categories.length, 'Маршрут:', route.length);
+                    // Восстанавливаем connections из индексов
+                    if (data.connections) {
+                        connections = data.connections.map(conn => {
+                            const fromPlace = categories[conn.fromCat]?.places[conn.fromPlace];
+                            const toPlace = categories[conn.toCat]?.places[conn.toPlace];
+                            if (fromPlace && toPlace) {
+                                return { from: fromPlace, to: toPlace };
+                            }
+                            return null;
+                        }).filter(c => c !== null);
+                    }
+                    console.log('Категорий:', categories.length, 'Маршрут:', route.length, 'Связей:', connections.length);
                     // Проверим сколько мест выбрано
                     let selectedCount = 0;
                     categories.forEach(cat => {
@@ -1117,6 +1149,20 @@
         function drawMap() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Рисуем связи (connections)
+            connections.forEach(conn => {
+                const fromCoords = getAbsoluteCoords(conn.from);
+                const toCoords = getAbsoluteCoords(conn.to);
+
+                ctx.strokeStyle = 'rgba(10, 132, 255, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(fromCoords.x, fromCoords.y);
+                ctx.lineTo(toCoords.x, toCoords.y);
+                ctx.stroke();
+            });
+
             // Рисуем маршрут
             if (route.length > 1) {
                 // Пунктирная линия
@@ -1335,14 +1381,30 @@
 
                 const result = getPlaceAt(x, y);
                 if (result) {
-                    // Клик по точке - показываем меню
-                    showActionMenu(result);
-                    // Скрыть подсказку после первого использования
-                    const hint = document.getElementById('mapHint');
-                    if (hint) hint.classList.add('hidden');
+                    // Проверяем режим связывания
+                    if (linkingMode && linkingFromPlace) {
+                        // Создаем связь
+                        if (result.place !== linkingFromPlace) {
+                            connections.push({ from: linkingFromPlace, to: result.place });
+                            saveData();
+                            drawMap();
+                        }
+                        // Выходим из режима связывания
+                        exitLinkingMode();
+                    } else {
+                        // Клик по точке - показываем меню
+                        showActionMenu(result);
+                        // Скрыть подсказку после первого использования
+                        const hint = document.getElementById('mapHint');
+                        if (hint) hint.classList.add('hidden');
+                    }
                 } else {
-                    // Клик мимо точки - скрываем меню
-                    if (selectedPlaceForMenu) {
+                    // Клик мимо точки
+                    if (linkingMode) {
+                        // Отменяем режим связывания
+                        exitLinkingMode();
+                    } else if (selectedPlaceForMenu) {
+                        // Скрываем меню
                         hideActionMenu();
                     }
                 }
@@ -1393,13 +1455,29 @@
 
                 const result = getPlaceAt(x, y);
                 if (result) {
-                    // Клик по точке - показываем меню
-                    showActionMenu(result);
-                    const hint = document.getElementById('mapHint');
-                    if (hint) hint.classList.add('hidden');
+                    // Проверяем режим связывания
+                    if (linkingMode && linkingFromPlace) {
+                        // Создаем связь
+                        if (result.place !== linkingFromPlace) {
+                            connections.push({ from: linkingFromPlace, to: result.place });
+                            saveData();
+                            drawMap();
+                        }
+                        // Выходим из режима связывания
+                        exitLinkingMode();
+                    } else {
+                        // Клик по точке - показываем меню
+                        showActionMenu(result);
+                        const hint = document.getElementById('mapHint');
+                        if (hint) hint.classList.add('hidden');
+                    }
                 } else {
-                    // Клик мимо точки - скрываем меню
-                    if (selectedPlaceForMenu) {
+                    // Клик мимо точки
+                    if (linkingMode) {
+                        // Отменяем режим связывания
+                        exitLinkingMode();
+                    } else if (selectedPlaceForMenu) {
+                        // Скрываем меню
                         hideActionMenu();
                     }
                 }
@@ -1516,17 +1594,64 @@
             hideActionMenu();
         }
 
+        function exitLinkingMode() {
+            linkingMode = false;
+            linkingFromPlace = null;
+
+            // Возвращаем обычный фон кнопки +
+            const linkBtn = document.querySelectorAll('.action-btn')[1];
+            if (linkBtn) {
+                linkBtn.style.background = '';
+            }
+
+            // Скрываем подсказку
+            const hint = document.getElementById('mapHint');
+            if (hint) {
+                hint.classList.add('hidden');
+            }
+        }
+
         function handleActionLink() {
             if (!selectedPlaceForMenu) return;
-            // Временная заглушка
+
+            // Входим в режим связывания
+            linkingMode = true;
+            linkingFromPlace = selectedPlaceForMenu.place;
+
+            // Визуально показываем режим - делаем кнопку + ярче
+            document.querySelectorAll('.action-btn')[1].style.background = 'rgba(10, 132, 255, 0.5)';
+
+            // Показываем подсказку
+            const hint = document.getElementById('mapHint');
+            if (hint) {
+                hint.textContent = 'Выберите место для связи или нажмите ESC для отмены';
+                hint.classList.remove('hidden');
+            }
+
             hideActionMenu();
         }
 
         function handleActionDelete() {
             if (!selectedPlaceForMenu) return;
-            // Временная заглушка
+
+            const placeToDelete = selectedPlaceForMenu.place;
+
+            // Удаляем все связи этой точки
+            connections = connections.filter(conn =>
+                conn.from !== placeToDelete && conn.to !== placeToDelete
+            );
+
+            saveData();
+            drawMap();
             hideActionMenu();
         }
+
+        // Обработчик ESC для выхода из режима связывания
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && linkingMode) {
+                exitLinkingMode();
+            }
+        });
 
         // Инициализация
         renderCategories();
