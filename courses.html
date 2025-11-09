@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Курсы • ГипноФилин</title>
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon.png">
+    <link rel="stylesheet" href="navbar.css">
     <style>
 * {
     margin: 0;
@@ -25,68 +26,6 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 10px;
-}
-
-/* Navbar */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: rgba(13, 13, 16, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    z-index: 1000;
-    padding: 12px 0;
-}
-
-.navbar .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.nav-brand {
-    display: none;
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 20px;
-}
-
-.nav-link {
-    color: rgba(255, 255, 255, 0.45);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.nav-link.active {
-    color: rgba(255, 255, 255, 0.95);
-}
-
-/* Hero */
-.hero {
-    padding: 40px 0 60px;
-    text-align: center;
-}
-
-.hero-title {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: -0.5px;
-}
-
-.hero-subtitle {
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.65);
-    max-width: 600px;
-    margin: 0 auto;
-    font-weight: 500;
 }
 
 /* Courses Section */
@@ -214,207 +153,536 @@ body {
     border-color: #0073e6;
 }
 
-/* CTA Section */
-.cta-section {
-    padding: 80px 20px;
-    text-align: center;
-}
-
-.cta-content {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.cta-title {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: -0.5px;
-}
-
-.cta-description {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.65);
-    margin-bottom: 32px;
-}
-
-.cta-button {
-    display: inline-block;
-    padding: 16px 40px;
-    background: #0a84ff;
-    color: white;
-    text-decoration: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.2s;
-}
-
-.cta-button:hover {
-    background: #0073e6;
-    transform: translateY(-2px);
-}
-
 /* Mobile Responsive */
 @media (max-width: 768px) {
-    .hero {
-        padding: 40px 0 40px;
-    }
-    
-    .hero-title {
-        font-size: 28px;
-    }
-    
-    .hero-subtitle {
-        font-size: 16px;
-    }
-    
     .course-header {
         height: 240px;
     }
-    
+
     .course-icon {
         font-size: 60px;
     }
-    
+
     .course-content {
         padding: 24px 20px;
     }
-    
+
     .course-title {
         font-size: 24px;
     }
-    
-    .cta-title {
-        font-size: 26px;
+}
+
+/* Video Modal */
+.video-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s;
+}
+
+.video-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.video-modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 1000px;
+    animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.video-modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.video-modal-close:hover {
+    transform: scale(1.2);
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Minimal Course Cards */
+.course-card-minimal {
+    background: linear-gradient(135deg, rgba(13, 13, 16, 0.95), rgba(26, 26, 32, 0.95));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 520px;
+    margin: 0 auto 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.video-block-minimal {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.video-block-minimal:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(10, 132, 255, 0.3);
+}
+
+.video-thumb-minimal {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(10, 132, 255, 0.05));
+}
+
+.video-thumb-minimal img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.play-overlay-minimal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s;
+}
+
+.video-block-minimal:hover .play-overlay-minimal {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.play-btn-minimal {
+    width: 68px;
+    height: 48px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+}
+
+.course-title-minimal {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.format-blocks-minimal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.format-block-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.format-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.format-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.program-minimal {
+    margin-bottom: 24px;
+}
+
+.program-minimal h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+.program-list-minimal {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.program-list-minimal li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.program-list-minimal li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #0a84ff;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.buttons-minimal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.btn-buy-minimal {
+    display: block;
+    text-align: center;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #0a84ff, #0066cc);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 16px rgba(10, 132, 255, 0.3);
+}
+
+.btn-buy-minimal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(10, 132, 255, 0.4);
+    background: linear-gradient(135deg, #0066cc, #0052a3);
+}
+
+.btn-details-minimal {
+    display: block;
+    text-align: center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.btn-details-minimal:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+    .course-card-minimal {
+        padding: 24px 20px;
+    }
+
+    .course-title-minimal {
+        font-size: 24px;
+    }
+
+    .buttons-minimal {
+        grid-template-columns: 1fr;
+    }
+
+    .format-blocks-minimal {
+        grid-template-columns: 1fr;
     }
 }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar center-menu">
         <div class="container">
-            <div class="nav-brand"></div>
             <ul class="nav-menu">
-                <li><a href="index.html" class="nav-link">Главная</a></li>
-                <li><a href="courses.html" class="nav-link active">Курсы</a></li>
-                <li><a href="games.html" class="nav-link">Игры</a></li>
-                <li><a href="about.html" class="nav-link">Обо мне</a></li>
+                <li><a href="index.html" class="nav-link" data-page="index">Главная</a></li>
+                <li><a href="courses.html" class="nav-link" data-page="courses">Курсы</a></li>
+                <li><a href="games.html" class="nav-link" data-page="games">Игры</a></li>
+                <li><a href="about.html" class="nav-link" data-page="about">Обо мне</a></li>
+                <li><a href="temp.html" class="nav-link" data-page="temp">Темп</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1 class="hero-title">Онлайн-курсы</h1>
-            <p class="hero-subtitle">Глубокое погружение в трансовые практики и гипноз.<br>От основ до мастерства.</p>
-        </div>
-    </section>
-
     <!-- Courses Section -->
     <section class="courses-section">
         <div class="courses-container">
-            
+
             <!-- Course 1: Чайные медитации -->
-            <div class="course-card">
-                <div class="course-header">
-                    <div class="course-icon">🍵</div>
-                    <div class="coming-soon-badge">Скоро</div>
-                </div>
-                <div class="course-content">
-                    <h2 class="course-title">Чайные медитации</h2>
-                    <p class="course-description">Древняя практика осознанности через чайную церемонию. Научитесь входить в медитативное состояние, используя ритуал заваривания чая.</p>
-                    
-                    <div class="course-features">
-                        <div class="feature-item">
-                            <span class="feature-icon">⏱️</span>
-                            <span>8 недель обучения</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🎥</span>
-                            <span>Видео-уроки + практики</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🧘</span>
-                            <span>Ежедневные медитации</span>
+            <div class="course-card-minimal">
+                <!-- Видео -->
+                <div class="video-block-minimal" onclick="openVideoModal('tea-meditations')">
+                    <div class="video-thumb-minimal">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="Чайные медитации" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(10, 132, 255, 0.05))'">
+                        <div class="play-overlay-minimal">
+                            <svg class="play-btn-minimal" viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path>
+                                <path d="M 45,24 27,14 27,34" fill="#fff"></path>
+                            </svg>
                         </div>
                     </div>
-                    
-                    <a href="#" class="course-cta">Узнать больше</a>
+                </div>
+
+                <h2 class="course-title-minimal">Чайные медитации</h2>
+
+                <div class="program-minimal">
+                    <h4>Что будет на курсе:</h4>
+                    <ul class="program-list-minimal">
+                        <li>Основы чайной церемонии и осознанности</li>
+                        <li>Медитативные состояния через ритуал заваривания</li>
+                        <li>Практики внимательности и присутствия</li>
+                        <li>Работа с вниманием и концентрацией</li>
+                        <li>Интеграция практики в повседневную жизнь</li>
+                    </ul>
+                </div>
+
+                <div class="format-blocks-minimal">
+                    <div class="format-block-item">
+                        <div class="format-label">Длительность</div>
+                        <div class="format-value">6 недель</div>
+                    </div>
+                    <div class="format-block-item">
+                        <div class="format-label">Формат</div>
+                        <div class="format-value">Онлайн</div>
+                    </div>
+                    <div class="format-block-item">
+                        <div class="format-label">Цена</div>
+                        <div class="format-value">12 000 ₽</div>
+                    </div>
+                </div>
+
+                <div class="buttons-minimal">
+                    <a href="#" class="btn-buy-minimal">Купить курс</a>
+                    <a href="#" class="btn-details-minimal">Подробнее</a>
                 </div>
             </div>
 
-            <!-- Course 2: Самогипноз -->
-            <div class="course-card">
-                <div class="course-header">
-                    <div class="course-icon">🌀</div>
-                    <div class="coming-soon-badge">Скоро</div>
-                </div>
-                <div class="course-content">
-                    <h2 class="course-title">Самогипноз</h2>
-                    <p class="course-description">Овладейте техниками самогипноза для работы с собственным бессознательным. Измените убеждения, избавьтесь от ограничений, достигайте целей.</p>
-                    
-                    <div class="course-features">
-                        <div class="feature-item">
-                            <span class="feature-icon">⏱️</span>
-                            <span>6 недель интенсива</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🎯</span>
-                            <span>Практические техники</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🧠</span>
-                            <span>Работа с убеждениями</span>
+            <!-- Course 2: Страх подхода -->
+            <div class="course-card-minimal">
+                <div class="video-block-minimal" onclick="openVideoModal('fear-approach')">
+                    <div class="video-thumb-minimal">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="Преодоление страха подхода" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(10, 132, 255, 0.05))'">
+                        <div class="play-overlay-minimal">
+                            <svg class="play-btn-minimal" viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path>
+                                <path d="M 45,24 27,14 27,34" fill="#fff"></path>
+                            </svg>
                         </div>
                     </div>
-                    
-                    <a href="#" class="course-cta">Узнать больше</a>
+                </div>
+
+                <h2 class="course-title-minimal">Преодоление страха подхода</h2>
+
+                <div class="program-minimal">
+                    <h4>Что будет на курсе:</h4>
+                    <ul class="program-list-minimal">
+                        <li>Работа с корневыми причинами страха знакомства</li>
+                        <li>Техники быстрого снятия тревоги перед подходом</li>
+                        <li>Якорение уверенных состояний</li>
+                        <li>Проработка негативных убеждений о себе</li>
+                        <li>Практические упражнения для закрепления</li>
+                    </ul>
+                </div>
+
+                <div class="format-blocks-minimal">
+                    <div class="format-block-item">
+                        <div class="format-label">Длительность</div>
+                        <div class="format-value">4 недели</div>
+                    </div>
+                    <div class="format-block-item">
+                        <div class="format-label">Формат</div>
+                        <div class="format-value">Онлайн</div>
+                    </div>
+                    <div class="format-block-item">
+                        <div class="format-label">Цена</div>
+                        <div class="format-value">10 000 ₽</div>
+                    </div>
+                </div>
+
+                <div class="buttons-minimal">
+                    <a href="#" class="btn-buy-minimal">Купить курс</a>
+                    <a href="#" class="btn-details-minimal">Подробнее</a>
                 </div>
             </div>
 
-            <!-- Course 3: Разговорный гипноз -->
-            <div class="course-card">
-                <div class="course-header">
-                    <div class="course-icon">💬</div>
-                    <div class="coming-soon-badge">Скоро</div>
-                </div>
-                <div class="course-content">
-                    <h2 class="course-title">Разговорный гипноз</h2>
-                    <p class="course-description">Эриксоновский гипноз и техники скрытого влияния. Учитесь работать с клиентами через естественный разговор без формальной индукции транса.</p>
-                    
-                    <div class="course-features">
-                        <div class="feature-item">
-                            <span class="feature-icon">⏱️</span>
-                            <span>10 недель + практикум</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🎭</span>
-                            <span>Языковые паттерны</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">👥</span>
-                            <span>Работа в парах</span>
+            <!-- Course 3: Трансовые техники -->
+            <div class="course-card-minimal">
+                <div class="video-block-minimal" onclick="openVideoModal('trance-techniques')">
+                    <div class="video-thumb-minimal">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="Трансовые техники" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(10, 132, 255, 0.05))'">
+                        <div class="play-overlay-minimal">
+                            <svg class="play-btn-minimal" viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path>
+                                <path d="M 45,24 27,14 27,34" fill="#fff"></path>
+                            </svg>
                         </div>
                     </div>
-                    
-                    <a href="#" class="course-cta">Узнать больше</a>
+                </div>
+
+                <h2 class="course-title-minimal">Трансовые техники</h2>
+
+                <div class="program-minimal">
+                    <h4>Что будет на курсе:</h4>
+                    <ul class="program-list-minimal">
+                        <li>Самогипноз и вход в трансовые состояния</li>
+                        <li>Техники якорения и работы с состояниями</li>
+                        <li>Регрессия и работа с бессознательным</li>
+                        <li>Практики изменения убеждений через транс</li>
+                        <li>Применение транса для личных целей</li>
+                    </ul>
+                </div>
+
+                <div class="format-blocks-minimal">
+                    <div class="format-block-item">
+                        <div class="format-label">Длительность</div>
+                        <div class="format-value">8 недель</div>
+                    </div>
+                    <div class="format-block-item">
+                        <div class="format-label">Формат</div>
+                        <div class="format-value">Онлайн</div>
+                    </div>
+                    <div class="format-block-item">
+                        <div class="format-label">Цена</div>
+                        <div class="format-value">15 000 ₽</div>
+                    </div>
+                </div>
+
+                <div class="buttons-minimal">
+                    <a href="#" class="btn-buy-minimal">Купить курс</a>
+                    <a href="#" class="btn-details-minimal">Подробнее</a>
                 </div>
             </div>
 
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="cta-content">
-            <h2 class="cta-title">Хотите узнать о старте курсов?</h2>
-            <p class="cta-description">Оставьте заявку, и я сообщу вам о запуске первого курса</p>
-            <a href="index.html#bookingForm" class="cta-button">Оставить заявку</a>
+    <!-- Модальное окно для видео -->
+    <div id="videoModal" class="video-modal" onclick="closeVideoModal(event)">
+        <div class="video-modal-content">
+            <button class="video-modal-close" onclick="closeVideoModal(event)">&times;</button>
+            <div class="video-wrapper">
+                <iframe id="videoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
         </div>
-    </section>
+    </div>
+
+<script>
+    const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+    const links = document.querySelectorAll('.nav-link');
+    links.forEach(link => {
+        const page = link.getAttribute('data-page');
+        if (page === currentPage) {
+            link.classList.add('active');
+        }
+    });
+
+    // Функции для модального окна с видео
+    function openVideoModal(courseId) {
+        const modal = document.getElementById('videoModal');
+        const videoFrame = document.getElementById('videoFrame');
+
+        // Видео ID для каждого курса
+        const videoIds = {
+            'tea-meditations': 'dQw4w9WgXcQ',
+            'fear-approach': 'dQw4w9WgXcQ',
+            'trance-techniques': 'dQw4w9WgXcQ'
+        };
+
+        const videoId = videoIds[courseId] || 'dQw4w9WgXcQ';
+        const videoSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+
+        videoFrame.src = videoSrc;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal(event) {
+        const modal = document.getElementById('videoModal');
+        const videoFrame = document.getElementById('videoFrame');
+
+        // Закрываем только если клик по фону или кнопке закрытия
+        if (event && event.target.closest('.video-modal-content') && !event.target.classList.contains('video-modal-close')) {
+            return;
+        }
+
+        videoFrame.src = '';
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+
+        if (event) {
+            event.stopPropagation();
+        }
+    }
+
+    // Закрытие по ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('videoModal');
+            if (modal && modal.classList.contains('active')) {
+                closeVideoModal();
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
