@@ -73,6 +73,28 @@
             touch-action: none;
         }
 
+        /* Кнопка очистки маршрута */
+        .clear-route-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 59, 48, 0.9);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+        }
+
+        .clear-route-btn.show {
+            display: block;
+        }
+
         /* Панель мест */
         .places-screen {
             padding: 80px 16px 16px;
@@ -100,9 +122,9 @@
         }
 
         .category-arrow {
-            font-size: 14px;
+            width: 20px;
+            height: 20px;
             transition: transform 0.2s ease;
-            color: rgba(255, 255, 255, 0.5);
         }
 
         .category-item.open .category-arrow {
@@ -110,38 +132,51 @@
         }
 
         .category-content {
-            display: none;
-            padding-top: 8px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
         }
 
         .category-item.open .category-content {
-            display: block;
+            max-height: 2000px;
+        }
+
+        .add-category-btn, .add-place-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .add-place-btn {
+            margin-top: 12px;
+            margin-bottom: 12px;
         }
 
         .places-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 8px;
-            margin-bottom: 12px;
+            margin-top: 12px;
         }
 
         .place-card {
             background: rgba(255, 255, 255, 0.06);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             padding: 10px;
+            min-height: 70px;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: relative;
-            min-height: 70px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-        }
-
-        .place-card.in-route {
-            border-color: #0a84ff;
-            background: rgba(10, 132, 255, 0.15);
         }
 
         .place-card:active {
@@ -149,16 +184,19 @@
         }
 
         .place-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             margin-bottom: 6px;
-            line-height: 1.3;
-            word-break: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         .place-rating {
             display: flex;
-            gap: 2px;
+            gap: 3px;
         }
 
         .rating-square {
@@ -167,71 +205,50 @@
             border-radius: 2px;
         }
 
-        .add-place-btn, .add-category-btn {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .add-place-btn:active, .add-category-btn:active {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Информационная панель */
+        /* Панель информации */
         .info-panel {
             position: fixed;
-            top: 0;
+            bottom: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(13, 13, 16, 0.98);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px 20px 0 0;
+            padding: 24px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
             z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         .info-panel.show {
-            display: flex;
-        }
-
-        .info-content {
-            background: rgba(13, 13, 16, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 24px;
-            max-width: 320px;
-            width: 100%;
-            position: relative;
+            transform: translateY(0);
         }
 
         .info-close {
             position: absolute;
             top: 16px;
             right: 16px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 28px;
+            cursor: pointer;
             width: 32px;
             height: 32px;
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
-            border-radius: 8px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 20px;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 8px;
+        }
+
+        .info-close:active {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .info-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             margin-bottom: 16px;
             padding-right: 32px;
@@ -247,259 +264,164 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
         }
 
         .info-criterion-name {
-            color: rgba(255, 255, 255, 0.65);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        .info-criterion-value {
+        .info-criterion-rating {
             display: flex;
-            gap: 3px;
+            gap: 4px;
         }
 
-        .criterion-square {
+        .info-rating-square {
             width: 12px;
             height: 12px;
-            border-radius: 2px;
-        }
-
-        .info-description {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.55);
-            line-height: 1.5;
+            border-radius: 3px;
         }
 
         /* Модальное окно */
         .modal {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.85);
-            z-index: 300;
-            overflow-y: auto;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
             padding: 20px;
         }
 
         .modal.show {
             display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding-top: 40px;
         }
 
         .modal-content {
-            background: rgba(13, 13, 16, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #1c1c1e;
             border-radius: 20px;
             padding: 24px;
             width: 100%;
             max-width: 400px;
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-title {
             font-size: 20px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
             font-size: 13px;
-            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
             margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.75);
         }
 
-        .form-input, .form-textarea {
+        .form-input {
             width: 100%;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
             padding: 12px;
+            color: white;
             font-size: 15px;
-            color: rgba(255, 255, 255, 0.95);
-            font-family: inherit;
         }
 
-        .form-input:focus, .form-textarea:focus {
+        .form-input:focus {
             outline: none;
             border-color: #0a84ff;
         }
 
-        .form-textarea {
-            resize: vertical;
-            min-height: 70px;
+        /* Критерии с цветными квадратиками */
+        .criterion-group {
+            margin-bottom: 20px;
         }
 
-        .rating-group {
-            margin-bottom: 16px;
-        }
-
-        .rating-label {
-            display: block;
+        .criterion-label {
             font-size: 13px;
-            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
             margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.75);
+            display: block;
         }
 
-        .rating-scale {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
+        .criterion-description {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 8px;
         }
 
-        .rating-btn {
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .color-checkboxes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-checkbox {
+            width: 40px;
+            height: 40px;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
             cursor: pointer;
+            border: 2px solid transparent;
             transition: all 0.2s ease;
+            position: relative;
         }
 
-        .rating-btn.active {
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
-            border-color: #0a84ff;
+        .color-checkbox.selected {
+            border-color: white;
+            transform: scale(1.1);
+        }
+
+        .color-checkbox.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             color: white;
+            font-size: 18px;
+            font-weight: 700;
         }
 
         .modal-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         .modal-btn {
+            flex: 1;
             padding: 14px;
             border-radius: 12px;
+            border: none;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            border: none;
         }
 
         .modal-btn-cancel {
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
         }
 
         .modal-btn-submit {
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
-            color: white;
-        }
-
-        /* Панель маршрута на карте */
-        .route-panel {
-            position: fixed;
-            bottom: 16px;
-            left: 16px;
-            right: 16px;
-            background: rgba(13, 13, 16, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 12px;
-            z-index: 50;
-            display: none;
-            backdrop-filter: blur(20px);
-        }
-
-        .route-panel.show {
-            display: block;
-        }
-
-        .route-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .route-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .route-clear {
-            padding: 4px 10px;
-            background: rgba(255, 50, 50, 0.2);
-            border: none;
-            border-radius: 6px;
-            color: rgba(255, 100, 100, 0.9);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .route-list {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-        }
-
-        .route-item {
-            min-width: 100px;
-            padding: 8px;
-            background: rgba(10, 132, 255, 0.15);
-            border: 1px solid rgba(10, 132, 255, 0.3);
-            border-radius: 8px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .route-item-number {
-            width: 18px;
-            height: 18px;
             background: #0a84ff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .route-item-name {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .route-item-remove {
-            width: 18px;
-            height: 18px;
-            background: rgba(255, 50, 50, 0.3);
-            border: none;
-            border-radius: 50%;
             color: white;
-            font-size: 12px;
-            cursor: pointer;
-            flex-shrink: 0;
         }
     </style>
 </head>
@@ -507,53 +429,48 @@
     <!-- Переключатель вкладок -->
     <div class="tab-switcher">
         <div class="tab-btn active" data-tab="map" onclick="switchTab('map')">
-            <svg viewBox="0 0 24 24"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
+            <svg viewBox="0 0 24 24">
+                <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+            </svg>
         </div>
         <div class="tab-btn" data-tab="places" onclick="switchTab('places')">
-            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
         </div>
     </div>
+
+    <!-- Кнопка очистки маршрута -->
+    <button class="clear-route-btn" id="clearRouteBtn" onclick="clearRoute()">Очистить маршрут</button>
 
     <!-- Экран карты -->
     <div class="screen active" id="mapScreen">
         <canvas id="mapCanvas"></canvas>
-
-        <!-- Панель маршрута -->
-        <div class="route-panel" id="routePanel">
-            <div class="route-header">
-                <div class="route-title">Маршрут</div>
-                <button class="route-clear" onclick="clearRoute()">Очистить</button>
-            </div>
-            <div class="route-list" id="routeList"></div>
-        </div>
     </div>
 
     <!-- Экран мест -->
     <div class="screen" id="placesScreen">
         <div class="places-screen">
-            <div id="categoriesList"></div>
+            <div id="categoriesContainer"></div>
             <button class="add-category-btn" onclick="openCategoryModal()">+ Добавить категорию</button>
         </div>
     </div>
 
-    <!-- Информационная панель -->
+    <!-- Панель информации о месте -->
     <div class="info-panel" id="infoPanel">
-        <div class="info-content">
-            <button class="info-close" onclick="hideInfoPanel()">×</button>
-            <div id="infoPanelContent"></div>
-        </div>
+        <button class="info-close" onclick="hideInfoPanel()">×</button>
+        <div id="infoPanelContent"></div>
     </div>
 
-    <!-- Модальное окно места -->
+    <!-- Модальное окно добавления места -->
     <div class="modal" id="placeModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="placeModalTitle">Добавить место</h2>
-            </div>
-            <form id="placeForm">
+            <div class="modal-title" id="placeModalTitle">Добавить место</div>
+            <div class="modal-subtitle" id="placeModalSubtitle">Оцените место по критериям</div>
+            <form id="placeForm" onsubmit="handlePlaceSubmit(event)">
                 <div class="form-group">
-                    <label class="form-label">Название *</label>
-                    <input type="text" class="form-input" id="placeName" required maxlength="30">
+                    <label class="form-label">Название</label>
+                    <input type="text" class="form-input" id="placeName" required placeholder="Например: Парк Швейцария">
                 </div>
                 <div id="criteriaContainer"></div>
                 <div class="modal-actions">
@@ -564,16 +481,15 @@
         </div>
     </div>
 
-    <!-- Модальное окно категории -->
+    <!-- Модальное окно добавления категории -->
     <div class="modal" id="categoryModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Новая категория</h2>
-            </div>
-            <form id="categoryForm">
+            <div class="modal-title">Новая категория</div>
+            <div class="modal-subtitle">Создайте свою категорию мест</div>
+            <form id="categoryForm" onsubmit="handleCategorySubmit(event)">
                 <div class="form-group">
-                    <label class="form-label">Название категории *</label>
-                    <input type="text" class="form-input" id="categoryName" required maxlength="20" placeholder="Например: Кафе">
+                    <label class="form-label">Название категории</label>
+                    <input type="text" class="form-input" id="categoryName" required placeholder="Например: Кафе">
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="modal-btn modal-btn-cancel" onclick="closeCategoryModal()">Отмена</button>
@@ -584,78 +500,41 @@
     </div>
 
     <script>
-        // === Цвета для рейтинга ===
+        // Цвета для оценок
         const ratingColors = ['#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#FF5722'];
 
-        const categoryColors = {
-            meet: '#4CAF50',
-            talk: '#2196F3',
-            sex: '#FF5722'
+        // Критерии для стандартных категорий
+        const standardCriteria = {
+            'Знакомства': [
+                { id: 'capacity', label: 'Ёмкость', description: 'Сколько потенциально интересных людей' },
+                { id: 'openness', label: 'Лёгкость открытия', description: 'Насколько просто начать разговор' },
+                { id: 'context', label: 'Контекст общения', description: 'Насколько понятно, о чём говорить' }
+            ],
+            'Свидания': [
+                { id: 'atmosphere', label: 'Атмосфера', description: 'Насколько романтично/уютно' },
+                { id: 'activity', label: 'Активность', description: 'Что там можно делать' },
+                { id: 'price', label: 'Средний чек', description: 'Сколько денег уйдёт' }
+            ],
+            'Секс': [
+                { id: 'privacy', label: 'Приватность', description: 'Насколько не спалят' },
+                { id: 'comfort', label: 'Комфорт', description: 'Есть ли нормальные условия' },
+                { id: 'availability', label: 'Доступность', description: 'Легко ли туда попасть быстро' }
+            ]
         };
 
-        // === Данные ===
-        const categories = [
-            {
-                id: 'meet',
-                name: 'Знакомство',
-                places: [
-                    { name: 'Большая Покровская', x: 150, y: 100, ratings: [4, 3, 4], description: 'Центральная улица' },
-                    { name: 'Парк Швейцария', x: 200, y: 150, ratings: [3, 4, 5], description: 'Спокойная атмосфера' }
-                ]
-            },
-            {
-                id: 'talk',
-                name: 'Общение',
-                places: [
-                    { name: 'Бар Койот', x: 400, y: 200, ratings: [4, 3, 3], description: 'Живая музыка' },
-                    { name: 'Бар Искры', x: 450, y: 250, ratings: [5, 2, 4], description: 'Уютный бар' }
-                ]
-            },
-            {
-                id: 'sex',
-                name: 'Секс',
-                places: [
-                    { name: 'Дома', x: 700, y: 300, ratings: [5, 5, 4], description: 'Классика' }
-                ]
-            }
+        // Данные
+        let categories = [
+            { id: 'cat_1', name: 'Знакомства', places: [] },
+            { id: 'cat_2', name: 'Свидания', places: [] },
+            { id: 'cat_3', name: 'Секс', places: [] }
         ];
 
         let route = [];
         let currentCategory = null;
-        let draggedPoint = null;
-        let canvas, ctx;
 
-        // === Инициализация ===
-        window.addEventListener('load', () => {
-            canvas = document.getElementById('mapCanvas');
-            ctx = canvas.getContext('2d');
-
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            renderCategories();
-            drawMap();
-
-            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-            canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
-            canvas.addEventListener('mousedown', handleMouseDown);
-            canvas.addEventListener('mousemove', handleMouseMove);
-            canvas.addEventListener('mouseup', handleMouseUp);
-
-            document.getElementById('placeForm').addEventListener('submit', handlePlaceSubmit);
-            document.getElementById('categoryForm').addEventListener('submit', handleCategorySubmit);
-
-            document.getElementById('placeModal').addEventListener('click', (e) => {
-                if (e.target.id === 'placeModal') closePlaceModal();
-            });
-            document.getElementById('categoryModal').addEventListener('click', (e) => {
-                if (e.target.id === 'categoryModal') closeCategoryModal();
-            });
-            document.getElementById('infoPanel').addEventListener('click', (e) => {
-                if (e.target.id === 'infoPanel') hideInfoPanel();
-            });
-        });
+        // Canvas
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -663,32 +542,40 @@
             drawMap();
         }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(tabName + 'Screen').classList.add('active');
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Переключение вкладок
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.toggle('active', screen.id === tab + 'Screen');
+            });
         }
 
-        // === Категории ===
+        // Рендер категорий
         function renderCategories() {
-            const container = document.getElementById('categoriesList');
-            container.innerHTML = categories.map((cat, catIndex) => `
-                <div class="category-item ${catIndex === 0 ? 'open' : ''}" id="cat-${cat.id}">
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item ${cat.places.length > 0 ? 'open' : ''}" id="${cat.id}">
                     <div class="category-header" onclick="toggleCategory('${cat.id}')">
                         <div class="category-name">${cat.name}</div>
-                        <div class="category-arrow">▼</div>
+                        <svg class="category-arrow" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
                     </div>
                     <div class="category-content">
+                        <button class="add-place-btn" onclick="openPlaceModal('${cat.id}')">+ Добавить место</button>
                         <div class="places-grid">
-                            ${cat.places.map((place, placeIndex) => {
-                                const avgRating = place.ratings.reduce((a, b) => a + b, 0) / place.ratings.length;
-                                const routeIndex = route.findIndex(r => r.categoryId === cat.id && r.placeIndex === placeIndex);
+                            ${cat.places.map((place, idx) => {
+                                const avgRating = Math.round(Object.values(place.ratings).reduce((a, b) => a + b, 0) / Object.values(place.ratings).length);
                                 return `
-                                    <div class="place-card ${routeIndex !== -1 ? 'in-route' : ''}" onclick="togglePlaceInRoute('${cat.id}', ${placeIndex})">
+                                    <div class="place-card" onclick="showPlaceInfo('${cat.id}', ${idx})">
                                         <div class="place-name">${place.name}</div>
                                         <div class="place-rating">
-                                            ${Array(Math.round(avgRating)).fill(0).map((_, i) =>
+                                            ${Array(avgRating).fill(0).map((_, i) =>
                                                 `<div class="rating-square" style="background: ${ratingColors[i] || ratingColors[4]};"></div>`
                                             ).join('')}
                                         </div>
@@ -696,54 +583,89 @@
                                 `;
                             }).join('')}
                         </div>
-                        <button class="add-place-btn" onclick="openPlaceModal('${cat.id}')">+ Добавить место</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function toggleCategory(categoryId) {
-            const elem = document.getElementById('cat-' + categoryId);
-            elem.classList.toggle('open');
+        function toggleCategory(catId) {
+            document.getElementById(catId).classList.toggle('open');
         }
 
-        // === Модалки ===
+        // Модальные окна
         function openPlaceModal(categoryId) {
             currentCategory = categoryId;
-            document.getElementById('placeModalTitle').textContent = 'Добавить место';
+            const category = categories.find(c => c.id === categoryId);
+
+            document.getElementById('placeModalTitle').textContent = `Добавить место: ${category.name}`;
+            document.getElementById('placeModalSubtitle').textContent = 'Оцените место по критериям';
             document.getElementById('placeName').value = '';
 
             const criteriaContainer = document.getElementById('criteriaContainer');
-            criteriaContainer.innerHTML = `
-                <div class="rating-group">
-                    <label class="rating-label">Критерий 1</label>
-                    <div class="rating-scale">
-                        ${[1,2,3,4,5].map(i => `<button type="button" class="rating-btn" data-criterion="0" data-value="${i}" onclick="selectRating(0, ${i})">${i}</button>`).join('')}
+            const criteria = standardCriteria[category.name] || [
+                { id: 'quality', label: 'Качество', description: 'Общая оценка места' },
+                { id: 'accessibility', label: 'Доступность', description: 'Легко ли добраться' },
+                { id: 'comfort', label: 'Комфорт', description: 'Удобство и условия' }
+            ];
+
+            criteriaContainer.innerHTML = criteria.map(criterion => `
+                <div class="criterion-group">
+                    <label class="criterion-label">${criterion.label}</label>
+                    <div class="criterion-description">${criterion.description}</div>
+                    <div class="color-checkboxes">
+                        ${ratingColors.map((color, idx) => `
+                            <div class="color-checkbox"
+                                 style="background: ${color};"
+                                 data-criterion="${criterion.id}"
+                                 data-value="${idx + 1}"
+                                 onclick="selectRating('${criterion.id}', ${idx + 1})">
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-                <div class="rating-group">
-                    <label class="rating-label">Критерий 2</label>
-                    <div class="rating-scale">
-                        ${[1,2,3,4,5].map(i => `<button type="button" class="rating-btn" data-criterion="1" data-value="${i}" onclick="selectRating(1, ${i})">${i}</button>`).join('')}
-                    </div>
-                </div>
-                <div class="rating-group">
-                    <label class="rating-label">Критерий 3</label>
-                    <div class="rating-scale">
-                        ${[1,2,3,4,5].map(i => `<button type="button" class="rating-btn" data-criterion="2" data-value="${i}" onclick="selectRating(2, ${i})">${i}</button>`).join('')}
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Описание</label>
-                    <textarea class="form-textarea" id="placeDescription"></textarea>
-                </div>
-            `;
+            `).join('');
 
             document.getElementById('placeModal').classList.add('show');
         }
 
         function closePlaceModal() {
             document.getElementById('placeModal').classList.remove('show');
+        }
+
+        function selectRating(criterionId, value) {
+            document.querySelectorAll(`[data-criterion="${criterionId}"]`).forEach(box => {
+                box.classList.toggle('selected', parseInt(box.dataset.value) === value);
+            });
+        }
+
+        function handlePlaceSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('placeName').value.trim();
+            const category = categories.find(c => c.id === currentCategory);
+            const criteria = standardCriteria[category.name] || [
+                { id: 'quality', label: 'Качество', description: 'Общая оценка места' },
+                { id: 'accessibility', label: 'Доступность', description: 'Легко ли добраться' },
+                { id: 'comfort', label: 'Комфорт', description: 'Удобство и условия' }
+            ];
+
+            const ratings = {};
+            criteria.forEach(criterion => {
+                const selected = document.querySelector(`[data-criterion="${criterion.id}"].selected`);
+                ratings[criterion.id] = selected ? parseInt(selected.dataset.value) : 3;
+            });
+
+            const place = {
+                name,
+                x: 100 + Math.random() * (canvas.width - 200),
+                y: 100 + Math.random() * (canvas.height - 200),
+                ratings
+            };
+
+            category.places.push(place);
+            closePlaceModal();
+            renderCategories();
+            drawMap();
         }
 
         function openCategoryModal() {
@@ -755,205 +677,196 @@
             document.getElementById('categoryModal').classList.remove('show');
         }
 
-        function selectRating(criterionIndex, value) {
-            document.querySelectorAll(`[data-criterion="${criterionIndex}"]`).forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.value) === value);
-            });
-        }
-
-        function handlePlaceSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('placeName').value.trim();
-            const description = document.getElementById('placeDescription').value.trim();
-
-            const ratings = [0, 1, 2].map(i => {
-                const activeBtn = document.querySelector(`[data-criterion="${i}"].active`);
-                return activeBtn ? parseInt(activeBtn.dataset.value) : 3;
-            });
-
-            const category = categories.find(c => c.id === currentCategory);
-            const x = 100 + Math.random() * (canvas.width - 200);
-            const y = 100 + Math.random() * (canvas.height - 200);
-
-            category.places.push({ name, x, y, ratings, description });
-
-            closePlaceModal();
-            renderCategories();
-            drawMap();
-        }
-
         function handleCategorySubmit(e) {
             e.preventDefault();
             const name = document.getElementById('categoryName').value.trim();
             const id = 'cat_' + Date.now();
-
             categories.push({ id, name, places: [] });
-
             closeCategoryModal();
             renderCategories();
         }
 
-        // === Маршрут ===
-        function togglePlaceInRoute(categoryId, placeIndex) {
-            const existingIndex = route.findIndex(r => r.categoryId === categoryId && r.placeIndex === placeIndex);
-
-            if (existingIndex !== -1) {
-                route.splice(existingIndex, 1);
-            } else {
-                const category = categories.find(c => c.id === categoryId);
-                const place = category.places[placeIndex];
-                route.push({ categoryId, placeIndex, place });
-            }
-
-            renderCategories();
-            renderRoutePanel();
-            drawMap();
-        }
-
-        function renderRoutePanel() {
-            const panel = document.getElementById('routePanel');
-            const list = document.getElementById('routeList');
-
-            if (route.length > 0) {
-                panel.classList.add('show');
-                list.innerHTML = route.map((r, i) => `
-                    <div class="route-item">
-                        <div class="route-item-number">${i + 1}</div>
-                        <div class="route-item-name">${r.place.name}</div>
-                        <button class="route-item-remove" onclick="removeFromRoute(${i})">×</button>
-                    </div>
-                `).join('');
-            } else {
-                panel.classList.remove('show');
-            }
-        }
-
-        function removeFromRoute(index) {
-            route.splice(index, 1);
-            renderCategories();
-            renderRoutePanel();
-            drawMap();
-        }
-
-        function clearRoute() {
-            route = [];
-            renderCategories();
-            renderRoutePanel();
-            drawMap();
-        }
-
-        // === Карта ===
+        // Карта
         function drawMap() {
-            if (!ctx) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (route.length > 1) drawRoute();
-            drawPoints();
-        }
-
-        function drawRoute() {
-            ctx.strokeStyle = 'rgba(10, 132, 255, 0.6)';
-            ctx.lineWidth = 3;
-            ctx.setLineDash([10, 5]);
-            ctx.beginPath();
-            ctx.moveTo(route[0].place.x, route[0].place.y);
-            for (let i = 1; i < route.length; i++) {
-                ctx.lineTo(route[i].place.x, route[i].place.y);
-            }
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            for (let i = 1; i < route.length; i++) {
-                const angle = Math.atan2(route[i].place.y - route[i-1].place.y, route[i].place.x - route[i-1].place.x);
-                const size = 12;
-                const mx = (route[i-1].place.x + route[i].place.x) / 2;
-                const my = (route[i-1].place.y + route[i].place.y) / 2;
-
-                ctx.fillStyle = 'rgba(10, 132, 255, 0.8)';
+            // Рисуем маршрут
+            if (route.length > 1) {
+                ctx.strokeStyle = 'rgba(10, 132, 255, 0.5)';
+                ctx.lineWidth = 3;
                 ctx.beginPath();
-                ctx.moveTo(mx, my);
-                ctx.lineTo(mx - size * Math.cos(angle - Math.PI / 6), my - size * Math.sin(angle - Math.PI / 6));
-                ctx.lineTo(mx - size * Math.cos(angle + Math.PI / 6), my - size * Math.sin(angle + Math.PI / 6));
-                ctx.closePath();
-                ctx.fill();
+                ctx.moveTo(route[0].place.x, route[0].place.y);
+                for (let i = 1; i < route.length; i++) {
+                    ctx.lineTo(route[i].place.x, route[i].place.y);
+                }
+                ctx.stroke();
+
+                // Номера точек
+                route.forEach((point, idx) => {
+                    ctx.fillStyle = 'rgba(10, 132, 255, 0.8)';
+                    ctx.font = '12px -apple-system';
+                    ctx.fillText((idx + 1).toString(), point.place.x - 15, point.place.y - 15);
+                });
             }
-        }
 
-        function drawPoints() {
+            // Рисуем точки
             categories.forEach(category => {
-                category.places.forEach((place, placeIndex) => {
-                    const routeIndex = route.findIndex(r => r.categoryId === category.id && r.placeIndex === placeIndex);
-                    const inRoute = routeIndex !== -1;
-                    const radius = inRoute ? 16 : 12;
+                category.places.forEach(place => {
+                    const avgRating = Math.round(Object.values(place.ratings).reduce((a, b) => a + b, 0) / Object.values(place.ratings).length);
+                    const color = ratingColors[avgRating - 1] || ratingColors[2];
 
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                    ctx.shadowBlur = 8;
-                    ctx.shadowOffsetY = 2;
-
-                    ctx.fillStyle = categoryColors[category.id] || '#888';
+                    ctx.fillStyle = color;
                     ctx.beginPath();
-                    ctx.arc(place.x, place.y, radius, 0, Math.PI * 2);
+                    ctx.arc(place.x, place.y, 10, 0, Math.PI * 2);
                     ctx.fill();
 
-                    if (inRoute) {
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-                        ctx.lineWidth = 3;
-                        ctx.stroke();
-
-                        ctx.shadowColor = 'transparent';
-                        ctx.fillStyle = 'white';
-                        ctx.font = 'bold 14px -apple-system';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(routeIndex + 1, place.x, place.y);
-                    }
-
-                    ctx.shadowColor = 'transparent';
-                    ctx.shadowBlur = 0;
-
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                    ctx.font = '600 12px -apple-system';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
-                    ctx.fillText(place.name, place.x, place.y - radius - 6);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '10px -apple-system';
+                    ctx.fillText(place.name, place.x + 15, place.y + 5);
                 });
             });
+
+            document.getElementById('clearRouteBtn').classList.toggle('show', route.length > 0);
         }
 
-        // === Взаимодействие ===
-        function getPointAt(x, y) {
-            for (const category of categories) {
-                for (let i = 0; i < category.places.length; i++) {
-                    const place = category.places[i];
-                    const dist = Math.sqrt((x - place.x) ** 2 + (y - place.y) ** 2);
-                    if (dist < 20) return { categoryId: category.id, placeIndex: i, place, category };
+        // Взаимодействие с картой
+        let draggedPlace = null;
+
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', handleTouchEnd);
+
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseup', handleMouseUp);
+
+        function getPlaceAt(x, y) {
+            for (let category of categories) {
+                for (let place of category.places) {
+                    const dx = x - place.x;
+                    const dy = y - place.y;
+                    if (dx * dx + dy * dy < 100) {
+                        return { category, place };
+                    }
                 }
             }
             return null;
         }
 
-        function showInfoPanel(point) {
-            const { place, category } = point;
-            const avgRating = place.ratings.reduce((a, b) => a + b, 0) / place.ratings.length;
+        function handleTouchStart(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
 
-            const content = `
-                <div class="info-title">${place.name}</div>
-                <div class="info-criteria">
-                    ${place.ratings.map((rating, i) => `
-                        <div class="info-criterion">
-                            <span class="info-criterion-name">Критерий ${i + 1}</span>
-                            <div class="info-criterion-value">
-                                ${Array(5).fill(0).map((_, j) =>
-                                    `<div class="criterion-square" style="background: ${j < rating ? ratingColors[j] : 'rgba(255,255,255,0.1)'};"></div>`
-                                ).join('')}
-                            </div>
+            const result = getPlaceAt(x, y);
+            if (result) {
+                draggedPlace = result.place;
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (draggedPlace) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                draggedPlace.x = touch.clientX - rect.left;
+                draggedPlace.y = touch.clientY - rect.top;
+                drawMap();
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (draggedPlace) {
+                draggedPlace = null;
+            } else if (e.changedTouches.length > 0) {
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.changedTouches[0];
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+
+                const result = getPlaceAt(x, y);
+                if (result) {
+                    addToRoute(result);
+                }
+            }
+        }
+
+        function handleMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const result = getPlaceAt(x, y);
+            if (result) {
+                draggedPlace = result.place;
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (draggedPlace) {
+                const rect = canvas.getBoundingClientRect();
+                draggedPlace.x = e.clientX - rect.left;
+                draggedPlace.y = e.clientY - rect.top;
+                drawMap();
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (draggedPlace) {
+                draggedPlace = null;
+            } else {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const result = getPlaceAt(x, y);
+                if (result) {
+                    addToRoute(result);
+                }
+            }
+        }
+
+        function addToRoute(result) {
+            route.push(result);
+            drawMap();
+        }
+
+        function clearRoute() {
+            route = [];
+            drawMap();
+        }
+
+        // Показ информации о месте
+        function showPlaceInfo(categoryId, placeIdx) {
+            const category = categories.find(c => c.id === categoryId);
+            const place = category.places[placeIdx];
+
+            const criteria = standardCriteria[category.name] || [
+                { id: 'quality', label: 'Качество', description: 'Общая оценка места' },
+                { id: 'accessibility', label: 'Доступность', description: 'Легко ли добраться' },
+                { id: 'comfort', label: 'Комфорт', description: 'Удобство и условия' }
+            ];
+
+            let html = `<div class="info-title">${place.name}</div><div class="info-criteria">`;
+
+            criteria.forEach(criterion => {
+                const value = place.ratings[criterion.id] || 3;
+                html += `
+                    <div class="info-criterion">
+                        <div class="info-criterion-name">${criterion.label}</div>
+                        <div class="info-criterion-rating">
+                            ${Array(value).fill(0).map((_, i) =>
+                                `<div class="info-rating-square" style="background: ${ratingColors[i]};"></div>`
+                            ).join('')}
                         </div>
-                    `).join('')}
-                </div>
-                ${place.description ? `<div class="info-description">${place.description}</div>` : ''}
-            `;
+                    </div>
+                `;
+            });
 
-            document.getElementById('infoPanelContent').innerHTML = content;
+            html += '</div>';
+
+            document.getElementById('infoPanelContent').innerHTML = html;
             document.getElementById('infoPanel').classList.add('show');
         }
 
@@ -961,74 +874,9 @@
             document.getElementById('infoPanel').classList.remove('show');
         }
 
-        function handleTouchStart(e) {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-
-            const point = getPointAt(x, y);
-            if (point) {
-                showInfoPanel(point);
-                draggedPoint = point;
-            }
-        }
-
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!draggedPoint) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-
-            draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
-            draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
-            drawMap();
-        }
-
-        function handleTouchEnd(e) {
-            e.preventDefault();
-            if (draggedPoint && e.changedTouches.length > 0) {
-                const touch = e.changedTouches[0];
-                const rect = canvas.getBoundingClientRect();
-                const x = touch.clientX - rect.left;
-                const y = touch.clientY - rect.top;
-                const dist = Math.sqrt((x - draggedPoint.place.x) ** 2 + (y - draggedPoint.place.y) ** 2);
-
-                if (dist < 5) {
-                    togglePlaceInRoute(draggedPoint.categoryId, draggedPoint.placeIndex);
-                }
-            }
-            draggedPoint = null;
-        }
-
-        function handleMouseDown(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const point = getPointAt(x, y);
-            if (point) {
-                showInfoPanel(point);
-                draggedPoint = point;
-            }
-        }
-
-        function handleMouseMove(e) {
-            if (!draggedPoint) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
-            draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
-            drawMap();
-        }
-
-        function handleMouseUp() {
-            draggedPoint = null;
-        }
+        // Инициализация
+        renderCategories();
+        drawMap();
     </script>
 </body>
 </html>
