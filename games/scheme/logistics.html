@@ -259,6 +259,35 @@
             position: relative;
         }
 
+        .place-delete-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 59, 48, 0.8);
+            border: none;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .place-card:hover .place-delete-btn {
+            opacity: 1;
+        }
+
+        .place-delete-btn:active {
+            transform: scale(0.9);
+        }
+
         .place-card.selected {
             border-color: #0a84ff;
         }
@@ -592,7 +621,6 @@
     <div class="action-menu" id="actionMenu">
         <button class="action-btn" onclick="handleActionInfo()">i</button>
         <button class="action-btn" onclick="handleActionLink()">+</button>
-        <button class="action-btn" onclick="handleActionDelete()">×</button>
     </div>
 
     <!-- Экран карты -->
@@ -966,6 +994,7 @@
                                     : 3;
                                 return `
                                     <div class="place-card ${place.selected ? 'selected' : ''}" onclick="togglePlaceSelection('${cat.id}', ${idx})">
+                                        <button class="place-delete-btn" onclick="event.stopPropagation(); deletePlace('${cat.id}', ${idx})">×</button>
                                         <div class="place-name-text">${place.name}</div>
                                         <div class="place-footer">
                                             <div class="place-rating">
@@ -995,6 +1024,23 @@
                     conn.from !== place && conn.to !== place
                 );
             }
+
+            saveData();
+            renderCategories();
+            drawMap();
+        }
+
+        function deletePlace(categoryId, placeIdx) {
+            const category = categories.find(c => c.id === categoryId);
+            const place = category.places[placeIdx];
+
+            // Удаляем все связи этого места
+            connections = connections.filter(conn =>
+                conn.from !== place && conn.to !== place
+            );
+
+            // Удаляем место из категории
+            category.places.splice(placeIdx, 1);
 
             saveData();
             renderCategories();
@@ -1707,31 +1753,6 @@
                 hint.classList.remove('hidden');
             }
 
-            hideActionMenu();
-        }
-
-        function handleActionDelete() {
-            if (!selectedPlaceForMenu) return;
-
-            const placeToDelete = selectedPlaceForMenu.place;
-
-            // Находим категорию и удаляем место из неё
-            for (let category of categories) {
-                const placeIndex = category.places.indexOf(placeToDelete);
-                if (placeIndex !== -1) {
-                    category.places.splice(placeIndex, 1);
-                    break;
-                }
-            }
-
-            // Удаляем все связи этой точки
-            connections = connections.filter(conn =>
-                conn.from !== placeToDelete && conn.to !== placeToDelete
-            );
-
-            saveData();
-            renderCategories();
-            drawMap();
             hideActionMenu();
         }
 
