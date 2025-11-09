@@ -194,7 +194,6 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            cursor: pointer;
             user-select: none;
         }
 
@@ -221,24 +220,8 @@
             flex: 1;
         }
 
-        .category-arrow {
-            width: 20px;
-            height: 20px;
-            transition: transform 0.2s ease;
-        }
-
-        .category-item.open .category-arrow {
-            transform: rotate(180deg);
-        }
-
         .category-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .category-item.open .category-content {
-            max-height: 2000px;
+            overflow: visible;
         }
 
         .add-category-btn {
@@ -489,14 +472,16 @@
 
         /* Критерии с цветными квадратиками */
         .criterion-group {
-            margin-bottom: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .criterion-label {
             font-size: 13px;
             color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 8px;
-            display: block;
+            margin: 0;
         }
 
         .criterion-description {
@@ -507,13 +492,13 @@
 
         .color-checkboxes {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .color-checkbox {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             cursor: pointer;
             border: 2px solid transparent;
             transition: all 0.2s ease;
@@ -532,7 +517,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 700;
         }
 
@@ -621,12 +606,9 @@
     <!-- Модальное окно добавления места -->
     <div class="modal" id="placeModal">
         <div class="modal-content">
-            <div class="modal-title" id="placeModalTitle">Добавить место</div>
-            <div class="modal-subtitle" id="placeModalSubtitle">Оцените место по критериям</div>
             <form id="placeForm" onsubmit="handlePlaceSubmit(event)">
-                <div class="form-group">
-                    <label class="form-label">Название</label>
-                    <input type="text" class="form-input" id="placeName" required placeholder="Например: Парк Швейцария">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <input type="text" class="form-input" id="placeName" required placeholder="Название места">
                 </div>
                 <div id="criteriaContainer"></div>
                 <div class="modal-actions">
@@ -913,13 +895,10 @@
         function renderCategories() {
             const container = document.getElementById('categoriesContainer');
             container.innerHTML = categories.map(cat => `
-                <div class="category-item ${cat.places.length > 0 ? 'open' : ''}" id="${cat.id}">
-                    <div class="category-header" onclick="toggleCategory('${cat.id}')">
+                <div class="category-item open" id="${cat.id}">
+                    <div class="category-header">
                         <div class="category-icon">${getCategoryIcon(cat.name)}</div>
                         <div class="category-name">${cat.name}</div>
-                        <svg class="category-arrow" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)">
-                            <path d="M7 10l5 5 5-5z"/>
-                        </svg>
                     </div>
                     <div class="category-content">
                         <div class="places-grid">
@@ -969,18 +948,11 @@
             drawMap();
         }
 
-        function toggleCategory(catId) {
-            document.getElementById(catId).classList.toggle('open');
-        }
-
         // Модальные окна
         function openPlaceModal(categoryId, placeIdx = null) {
             currentCategory = categoryId;
             editingPlace = placeIdx;
             const category = categories.find(c => c.id === categoryId);
-
-            document.getElementById('placeModalTitle').textContent = category.name;
-            document.getElementById('placeModalSubtitle').style.display = 'none';
 
             const criteriaContainer = document.getElementById('criteriaContainer');
             const criteria = standardCriteria[category.name] || [
@@ -1026,10 +998,9 @@
             html += textCriteria.map(criterion => {
                 const currentValue = (placeIdx !== null) ? category.places[placeIdx].ratings[criterion.id] : null;
                 return `
-                    <div class="form-group">
-                        <label class="form-label">${criterion.label}</label>
+                    <div class="form-group" style="margin-bottom: 12px;">
                         <input type="text" class="form-input" id="criterion_${criterion.id}"
-                               value="${currentValue || ''}" placeholder="Введите текст...">
+                               value="${currentValue || ''}" placeholder="${criterion.label}">
                     </div>
                 `;
             }).join('');
