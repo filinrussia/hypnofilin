@@ -766,7 +766,16 @@
                 try {
                     const data = JSON.parse(saved);
                     if (data.categories) categories = data.categories;
-                    if (data.route) route = data.route;
+                    if (data.route) {
+                        // Проверяем формат route - если старый формат (массив {place}), просто очищаем
+                        if (data.route.length > 0 && data.route[0].place !== undefined) {
+                            // Старый формат - очищаем маршруты
+                            route = [];
+                        } else {
+                            // Новый формат или пустой массив
+                            route = data.route;
+                        }
+                    }
                 } catch (e) {
                     console.error('Ошибка загрузки данных:', e);
                 }
@@ -1075,6 +1084,9 @@
 
         // Вспомогательная функция для получения абсолютных координат
         function getAbsoluteCoords(place) {
+            // Проверка на undefined/null
+            if (!place) return { x: 0, y: 0 };
+
             // Обратная совместимость - если есть старые координаты, конвертируем в проценты
             if (place.x !== undefined && place.xPercent === undefined) {
                 place.xPercent = place.x / canvas.width;
@@ -1084,8 +1096,8 @@
             }
 
             return {
-                x: place.xPercent * canvas.width,
-                y: place.yPercent * canvas.height
+                x: (place.xPercent || 0) * canvas.width,
+                y: (place.yPercent || 0) * canvas.height
             };
         }
 
