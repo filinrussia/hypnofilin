@@ -2,293 +2,478 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Логистика • ГипноФилин</title>
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png">
-    <link rel="stylesheet" href="../../global.css">
-    <link rel="stylesheet" href="../../navbar.css">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d0d10">
+    <meta name="color-scheme" content="dark">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="telegram-web-app-expand" content="true">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>+1 Логистика</title>
     <style>
-        .logistics-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .page-title {
-            font-size: 36px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #0d0d10;
+            color: rgba(255, 255, 255, 0.95);
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            color-scheme: dark;
+        }
+
+        /* Кнопки управления */
+        .top-left-controls {
+            position: fixed;
+            top: max(16px, env(safe-area-inset-top));
+            left: max(16px, env(safe-area-inset-left));
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        /* Переключатель вкладок */
+        .tab-switcher {
+            position: fixed;
+            top: max(16px, env(safe-area-inset-top));
+            right: max(16px, env(safe-area-inset-right));
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .tab-btn {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tab-btn.active {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .tab-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Экраны */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Карта */
+        #mapCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            touch-action: none;
+        }
+
+        /* Подсказка */
+        .map-hint {
+            position: fixed;
+            top: calc(max(16px, env(safe-area-inset-top)) + 50px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .map-hint.hidden {
+            opacity: 0;
+        }
+
+        /* Кнопка очистки маршрута */
+        .clear-route-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 59, 48, 0.9);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+        }
+
+        .clear-route-btn.show {
+            display: block;
+        }
+
+        /* Меню действий над точкой */
+        .action-menu {
+            position: fixed;
+            display: none;
+            flex-direction: row;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .action-menu.show {
+            display: flex;
+        }
+
+        .action-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
             font-weight: 700;
-            text-align: center;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            color: #666666;
+            background: #2a2a2a;
+            transition: all 0.2s ease;
         }
 
-        .page-subtitle {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.6);
-            text-align: center;
-            margin-bottom: 40px;
+        .action-btn.active {
+            color: #ffffff;
+            background: #444444;
         }
 
-        .main-layout {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
+        .action-btn:active {
+            transform: scale(0.9);
         }
 
-        /* Панель категорий */
-        .categories-panel {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 24px;
-            height: fit-content;
+        /* Панель мест */
+        .places-screen {
+            padding: calc(max(16px, env(safe-area-inset-top)) + 60px) 16px 16px;
+            overflow-y: auto;
+            height: 100vh;
+            height: 100dvh;
         }
 
-        .category-block {
-            margin-bottom: 30px;
-        }
-
-        .category-block:last-child {
-            margin-bottom: 0;
+        .category-item {
+            margin-bottom: 24px;
         }
 
         .category-header {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .category-emoji {
-            font-size: 20px;
-        }
-
-        .category-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .add-place-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 16px;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 12px;
-        }
-
-        .add-place-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
-        }
-
-        .places-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .place-item {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.85);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 12px 0;
+            user-select: none;
         }
 
-        .place-item:hover {
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateX(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
         }
 
-        .place-item.selected {
-            background: linear-gradient(135deg, rgba(10, 132, 255, 0.2) 0%, rgba(0, 102, 204, 0.2) 100%);
-            border-color: rgba(10, 132, 255, 0.4);
+        .category-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: rgba(255, 255, 255, 0.8);
         }
 
-        .place-name {
+        .category-name {
+            font-size: 16px;
+            font-weight: 600;
             flex: 1;
+        }
+
+        .category-content {
+            overflow: visible;
+        }
+
+        .add-category-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+
+        .place-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 70px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .place-buttons {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .place-delete-btn,
+        .place-info-btn {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .place-delete-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 59, 48, 0.3);
+        }
+
+        .place-info-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .place-card.selected {
+            border-color: #0a84ff;
+        }
+
+        .place-card:active {
+            transform: scale(0.95);
+        }
+
+        .place-card.add-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .add-icon {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 4px;
+        }
+
+        .add-text {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+        }
+
+
+        .place-name-text {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .place-footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .place-rating {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-left: 8px;
+            display: flex;
+            gap: 4px;
+            flex: 1;
         }
 
-        .remove-place-btn {
-            color: rgba(255, 255, 255, 0.4);
+        .rating-square {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        /* Панель информации */
+        .info-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 13, 16, 0.98);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px 20px 0 0;
+            padding: 24px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 200;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .info-panel.show {
+            transform: translateY(0);
+        }
+
+        .info-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
             background: none;
             border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 28px;
             cursor: pointer;
-            font-size: 16px;
-            padding: 0 4px;
-            margin-left: 8px;
-            transition: color 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
         }
 
-        .remove-place-btn:hover {
-            color: rgba(255, 100, 100, 0.9);
+        .info-close:active {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Карта */
-        .map-container {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 24px;
-            min-height: 600px;
-            position: relative;
+        .info-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-right: 32px;
         }
 
-        .map-header {
+        .info-criteria {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-criterion {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
-        .map-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .map-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .control-btn {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
-            padding: 8px 16px;
-            color: rgba(255, 255, 255, 0.85);
+        .info-criterion-name {
             font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .control-btn.primary {
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
-            color: white;
-            border: none;
-        }
-
-        .canvas-wrapper {
-            position: relative;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        #mapCanvas {
-            display: block;
-            width: 100%;
-            height: 550px;
-            cursor: grab;
-        }
-
-        #mapCanvas:active {
-            cursor: grabbing;
-        }
-
-        .legend {
+        .info-criterion-rating {
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 16px;
-            flex-wrap: wrap;
+            gap: 4px;
         }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.65);
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+        .info-rating-square {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
         }
 
         /* Модальное окно */
-        .modal-overlay {
-            display: none;
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 10000;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.2s ease;
+            z-index: 1000;
+            padding: 20px;
         }
 
-        .modal-overlay.show {
+        .modal.show {
             display: flex;
         }
 
         .modal-content {
-            background: rgba(13, 13, 16, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #1c1c1e;
             border-radius: 20px;
-            padding: 32px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
             overflow-y: auto;
-            animation: slideUp 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-header {
-            margin-bottom: 24px;
         }
 
         .modal-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 8px;
         }
 
         .modal-subtitle {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.55);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
         }
 
         .form-group {
@@ -297,888 +482,1321 @@
 
         .form-label {
             display: block;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
             margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.85);
         }
 
-        .form-input, .form-textarea {
+        .form-input {
             width: 100%;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.95);
-            font-family: inherit;
-            transition: all 0.2s ease;
+            padding: 12px;
+            color: white;
+            font-size: 15px;
         }
 
-        .form-textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-input:focus, .form-textarea:focus {
+        .form-input:focus {
             outline: none;
             border-color: #0a84ff;
-            background: rgba(255, 255, 255, 0.08);
         }
 
-        .rating-group {
-            margin-bottom: 20px;
-        }
-
-        .rating-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        .rating-scale {
+        /* Критерии с цветными квадратиками */
+        .criterion-group {
+            margin-bottom: 12px;
             display: flex;
-            gap: 8px;
+            align-items: center;
             justify-content: space-between;
         }
 
-        .rating-btn {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px 8px;
-            font-size: 16px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
+        .criterion-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+        .criterion-description {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 8px;
+        }
+
+        .color-checkboxes {
+            display: flex;
+            gap: 6px;
+        }
+
+        .color-checkbox {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             cursor: pointer;
+            border: 2px solid transparent;
             transition: all 0.2s ease;
-            text-align: center;
+            position: relative;
         }
 
-        .rating-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
+        .color-checkbox.selected {
+            border-color: white;
+            transform: scale(1.1);
         }
 
-        .rating-btn.active {
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
-            border-color: #0a84ff;
+        .color-checkbox.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             color: white;
+            font-size: 14px;
+            font-weight: 700;
         }
 
         .modal-actions {
             display: flex;
             gap: 12px;
-            margin-top: 28px;
+            margin-top: 24px;
         }
 
         .modal-btn {
             flex: 1;
-            padding: 14px 24px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
         }
 
         .modal-btn-cancel {
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        .modal-btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        .modal-btn-submit {
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
         }
 
-        .modal-btn-submit:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
-        }
-
-        /* Информационная панель */
-        .info-panel {
-            position: absolute;
-            top: 80px;
-            right: 24px;
-            background: rgba(13, 13, 16, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
-            max-width: 280px;
-            display: none;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-
-        .info-panel.show {
-            display: block;
-        }
-
-        .info-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 12px;
-        }
-
-        .info-criteria {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .info-criterion {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-        }
-
-        .info-criterion-name {
-            color: rgba(255, 255, 255, 0.65);
-        }
-
-        .info-criterion-value {
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 600;
-        }
-
-        .info-stars {
-            color: #0a84ff;
-        }
-
-        .info-description {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.55);
-            line-height: 1.5;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 1024px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .categories-panel {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-            }
-
-            .category-block {
-                margin-bottom: 0;
-            }
-
-            .info-panel {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                left: 0;
-                top: auto;
-                max-width: 100%;
-                border-radius: 16px 16px 0 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .categories-panel {
-                grid-template-columns: 1fr;
-            }
-
-            .page-title {
-                font-size: 28px;
-            }
-
-            .logistics-container {
-                padding: 20px 15px;
-            }
-
-            #mapCanvas {
-                height: 400px;
-            }
-
-            .map-controls {
-                flex-direction: column;
-            }
-
-            .control-btn {
-                width: 100%;
-            }
+        .modal-btn-submit {
+            background: #0a84ff;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar center-menu">
-        <div class="container">
-            <ul class="nav-menu">
-                <li><a href="../../index.html" class="nav-link" data-page="index">Главная</a></li>
-                <li><a href="../../courses.html" class="nav-link" data-page="courses">Курсы</a></li>
-                <li><a href="../../games.html" class="nav-link" data-page="games">Игры</a></li>
-                <li><a href="../../about.html" class="nav-link" data-page="about">Обо мне</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="logistics-container">
-        <h1 class="page-title">Карта логистики</h1>
-        <p class="page-subtitle">Планируйте свой маршрут: от знакомства до финала</p>
-
-        <div class="main-layout">
-            <!-- Панель категорий -->
-            <div class="categories-panel">
-                <!-- Места знакомства -->
-                <div class="category-block">
-                    <div class="category-header">
-                        <span class="category-emoji">👋</span>
-                        <h3 class="category-title">Места знакомства</h3>
-                    </div>
-                    <button class="add-place-btn" onclick="openAddModal('meet')">+ Добавить место</button>
-                    <div class="places-list" id="meetPlaces"></div>
-                </div>
-
-                <!-- Места общения -->
-                <div class="category-block">
-                    <div class="category-header">
-                        <span class="category-emoji">💬</span>
-                        <h3 class="category-title">Места общения</h3>
-                    </div>
-                    <button class="add-place-btn" onclick="openAddModal('talk')">+ Добавить место</button>
-                    <div class="places-list" id="talkPlaces"></div>
-                </div>
-
-                <!-- Места секса -->
-                <div class="category-block">
-                    <div class="category-header">
-                        <span class="category-emoji">🔥</span>
-                        <h3 class="category-title">Места секса</h3>
-                    </div>
-                    <button class="add-place-btn" onclick="openAddModal('sex')">+ Добавить место</button>
-                    <div class="places-list" id="sexPlaces"></div>
-                </div>
-            </div>
-
-            <!-- Карта -->
-            <div class="map-container">
-                <div class="map-header">
-                    <h2 class="map-title">Интерактивная карта</h2>
-                    <div class="map-controls">
-                        <button class="control-btn" onclick="clearRoute()">Очистить маршрут</button>
-                        <button class="control-btn primary" onclick="buildRoute()">Построить маршрут</button>
-                    </div>
-                </div>
-                <div class="canvas-wrapper">
-                    <canvas id="mapCanvas"></canvas>
-                    <!-- Информационная панель -->
-                    <div class="info-panel" id="infoPanel"></div>
-                </div>
-                <div class="legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #4CAF50;"></div>
-                        <span>Знакомство</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #2196F3;"></div>
-                        <span>Общение</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #FF5722;"></div>
-                        <span>Секс</span>
-                    </div>
-                </div>
-            </div>
+    <!-- Кнопки слева сверху -->
+    <div class="top-left-controls" id="mapControls">
+        <div class="tab-btn" id="placeInfoBtn" onclick="showPlaceInfoOnMap()" style="display: none;">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
         </div>
     </div>
 
+    <!-- Переключатель вкладок -->
+    <div class="tab-switcher">
+        <div class="tab-btn active" data-tab="map" onclick="switchTab('map')">
+            <svg viewBox="0 0 24 24">
+                <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+            </svg>
+        </div>
+        <div class="tab-btn" data-tab="places" onclick="switchTab('places')">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Подсказка -->
+    <div class="map-hint" id="mapHint">Нажми на точку чтобы открыть меню действий</div>
+
+    <!-- Кнопка очистки маршрута -->
+    <button class="clear-route-btn" id="clearRouteBtn" onclick="clearRoute()">Очистить маршрут</button>
+
+    <!-- Меню действий -->
+    <div class="action-menu" id="actionMenu">
+        <button class="action-btn" onclick="handleActionInfo()">i</button>
+        <button class="action-btn" onclick="handleActionLink()">+</button>
+        <button class="action-btn" onclick="handleActionDelete()">×</button>
+    </div>
+
+    <!-- Экран карты -->
+    <div class="screen active" id="mapScreen">
+        <canvas id="mapCanvas"></canvas>
+    </div>
+
+    <!-- Экран мест -->
+    <div class="screen" id="placesScreen">
+        <div class="places-screen">
+            <div id="categoriesContainer"></div>
+        </div>
+    </div>
+
+    <!-- Панель информации о месте -->
+    <div class="info-panel" id="infoPanel">
+        <button class="info-close" onclick="hideInfoPanel()">×</button>
+        <div id="infoPanelContent"></div>
+    </div>
+
     <!-- Модальное окно добавления места -->
-    <div class="modal-overlay" id="addModal">
+    <div class="modal" id="placeModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Добавить место</h2>
-                <p class="modal-subtitle" id="modalSubtitle"></p>
-            </div>
-
-            <form id="addPlaceForm">
-                <div class="form-group">
-                    <label class="form-label">Название места *</label>
-                    <input type="text" class="form-input" id="placeName" required maxlength="30" placeholder="Например: Большая Покровская">
+            <form id="placeForm" onsubmit="handlePlaceSubmit(event)">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <input type="text" class="form-input" id="placeName" required placeholder="Название места">
                 </div>
-
                 <div id="criteriaContainer"></div>
-
                 <div class="modal-actions">
-                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
-                    <button type="submit" class="modal-btn modal-btn-submit">Добавить</button>
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closePlaceModal()">Отмена</button>
+                    <button type="submit" class="modal-btn modal-btn-submit">ОК</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления категории -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-title">Новая категория</div>
+            <form id="categoryForm" onsubmit="handleCategorySubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Название категории</label>
+                    <input type="text" class="form-input" id="categoryName" required placeholder="Например: Кафе">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeCategoryModal()">Отмена</button>
+                    <button type="submit" class="modal-btn modal-btn-submit">Создать</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // === Критерии для каждой категории ===
-        const criteria = {
-            meet: [
-                { id: 'capacity', label: 'Ёмкость', description: 'Сколько потенциально интересных людей' },
-                { id: 'openness', label: 'Лёгкость открытия', description: 'Насколько просто начать разговор' },
-                { id: 'context', label: 'Контекст общения', description: 'Насколько понятно, о чём говорить' }
-            ],
-            talk: [
-                { id: 'atmosphere', label: 'Атмосфера', description: 'Насколько романтично/уютно' },
-                { id: 'activity', label: 'Активность', description: 'Что там можно делать' },
-                { id: 'price', label: 'Средний чек', description: 'Сколько денег уйдёт' }
-            ],
-            sex: [
-                { id: 'privacy', label: 'Приватность', description: 'Насколько не спалят' },
-                { id: 'comfort', label: 'Комфорт', description: 'Есть ли нормальные условия' },
-                { id: 'availability', label: 'Доступность', description: 'Легко ли туда попасть быстро' }
-            ]
-        };
-
-        // === Данные ===
-        const places = {
-            meet: [
-                {
-                    name: 'Большая Покровская',
-                    x: 150,
-                    y: 100,
-                    ratings: { capacity: 4, openness: 3, context: 4 },
-                    description: 'Центральная улица, много людей'
-                },
-                {
-                    name: 'Парк Швейцария',
-                    x: 200,
-                    y: 150,
-                    ratings: { capacity: 3, openness: 4, context: 5 },
-                    description: 'Спокойная атмосфера для прогулок'
-                }
-            ],
-            talk: [
-                {
-                    name: 'Бар Койот',
-                    x: 400,
-                    y: 200,
-                    ratings: { atmosphere: 4, activity: 3, price: 3 },
-                    description: 'Живая музыка, танцы',
-                    averageCheck: 2000
-                },
-                {
-                    name: 'Бар Искры',
-                    x: 450,
-                    y: 250,
-                    ratings: { atmosphere: 5, activity: 2, price: 4 },
-                    description: 'Уютный бар для разговоров',
-                    averageCheck: 3000
-                }
-            ],
-            sex: [
-                {
-                    name: 'Дома',
-                    x: 700,
-                    y: 300,
-                    ratings: { privacy: 5, comfort: 5, availability: 4 },
-                    description: 'Классика'
-                }
-            ]
-        };
-
-        const selectedPlaces = {
-            meet: null,
-            talk: null,
-            sex: null
-        };
-
-        const colors = {
-            meet: '#4CAF50',
-            talk: '#2196F3',
-            sex: '#FF5722'
-        };
-
-        let currentCategory = null;
-        let draggedPoint = null;
-        let hoveredPoint = null;
-        let canvas, ctx;
-
-        // === Инициализация ===
-        window.addEventListener('load', () => {
-            canvas = document.getElementById('mapCanvas');
-            ctx = canvas.getContext('2d');
-
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            renderPlacesLists();
-            drawMap();
-
-            // События мыши
-            canvas.addEventListener('mousedown', handleMouseDown);
-            canvas.addEventListener('mousemove', handleMouseMove);
-            canvas.addEventListener('mouseup', handleMouseUp);
-            canvas.addEventListener('click', handleClick);
-
-            // События тач
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
-            canvas.addEventListener('touchend', handleTouchEnd);
-
-            // Форма
-            document.getElementById('addPlaceForm').addEventListener('submit', handleFormSubmit);
-        });
-
-        function resizeCanvas() {
-            const wrapper = canvas.parentElement;
-            canvas.width = wrapper.offsetWidth;
-            canvas.height = 550;
-            drawMap();
+        // Telegram WebApp expansion
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+            }
+        } catch (e) {
+            console.log('Telegram WebApp не доступен:', e);
         }
 
-        // === Модальное окно ===
-        function openAddModal(category) {
-            currentCategory = category;
-            const modal = document.getElementById('addModal');
-            const title = document.getElementById('modalTitle');
-            const subtitle = document.getElementById('modalSubtitle');
-            const criteriaContainer = document.getElementById('criteriaContainer');
+        // Цвета для оценок (от красного к зеленому)
+        const ratingColors = ['#FF5722', '#FF9800', '#FFC107', '#8BC34A', '#4CAF50'];
 
-            // Заголовки
-            const titles = {
-                meet: 'Добавить место знакомства',
-                talk: 'Добавить место общения',
-                sex: 'Добавить место секса'
-            };
-            title.textContent = titles[category];
-            subtitle.textContent = 'Оцените место по критериям от 1 до 5';
+        // Цвета для категорий
+        const categoryColors = {
+            'Знакомства': '#4CAF50',
+            'Свидания': '#2196F3',
+            'Секс': '#FF5722'
+        };
 
-            // Очистка формы
-            document.getElementById('placeName').value = '';
-            criteriaContainer.innerHTML = '';
+        // Критерии для стандартных категорий
+        const standardCriteria = {
+            'Знакомства': [
+                { id: 'capacity', label: 'Ёмкость', description: 'Сколько потенциально интересных людей', type: 'rating' },
+                { id: 'openness', label: 'Лёгкость открытия', description: 'Насколько просто начать разговор', type: 'rating' },
+                { id: 'activities', label: 'Чем тут люди занимаются?', description: '', type: 'text', order: 'after' }
+            ],
+            'Свидания': [
+                { id: 'atmosphere', label: 'Атмосфера', description: 'Насколько романтично/уютно', type: 'rating' },
+                { id: 'price', label: 'Средний чек', description: 'Сколько денег уйдёт', type: 'rating' },
+                { id: 'activities', label: 'Чем в этом месте можно заняться?', description: '', type: 'text', order: 'after' }
+            ],
+            'Секс': [
+                { id: 'privacy', label: 'Приватность', description: 'Насколько не спалят', type: 'rating' },
+                { id: 'comfort', label: 'Комфорт', description: 'Есть ли нормальные условия', type: 'rating' },
+                { id: 'pretext', label: 'Какой предлог для посещения', description: '', type: 'text', order: 'after' }
+            ]
+        };
 
-            // Генерация критериев
-            criteria[category].forEach(criterion => {
-                const ratingGroup = document.createElement('div');
-                ratingGroup.className = 'rating-group';
+        // Флаг загрузки данных
+        let dataLoaded = false;
 
-                const label = document.createElement('label');
-                label.className = 'rating-label';
-                label.textContent = `${criterion.label} — ${criterion.description}`;
+        // Данные
+        let categories = [
+            {
+                id: 'cat_1',
+                name: 'Знакомства',
+                places: [
+                    {
+                        name: 'Улица Ленина',
+                        xPercent: 0.15,
+                        yPercent: 0.25,
+                        ratings: { capacity: 3, openness: 3, activities: 'Гуляют, сидят в кафе' },
+                        selected: true
+                    }
+                ]
+            },
+            {
+                id: 'cat_2',
+                name: 'Свидания',
+                places: [
+                    {
+                        name: 'Кафе "Ромашка"',
+                        xPercent: 0.45,
+                        yPercent: 0.3,
+                        ratings: { atmosphere: 3, activities: 'Поесть, поговорить', price: 2 },
+                        selected: true
+                    }
+                ]
+            },
+            {
+                id: 'cat_3',
+                name: 'Секс',
+                places: [
+                    {
+                        name: 'Дома у меня',
+                        xPercent: 0.75,
+                        yPercent: 0.4,
+                        ratings: { privacy: 4, comfort: 4, pretext: 'Посмотреть фильм' },
+                        selected: true
+                    }
+                ]
+            }
+        ];
 
-                const scale = document.createElement('div');
-                scale.className = 'rating-scale';
+        let route = [];
+        let connections = [];
+        let currentCategory = null;
+        let editingPlace = null;
+        let selectedPlaceForMenu = null;
+        let linkingMode = false;
+        let linkingFromPlace = null;
 
-                for (let i = 1; i <= 5; i++) {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'rating-btn';
-                    btn.textContent = i;
-                    btn.dataset.criterion = criterion.id;
-                    btn.dataset.value = i;
-                    btn.onclick = () => selectRating(criterion.id, i);
-                    scale.appendChild(btn);
-                }
+        // Проверка доступности Telegram Cloud Storage
+        let hasCloudStorage = false;
+        try {
+            hasCloudStorage = window.Telegram?.WebApp?.CloudStorage &&
+                             typeof window.Telegram.WebApp.CloudStorage.setItem === 'function';
+        } catch (e) {
+            hasCloudStorage = false;
+        }
 
-                ratingGroup.appendChild(label);
-                ratingGroup.appendChild(scale);
-                criteriaContainer.appendChild(ratingGroup);
+        // Функции для работы с хранилищем
+        function saveData() {
+            // Сохраняем connections как индексы
+            const connectionsData = connections.map(conn => {
+                const fromCat = categories.findIndex(cat => cat.places.includes(conn.from));
+                const fromPlace = categories[fromCat].places.indexOf(conn.from);
+                const toCat = categories.findIndex(cat => cat.places.includes(conn.to));
+                const toPlace = categories[toCat].places.indexOf(conn.to);
+                return { fromCat, fromPlace, toCat, toPlace };
             });
 
-            // Дополнительные поля
-            if (category === 'meet' || category === 'talk') {
-                const descGroup = document.createElement('div');
-                descGroup.className = 'form-group';
-                descGroup.innerHTML = `
-                    <label class="form-label">${category === 'meet' ? 'Описание контекста' : 'Что можно делать'}</label>
-                    <textarea class="form-textarea" id="placeDescription" placeholder="Например: ${category === 'meet' ? 'Люди гуляют с собаками' : 'Гулять, смотреть закат'}"></textarea>
-                `;
-                criteriaContainer.appendChild(descGroup);
-            }
+            const data = {
+                categories: categories,
+                route: route,
+                connections: connectionsData
+            };
 
-            if (category === 'talk') {
-                const priceGroup = document.createElement('div');
-                priceGroup.className = 'form-group';
-                priceGroup.innerHTML = `
-                    <label class="form-label">Средний чек (₽)</label>
-                    <input type="number" class="form-input" id="averageCheck" placeholder="2000" min="0" step="100">
-                `;
-                criteriaContainer.appendChild(priceGroup);
-            }
+            const jsonData = JSON.stringify(data);
 
-            modal.classList.add('show');
+            // Всегда сохраняем в localStorage
+            localStorage.setItem('logistics_data', jsonData);
+
+            // Если доступен CloudStorage - сохраняем и туда
+            if (hasCloudStorage) {
+                try {
+                    window.Telegram.WebApp.CloudStorage.setItem('logistics_data', jsonData, (error) => {
+                        if (error) {
+                            console.error('Ошибка синхронизации с облаком:', error);
+                        }
+                    });
+                } catch (e) {
+                    console.error('CloudStorage не поддерживается:', e);
+                }
+            }
         }
 
-        function closeModal() {
-            document.getElementById('addModal').classList.remove('show');
+        function loadData() {
+            function processData(saved) {
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        console.log('Загружены данные:', data);
+                        if (data.categories) {
+                            categories = data.categories;
+                            // Проверяем, что у всех мест есть свойство selected
+                            categories.forEach(cat => {
+                                cat.places.forEach(place => {
+                                    if (place.selected === undefined) {
+                                        place.selected = true;
+                                    }
+                                });
+                            });
+                        }
+                        if (data.route) {
+                            // Проверяем формат route - если старый формат (массив {place}), просто очищаем
+                            if (data.route.length > 0 && data.route[0].place !== undefined) {
+                                // Старый формат - очищаем маршруты
+                                console.log('Обнаружен старый формат маршрута, очищаем');
+                                route = [];
+                            } else {
+                                // Новый формат или пустой массив
+                                route = data.route;
+                            }
+                        }
+                        // Восстанавливаем connections из индексов
+                        if (data.connections) {
+                            connections = data.connections.map(conn => {
+                                const fromPlace = categories[conn.fromCat]?.places[conn.fromPlace];
+                                const toPlace = categories[conn.toCat]?.places[conn.toPlace];
+                                if (fromPlace && toPlace) {
+                                    return { from: fromPlace, to: toPlace };
+                                }
+                                return null;
+                            }).filter(c => c !== null);
+                        }
+                        console.log('Категорий:', categories.length, 'Маршрут:', route.length, 'Связей:', connections.length);
+                        // Проверим сколько мест выбрано
+                        let selectedCount = 0;
+                        categories.forEach(cat => {
+                            cat.places.forEach(p => {
+                                if (p.selected) selectedCount++;
+                            });
+                        });
+                        console.log('Выбрано мест:', selectedCount);
+                    } catch (e) {
+                        console.error('Ошибка загрузки данных:', e);
+                    }
+                } else {
+                    console.log('Нет сохраненных данных, используем дефолтные');
+                }
+
+                // Помечаем что данные загружены
+                dataLoaded = true;
+
+                // Рендерим UI после загрузки данных
+                renderCategories();
+                drawMap();
+            }
+
+            // Если CloudStorage доступен - загружаем из него
+            if (hasCloudStorage) {
+                try {
+                    window.Telegram.WebApp.CloudStorage.getItem('logistics_data', (error, cloudData) => {
+                        if (error) {
+                            console.error('Ошибка загрузки из облака:', error);
+                            // При ошибке загружаем из localStorage
+                            const saved = localStorage.getItem('logistics_data');
+                            processData(saved);
+                        } else if (cloudData) {
+                            console.log('Данные загружены из облака');
+                            processData(cloudData);
+                        } else {
+                            // Нет данных в облаке, загружаем из localStorage
+                            const saved = localStorage.getItem('logistics_data');
+                            processData(saved);
+                        }
+                    });
+                } catch (e) {
+                    console.error('CloudStorage не поддерживается:', e);
+                    // При ошибке загружаем из localStorage
+                    const saved = localStorage.getItem('logistics_data');
+                    processData(saved);
+                }
+            } else {
+                // CloudStorage недоступен, загружаем из localStorage
+                const saved = localStorage.getItem('logistics_data');
+                processData(saved);
+            }
+        }
+
+        // Экспорт данных в файл
+        function exportData() {
+            const data = {
+                categories: categories,
+                route: route,
+                exportDate: new Date().toISOString()
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `logistics_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Импорт данных из файла
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.categories) {
+                        categories = data.categories;
+                        route = data.route || [];
+                        saveData();
+                        renderCategories();
+                        drawMap();
+                        alert('Данные успешно импортированы!');
+                    } else {
+                        alert('Неверный формат файла');
+                    }
+                } catch (err) {
+                    console.error('Ошибка импорта:', err);
+                    alert('Ошибка чтения файла');
+                }
+            };
+            reader.readAsText(file);
+
+            // Сбросить input чтобы можно было импортировать тот же файл снова
+            event.target.value = '';
+        }
+
+        // Canvas
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Перерисовываем только если данные уже загружены
+            if (dataLoaded) {
+                drawMap();
+            }
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Загружаем данные при старте (ПОСЛЕ инициализации canvas)
+        loadData();
+
+        // Переключение вкладок
+        function switchTab(tab) {
+            // Скрываем меню действий при переходе между вкладками
+            if (selectedPlaceForMenu) {
+                hideActionMenu();
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.toggle('active', screen.id === tab + 'Screen');
+            });
+        }
+
+        // Иконки категорий - цветные круги
+        function getCategoryIcon(categoryName) {
+            const color = categoryColors[categoryName] || 'rgba(255,255,255,0.8)';
+            return `<div style="width: 16px; height: 16px; border-radius: 50%; background: ${color};"></div>`;
+        }
+
+        // Рендер категорий
+        function renderCategories() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item open" id="${cat.id}">
+                    <div class="category-header">
+                        <div class="category-icon">${getCategoryIcon(cat.name)}</div>
+                        <div class="category-name">${cat.name}</div>
+                    </div>
+                    <div class="category-content">
+                        <div class="places-grid">
+                            <div class="place-card add-card" onclick="openPlaceModal('${cat.id}')">
+                                <div class="add-icon">+</div>
+                                <div class="add-text">Добавить</div>
+                            </div>
+                            ${cat.places.map((place, idx) => {
+                                const numericRatings = Object.values(place.ratings).filter(v => typeof v === 'number');
+                                const avgRating = numericRatings.length > 0
+                                    ? Math.min(5, Math.round(numericRatings.reduce((a, b) => a + b, 0) / numericRatings.length))
+                                    : 3;
+                                return `
+                                    <div class="place-card ${place.selected ? 'selected' : ''}" onclick="togglePlaceSelection('${cat.id}', ${idx})">
+                                        <div class="place-buttons">
+                                            <button class="place-info-btn" onclick="event.stopPropagation(); editPlace('${cat.id}', ${idx})">i</button>
+                                            <button class="place-delete-btn" onclick="event.stopPropagation(); deletePlace('${cat.id}', ${idx})">×</button>
+                                        </div>
+                                        <div class="place-name-text">${place.name}</div>
+                                        <div class="place-footer">
+                                            <div class="place-rating">
+                                                ${Array(avgRating).fill(0).map((_, i) =>
+                                                    `<div class="rating-square" style="background: ${ratingColors[i] || ratingColors[4]};"></div>`
+                                                ).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function togglePlaceSelection(categoryId, placeIdx) {
+            const category = categories.find(c => c.id === categoryId);
+            const place = category.places[placeIdx];
+            place.selected = !place.selected;
+
+            // Если место скрыли, удаляем все его связи
+            if (!place.selected) {
+                connections = connections.filter(conn =>
+                    conn.from !== place && conn.to !== place
+                );
+            }
+
+            saveData();
+            renderCategories();
+            drawMap();
+        }
+
+        function deletePlace(categoryId, placeIdx) {
+            const category = categories.find(c => c.id === categoryId);
+            const place = category.places[placeIdx];
+
+            // Удаляем все связи этого места
+            connections = connections.filter(conn =>
+                conn.from !== place && conn.to !== place
+            );
+
+            // Удаляем место из категории
+            category.places.splice(placeIdx, 1);
+
+            saveData();
+            renderCategories();
+            drawMap();
+        }
+
+        // Модальные окна
+        function openPlaceModal(categoryId, placeIdx = null) {
+            currentCategory = categoryId;
+            editingPlace = placeIdx;
+            const category = categories.find(c => c.id === categoryId);
+
+            const criteriaContainer = document.getElementById('criteriaContainer');
+            const criteria = standardCriteria[category.name] || [
+                { id: 'quality', label: 'Качество', description: 'Общая оценка места' },
+                { id: 'accessibility', label: 'Доступность', description: 'Легко ли добраться' },
+                { id: 'comfort', label: 'Комфорт', description: 'Удобство и условия' }
+            ];
+
+            // Если редактируем место
+            if (placeIdx !== null) {
+                const place = category.places[placeIdx];
+                document.getElementById('placeName').value = place.name;
+            } else {
+                document.getElementById('placeName').value = '';
+            }
+
+            const ratingCriteria = criteria.filter(c => c.type !== 'text');
+            const textCriteria = criteria.filter(c => c.type === 'text');
+
+            let html = '';
+
+            // Сначала все рейтинговые критерии
+            html += ratingCriteria.map(criterion => {
+                const currentValue = (placeIdx !== null) ? category.places[placeIdx].ratings[criterion.id] : null;
+                return `
+                    <div class="criterion-group">
+                        <label class="criterion-label">${criterion.label}</label>
+                        <div class="color-checkboxes">
+                            ${ratingColors.map((color, idx) => `
+                                <div class="color-checkbox ${currentValue === (idx + 1) ? 'selected' : ''}"
+                                     style="background: ${color};"
+                                     data-criterion="${criterion.id}"
+                                     data-value="${idx + 1}"
+                                     onclick="selectRating('${criterion.id}', ${idx + 1})">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Потом все текстовые поля
+            html += textCriteria.map(criterion => {
+                const currentValue = (placeIdx !== null) ? category.places[placeIdx].ratings[criterion.id] : null;
+                return `
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <input type="text" class="form-input" id="criterion_${criterion.id}"
+                               value="${currentValue || ''}" placeholder="${criterion.label}">
+                    </div>
+                `;
+            }).join('');
+
+            criteriaContainer.innerHTML = html;
+
+            document.getElementById('placeModal').classList.add('show');
+        }
+
+        function editPlace(categoryId, placeIdx) {
+            openPlaceModal(categoryId, placeIdx);
+        }
+
+        function closePlaceModal() {
+            document.getElementById('placeModal').classList.remove('show');
         }
 
         function selectRating(criterionId, value) {
-            const buttons = document.querySelectorAll(`[data-criterion="${criterionId}"]`);
-            buttons.forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.value) === value);
+            document.querySelectorAll(`[data-criterion="${criterionId}"]`).forEach(box => {
+                box.classList.toggle('selected', parseInt(box.dataset.value) === value);
             });
         }
 
-        function handleFormSubmit(e) {
+        function handlePlaceSubmit(e) {
             e.preventDefault();
 
             const name = document.getElementById('placeName').value.trim();
-            if (!name) return;
+            const category = categories.find(c => c.id === currentCategory);
+            const criteria = standardCriteria[category.name] || [
+                { id: 'quality', label: 'Качество', description: 'Общая оценка места' },
+                { id: 'accessibility', label: 'Доступность', description: 'Легко ли добраться' },
+                { id: 'comfort', label: 'Комфорт', description: 'Удобство и условия' }
+            ];
 
-            // Собираем оценки
             const ratings = {};
-            criteria[currentCategory].forEach(criterion => {
-                const activeBtn = document.querySelector(`[data-criterion="${criterion.id}"].active`);
-                ratings[criterion.id] = activeBtn ? parseInt(activeBtn.dataset.value) : 3;
-            });
-
-            // Случайная позиция в зависимости от категории
-            let x, y;
-            if (currentCategory === 'meet') {
-                x = 100 + Math.random() * 200;
-                y = 100 + Math.random() * 200;
-            } else if (currentCategory === 'talk') {
-                x = 350 + Math.random() * 200;
-                y = 150 + Math.random() * 200;
-            } else {
-                x = 600 + Math.random() * 150;
-                y = 200 + Math.random() * 200;
-            }
-
-            const place = { name, x, y, ratings };
-
-            // Дополнительные поля
-            const descField = document.getElementById('placeDescription');
-            if (descField) {
-                place.description = descField.value.trim();
-            }
-
-            const checkField = document.getElementById('averageCheck');
-            if (checkField) {
-                place.averageCheck = parseInt(checkField.value) || 0;
-            }
-
-            places[currentCategory].push(place);
-
-            closeModal();
-            renderPlacesLists();
-            drawMap();
-        }
-
-        // === Работа с местами ===
-        function removePlace(category, index) {
-            places[category].splice(index, 1);
-            if (selectedPlaces[category] && selectedPlaces[category].index === index) {
-                selectedPlaces[category] = null;
-            }
-            renderPlacesLists();
-            drawMap();
-        }
-
-        function selectPlace(category, index) {
-            selectedPlaces[category] = { index, place: places[category][index] };
-            renderPlacesLists();
-            drawMap();
-        }
-
-        function renderPlacesLists() {
-            ['meet', 'talk', 'sex'].forEach(category => {
-                const container = document.getElementById(category + 'Places');
-                container.innerHTML = '';
-
-                places[category].forEach((place, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'place-item';
-                    if (selectedPlaces[category] && selectedPlaces[category].index === index) {
-                        item.classList.add('selected');
-                    }
-
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'place-name';
-                    nameSpan.textContent = place.name;
-
-                    // Средний рейтинг
-                    const avgRating = Object.values(place.ratings).reduce((a, b) => a + b, 0) / Object.values(place.ratings).length;
-                    const ratingSpan = document.createElement('span');
-                    ratingSpan.className = 'place-rating';
-                    ratingSpan.textContent = '★'.repeat(Math.round(avgRating));
-
-                    const removeBtn = document.createElement('button');
-                    removeBtn.className = 'remove-place-btn';
-                    removeBtn.innerHTML = '×';
-                    removeBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        removePlace(category, index);
-                    };
-
-                    item.appendChild(nameSpan);
-                    item.appendChild(ratingSpan);
-                    item.appendChild(removeBtn);
-                    item.onclick = () => selectPlace(category, index);
-
-                    container.appendChild(item);
-                });
-            });
-        }
-
-        // === Отрисовка карты ===
-        function drawMap() {
-            if (!ctx) return;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawRoute();
-            drawPoints();
-        }
-
-        function drawRoute() {
-            const route = [];
-            ['meet', 'talk', 'sex'].forEach(category => {
-                if (selectedPlaces[category]) {
-                    route.push({
-                        category,
-                        place: selectedPlaces[category].place
-                    });
+            criteria.forEach(criterion => {
+                if (criterion.type === 'text') {
+                    const input = document.getElementById(`criterion_${criterion.id}`);
+                    ratings[criterion.id] = input ? input.value : '';
+                } else {
+                    const selected = document.querySelector(`[data-criterion="${criterion.id}"].selected`);
+                    ratings[criterion.id] = selected ? parseInt(selected.dataset.value) : 3;
                 }
             });
 
-            if (route.length < 2) return;
+            if (editingPlace !== null) {
+                // Редактируем существующее место
+                category.places[editingPlace].name = name;
+                category.places[editingPlace].ratings = ratings;
+            } else {
+                // Добавляем новое место
+                // Зоны генерации: Знакомства слева 25%, Свидания центр 50%, Секс справа 25%
+                let xPercentMin, xPercentMax;
 
-            ctx.strokeStyle = 'rgba(10, 132, 255, 0.6)';
-            ctx.lineWidth = 3;
-            ctx.setLineDash([10, 5]);
+                if (category.name === 'Знакомства') {
+                    // Слева 25%
+                    xPercentMin = 0.1;
+                    xPercentMax = 0.35;
+                } else if (category.name === 'Свидания') {
+                    // Центр 50%
+                    xPercentMin = 0.25;
+                    xPercentMax = 0.75;
+                } else if (category.name === 'Секс') {
+                    // Справа 25%
+                    xPercentMin = 0.65;
+                    xPercentMax = 0.9;
+                } else {
+                    // Для других категорий - по всей ширине
+                    xPercentMin = 0.1;
+                    xPercentMax = 0.9;
+                }
 
-            ctx.beginPath();
-            ctx.moveTo(route[0].place.x, route[0].place.y);
-
-            for (let i = 1; i < route.length; i++) {
-                ctx.lineTo(route[i].place.x, route[i].place.y);
+                const place = {
+                    name,
+                    xPercent: xPercentMin + Math.random() * (xPercentMax - xPercentMin),
+                    yPercent: 0.15 + Math.random() * 0.7,
+                    ratings,
+                    selected: true
+                };
+                category.places.push(place);
             }
 
-            ctx.stroke();
-            ctx.setLineDash([]);
+            closePlaceModal();
+            saveData();
+            renderCategories();
+            drawMap();
+        }
 
-            for (let i = 1; i < route.length; i++) {
-                drawArrow(
-                    route[i - 1].place.x,
-                    route[i - 1].place.y,
-                    route[i].place.x,
-                    route[i].place.y
+        function openCategoryModal() {
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryModal').classList.add('show');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('show');
+        }
+
+        function handleCategorySubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('categoryName').value.trim();
+            const id = 'cat_' + Date.now();
+            categories.push({ id, name, places: [] });
+            closeCategoryModal();
+            renderCategories();
+        }
+
+        // Вспомогательная функция для получения абсолютных координат
+        function getAbsoluteCoords(place) {
+            // Проверка на undefined/null
+            if (!place) return { x: 0, y: 0 };
+
+            // Обратная совместимость - если есть старые координаты, конвертируем в проценты
+            if (place.x !== undefined && place.xPercent === undefined) {
+                place.xPercent = place.x / canvas.width;
+                place.yPercent = place.y / canvas.height;
+                delete place.x;
+                delete place.y;
+            }
+
+            return {
+                x: (place.xPercent || 0) * canvas.width,
+                y: (place.yPercent || 0) * canvas.height
+            };
+        }
+
+        // Карта
+        function drawMap() {
+            // Не рисуем пока данные не загружены
+            if (!dataLoaded) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Рисуем связи (connections)
+            connections.forEach(conn => {
+                const fromCoords = getAbsoluteCoords(conn.from);
+                const toCoords = getAbsoluteCoords(conn.to);
+
+                // Пунктирная серая линия
+                ctx.strokeStyle = '#888888';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([10, 10]);
+                ctx.beginPath();
+                ctx.moveTo(fromCoords.x, fromCoords.y);
+                ctx.lineTo(toCoords.x, toCoords.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Стрелка посередине
+                const midX = (fromCoords.x + toCoords.x) / 2;
+                const midY = (fromCoords.y + toCoords.y) / 2;
+                const angle = Math.atan2(toCoords.y - fromCoords.y, toCoords.x - fromCoords.x);
+                const headlen = 15;
+
+                ctx.fillStyle = '#888888';
+                ctx.beginPath();
+                ctx.moveTo(midX, midY);
+                ctx.lineTo(
+                    midX - headlen * Math.cos(angle - Math.PI / 6),
+                    midY - headlen * Math.sin(angle - Math.PI / 6)
                 );
+                ctx.lineTo(
+                    midX - headlen * Math.cos(angle + Math.PI / 6),
+                    midY - headlen * Math.sin(angle + Math.PI / 6)
+                );
+                ctx.closePath();
+                ctx.fill();
+            });
+
+            // Рисуем маршрут
+            if (route.length > 1) {
+                // Пунктирная линия
+                ctx.strokeStyle = '#666666';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 8]);
+                ctx.beginPath();
+                const firstCoords = getAbsoluteCoords(route[0].place);
+                ctx.moveTo(firstCoords.x, firstCoords.y);
+                for (let i = 1; i < route.length; i++) {
+                    const coords = getAbsoluteCoords(route[i].place);
+                    ctx.lineTo(coords.x, coords.y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Стрелки между точками
+                for (let i = 0; i < route.length - 1; i++) {
+                    const fromCoords = getAbsoluteCoords(route[i].place);
+                    const toCoords = getAbsoluteCoords(route[i + 1].place);
+                    drawArrow(fromCoords.x, fromCoords.y, toCoords.x, toCoords.y);
+                }
             }
-        }
 
-        function drawArrow(x1, y1, x2, y2) {
-            const angle = Math.atan2(y2 - y1, x2 - x1);
-            const arrowSize = 12;
-            const mx = (x1 + x2) / 2;
-            const my = (y1 + y2) / 2;
+            // Рисуем только выбранные точки
+            categories.forEach(category => {
+                const categoryColor = categoryColors[category.name] || '#888';
+                category.places.forEach(place => {
+                    if (!place.selected) return; // Показываем только выбранные
 
-            ctx.fillStyle = 'rgba(10, 132, 255, 0.8)';
-            ctx.beginPath();
-            ctx.moveTo(mx, my);
-            ctx.lineTo(
-                mx - arrowSize * Math.cos(angle - Math.PI / 6),
-                my - arrowSize * Math.sin(angle - Math.PI / 6)
-            );
-            ctx.lineTo(
-                mx - arrowSize * Math.cos(angle + Math.PI / 6),
-                my - arrowSize * Math.sin(angle + Math.PI / 6)
-            );
-            ctx.closePath();
-            ctx.fill();
-        }
+                    const coords = getAbsoluteCoords(place);
 
-        function drawPoints() {
-            ['meet', 'talk', 'sex'].forEach(category => {
-                places[category].forEach((place, index) => {
-                    const isSelected = selectedPlaces[category] && selectedPlaces[category].index === index;
-                    const isHovered = hoveredPoint && hoveredPoint.category === category && hoveredPoint.index === index;
-                    const radius = isSelected ? 14 : (isHovered ? 12 : 10);
+                    // Проверяем, выбрана ли точка для меню
+                    const isSelectedForMenu = selectedPlaceForMenu && selectedPlaceForMenu.place === place;
 
+                    // Свечение для всех точек
+                    ctx.shadowColor = categoryColor;
+                    ctx.shadowBlur = 25;
+                    ctx.fillStyle = categoryColor;
+                    ctx.beginPath();
+                    ctx.arc(coords.x, coords.y, 20, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Тень для лучшей видимости
                     ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
                     ctx.shadowBlur = 8;
                     ctx.shadowOffsetX = 0;
                     ctx.shadowOffsetY = 2;
 
-                    ctx.fillStyle = colors[category];
+                    ctx.fillStyle = categoryColor;
                     ctx.beginPath();
-                    ctx.arc(place.x, place.y, radius, 0, Math.PI * 2);
+                    ctx.arc(coords.x, coords.y, 20, 0, Math.PI * 2);
                     ctx.fill();
 
-                    if (isSelected || isHovered) {
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.shadowBlur = 0;
+
+                    // Светло-серый круг для выбранной точки
+                    if (isSelectedForMenu) {
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
                         ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(coords.x, coords.y, 28, 0, Math.PI * 2);
                         ctx.stroke();
                     }
 
-                    ctx.shadowColor = 'transparent';
-                    ctx.shadowBlur = 0;
-
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                    ctx.font = '600 13px -apple-system, BlinkMacSystemFont, sans-serif';
+                    // Рисуем название под кружком с переносом строк
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 11px -apple-system';
                     ctx.textAlign = 'center';
-                    ctx.fillText(place.name, place.x, place.y - 20);
+
+                    const maxWidth = 100;
+                    const lineHeight = 14;
+                    const words = place.name.split(' ');
+                    let lines = [];
+                    let currentLine = words[0];
+
+                    for (let i = 1; i < words.length; i++) {
+                        const testLine = currentLine + ' ' + words[i];
+                        const metrics = ctx.measureText(testLine);
+                        if (metrics.width > maxWidth) {
+                            lines.push(currentLine);
+                            currentLine = words[i];
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    lines.push(currentLine);
+
+                    // Рисуем каждую строку
+                    lines.forEach((line, index) => {
+                        ctx.fillText(line, coords.x, coords.y + 30 + index * lineHeight);
+                    });
+
+                    ctx.textAlign = 'left';
                 });
             });
+
+            document.getElementById('clearRouteBtn').classList.toggle('show', route.length > 0);
         }
 
-        // === Взаимодействие с точками ===
-        function getPointAt(x, y) {
-            for (const category in places) {
-                for (let i = 0; i < places[category].length; i++) {
-                    const place = places[category][i];
-                    const dist = Math.sqrt((x - place.x) ** 2 + (y - place.y) ** 2);
-                    if (dist < 15) {
-                        return { category, index: i, place };
+        // Взаимодействие с картой
+        let draggedPlace = null;
+        let touchStartTime = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isDragging = false;
+
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', handleTouchEnd);
+
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseup', handleMouseUp);
+
+        // Скрыть подсказку через 5 секунд
+        setTimeout(() => {
+            const hint = document.getElementById('mapHint');
+            if (hint) hint.classList.add('hidden');
+        }, 5000);
+
+        // Функция для рисования стрелки
+        function drawArrow(fromX, fromY, toX, toY) {
+            const headlen = 12;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+
+            // Середина линии
+            const midX = (fromX + toX) / 2;
+            const midY = (fromY + toY) / 2;
+
+            ctx.fillStyle = '#666666';
+            ctx.beginPath();
+            ctx.moveTo(midX, midY);
+            ctx.lineTo(midX - headlen * Math.cos(angle - Math.PI / 6), midY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(midX - headlen * Math.cos(angle + Math.PI / 6), midY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Переменная для хранения выбранного места
+        let selectedPlaceForInfo = null;
+
+        // Показать информацию о месте на карте
+        function showPlaceInfoOnMap() {
+            if (selectedPlaceForInfo) {
+                const categoryId = categories.find(cat =>
+                    cat.places.some(p => p === selectedPlaceForInfo.place)
+                )?.id;
+
+                if (categoryId) {
+                    const placeIdx = categories.find(c => c.id === categoryId)
+                        .places.indexOf(selectedPlaceForInfo.place);
+
+                    // Показываем информацию
+                    showPlaceInfo(categoryId, placeIdx);
+                }
+            }
+        }
+
+        function getPlaceAt(x, y) {
+            for (let category of categories) {
+                for (let place of category.places) {
+                    if (!place.selected) continue; // Только выбранные места
+                    const coords = getAbsoluteCoords(place);
+                    const dx = x - coords.x;
+                    const dy = y - coords.y;
+                    if (dx * dx + dy * dy < 400) { // 20 * 20 = 400
+                        return { category, place };
                     }
                 }
             }
             return null;
         }
 
-        function showInfoPanel(point) {
-            const panel = document.getElementById('infoPanel');
-            const place = point.place;
+        function handleTouchStart(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+
+            touchStartTime = Date.now();
+            touchStartX = x;
+            touchStartY = y;
+            isDragging = false;
+
+            const result = getPlaceAt(x, y);
+            if (result) {
+                draggedPlace = result.place;
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (draggedPlace) {
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+
+                // Если пользователь подвинул палец больше чем на 10px - это драг
+                const dx = x - touchStartX;
+                const dy = y - touchStartY;
+                if (dx * dx + dy * dy > 100) {
+                    isDragging = true;
+                    e.preventDefault();
+                    draggedPlace.xPercent = x / canvas.width;
+                    draggedPlace.yPercent = y / canvas.height;
+                    saveData();
+                    drawMap();
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!isDragging) {
+                // Короткий тап
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.changedTouches[0];
+                const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+
+                const result = getPlaceAt(x, y);
+                if (result) {
+                    // Проверяем режим связывания
+                    if (linkingMode && linkingFromPlace) {
+                        // Создаем связь
+                        if (result.place !== linkingFromPlace) {
+                            connections.push({ from: linkingFromPlace, to: result.place });
+                            saveData();
+                            drawMap();
+                        }
+                        // Выходим из режима связывания
+                        exitLinkingMode();
+                    } else {
+                        // Клик по точке - показываем меню
+                        showActionMenu(result);
+                        // Скрыть подсказку после первого использования
+                        const hint = document.getElementById('mapHint');
+                        if (hint) hint.classList.add('hidden');
+                    }
+                } else {
+                    // Клик мимо точки
+                    if (linkingMode) {
+                        // Отменяем режим связывания
+                        exitLinkingMode();
+                    } else if (selectedPlaceForMenu) {
+                        // Скрываем меню
+                        hideActionMenu();
+                    }
+                }
+            }
+            draggedPlace = null;
+            isDragging = false;
+        }
+
+        function handleMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            touchStartX = x;
+            touchStartY = y;
+            isDragging = false;
+
+            const result = getPlaceAt(x, y);
+            if (result) {
+                draggedPlace = result.place;
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (draggedPlace) {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                const dx = x - touchStartX;
+                const dy = y - touchStartY;
+                if (dx * dx + dy * dy > 25) {
+                    isDragging = true;
+                    draggedPlace.xPercent = x / canvas.width;
+                    draggedPlace.yPercent = y / canvas.height;
+                    saveData();
+                    drawMap();
+                }
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (!isDragging) {
+                // Клик без драга
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                const result = getPlaceAt(x, y);
+                if (result) {
+                    // Проверяем режим связывания
+                    if (linkingMode && linkingFromPlace) {
+                        // Создаем связь
+                        if (result.place !== linkingFromPlace) {
+                            connections.push({ from: linkingFromPlace, to: result.place });
+                            saveData();
+                            drawMap();
+                        }
+                        // Выходим из режима связывания
+                        exitLinkingMode();
+                    } else {
+                        // Клик по точке - показываем меню
+                        showActionMenu(result);
+                        const hint = document.getElementById('mapHint');
+                        if (hint) hint.classList.add('hidden');
+                    }
+                } else {
+                    // Клик мимо точки
+                    if (linkingMode) {
+                        // Отменяем режим связывания
+                        exitLinkingMode();
+                    } else if (selectedPlaceForMenu) {
+                        // Скрываем меню
+                        hideActionMenu();
+                    }
+                }
+            }
+            draggedPlace = null;
+            isDragging = false;
+        }
+
+        function addToRoute(result) {
+            route.push(result);
+            selectedPlaceForInfo = result;
+
+            // Показываем кнопку информации
+            const infoBtn = document.getElementById('placeInfoBtn');
+            if (infoBtn) infoBtn.style.display = 'flex';
+
+            saveData();
+            drawMap();
+        }
+
+        function clearRoute() {
+            route = [];
+            selectedPlaceForInfo = null;
+
+            // Скрываем кнопку информации
+            const infoBtn = document.getElementById('placeInfoBtn');
+            if (infoBtn) infoBtn.style.display = 'none';
+
+            saveData();
+            drawMap();
+        }
+
+        // Показ информации о месте
+        function showPlaceInfo(categoryId, placeIdx) {
+            const category = categories.find(c => c.id === categoryId);
+            const place = category.places[placeIdx];
+
+            const criteria = standardCriteria[category.name] || [
+                { id: 'quality', label: 'Качество', description: 'Общая оценка места' },
+                { id: 'accessibility', label: 'Доступность', description: 'Легко ли добраться' },
+                { id: 'comfort', label: 'Комфорт', description: 'Удобство и условия' }
+            ];
 
             let html = `<div class="info-title">${place.name}</div><div class="info-criteria">`;
 
-            // Критерии
-            const categoryCriteria = criteria[point.category];
-            categoryCriteria.forEach(criterion => {
-                const value = place.ratings[criterion.id] || 0;
-                const stars = '★'.repeat(value) + '☆'.repeat(5 - value);
-                html += `
-                    <div class="info-criterion">
-                        <span class="info-criterion-name">${criterion.label}</span>
-                        <span class="info-criterion-value info-stars">${stars}</span>
-                    </div>
-                `;
+            criteria.forEach(criterion => {
+                const value = place.ratings[criterion.id];
+                if (criterion.type === 'text') {
+                    html += `
+                        <div class="info-criterion">
+                            <div class="info-criterion-name">${criterion.label}</div>
+                            <div style="font-size: 14px; color: rgba(255, 255, 255, 0.8);">${value || 'Не указано'}</div>
+                        </div>
+                    `;
+                } else {
+                    const rating = value || 3;
+                    html += `
+                        <div class="info-criterion">
+                            <div class="info-criterion-name">${criterion.label}</div>
+                            <div class="info-criterion-rating">
+                                ${Array(rating).fill(0).map((_, i) =>
+                                    `<div class="info-rating-square" style="background: ${ratingColors[i]};"></div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
             });
 
             html += '</div>';
 
-            // Доп поля
-            if (place.averageCheck) {
-                html += `<div class="info-description">Средний чек: ${place.averageCheck} ₽</div>`;
-            }
-            if (place.description) {
-                html += `<div class="info-description">${place.description}</div>`;
-            }
-
-            panel.innerHTML = html;
-            panel.classList.add('show');
+            document.getElementById('infoPanelContent').innerHTML = html;
+            document.getElementById('infoPanel').classList.add('show');
         }
 
         function hideInfoPanel() {
             document.getElementById('infoPanel').classList.remove('show');
         }
 
-        function handleMouseDown(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        // Показать меню действий
+        function showActionMenu(result) {
+            selectedPlaceForMenu = result;
 
-            draggedPoint = getPointAt(x, y);
+            // Получаем координаты точки
+            const coords = getAbsoluteCoords(result.place);
+            const rect = canvas.getBoundingClientRect();
+
+            // Позиционируем меню над точкой (на 80px выше)
+            const menu = document.getElementById('actionMenu');
+            menu.style.left = (rect.left + coords.x) + 'px';
+            menu.style.top = (rect.top + coords.y - 80) + 'px';
+            menu.style.transform = 'translateX(-50%)';
+            menu.classList.add('show');
+
+            // Активируем кнопки
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.classList.add('active');
+            });
+
+            drawMap(); // Перерисовываем карту для подсветки
         }
 
-        function handleMouseMove(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        // Скрыть меню действий
+        function hideActionMenu() {
+            selectedPlaceForMenu = null;
 
-            if (draggedPoint) {
-                draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
-                draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
-                drawMap();
-            } else {
-                const point = getPointAt(x, y);
-                if (point) {
-                    canvas.style.cursor = 'pointer';
-                    hoveredPoint = point;
-                    showInfoPanel(point);
-                } else {
-                    canvas.style.cursor = 'grab';
-                    hoveredPoint = null;
-                    hideInfoPanel();
-                }
-                drawMap();
+            // Скрываем меню
+            const menu = document.getElementById('actionMenu');
+            menu.classList.remove('show');
+
+            // Деактивируем кнопки
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            drawMap(); // Перерисовываем карту чтобы убрать подсветку
+        }
+
+        // Обработчики кнопок меню
+        function handleActionInfo() {
+            if (!selectedPlaceForMenu) return;
+
+            const categoryId = categories.find(cat =>
+                cat.places.some(p => p === selectedPlaceForMenu.place)
+            )?.id;
+
+            if (categoryId) {
+                const placeIdx = categories.find(c => c.id === categoryId)
+                    .places.indexOf(selectedPlaceForMenu.place);
+                openPlaceModal(categoryId, placeIdx);
+            }
+
+            hideActionMenu();
+        }
+
+        function exitLinkingMode() {
+            linkingMode = false;
+            linkingFromPlace = null;
+
+            // Возвращаем обычный фон кнопки +
+            const linkBtn = document.querySelectorAll('.action-btn')[1];
+            if (linkBtn) {
+                linkBtn.style.background = '';
+            }
+
+            // Скрываем подсказку
+            const hint = document.getElementById('mapHint');
+            if (hint) {
+                hint.classList.add('hidden');
             }
         }
 
-        function handleMouseUp() {
-            draggedPoint = null;
-        }
+        function handleActionLink() {
+            if (!selectedPlaceForMenu) return;
 
-        function handleClick(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            // Входим в режим связывания
+            linkingMode = true;
+            linkingFromPlace = selectedPlaceForMenu.place;
 
-            const point = getPointAt(x, y);
-            if (point && !draggedPoint) {
-                selectPlace(point.category, point.index);
+            // Визуально показываем режим - делаем кнопку + ярче
+            document.querySelectorAll('.action-btn')[1].style.background = 'rgba(10, 132, 255, 0.5)';
+
+            // Показываем подсказку
+            const hint = document.getElementById('mapHint');
+            if (hint) {
+                hint.textContent = 'Выберите место для связи или нажмите ESC для отмены';
+                hint.classList.remove('hidden');
             }
+
+            hideActionMenu();
         }
 
-        function handleTouchStart(e) {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
+        function handleActionDelete() {
+            if (!selectedPlaceForMenu) return;
 
-            draggedPoint = getPointAt(x, y);
-            if (draggedPoint) {
-                showInfoPanel(draggedPoint);
-            }
-        }
+            const place = selectedPlaceForMenu.place;
 
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!draggedPoint) return;
+            // Удаляем все связи этого места
+            connections = connections.filter(conn =>
+                conn.from !== place && conn.to !== place
+            );
 
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-
-            draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
-            draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
-
+            saveData();
             drawMap();
+            hideActionMenu();
         }
 
-        function handleTouchEnd(e) {
-            e.preventDefault();
-            draggedPoint = null;
-        }
-
-        // === Управление маршрутом ===
-        function buildRoute() {
-            drawMap();
-        }
-
-        function clearRoute() {
-            selectedPlaces.meet = null;
-            selectedPlaces.talk = null;
-            selectedPlaces.sex = null;
-            renderPlacesLists();
-            drawMap();
-        }
-
-        // Закрытие модалки по клику вне
-        document.getElementById('addModal').addEventListener('click', (e) => {
-            if (e.target.id === 'addModal') {
-                closeModal();
+        // Обработчик ESC для выхода из режима связывания
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && linkingMode) {
+                exitLinkingMode();
             }
         });
     </script>
