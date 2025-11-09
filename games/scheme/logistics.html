@@ -272,6 +272,17 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .place-name-indicator {
+            width: 8px;
+            height: 8px;
+            background: #0a84ff;
+            border-radius: 2px;
+            flex-shrink: 0;
         }
 
         .place-footer {
@@ -741,7 +752,10 @@
                                     : 3;
                                 return `
                                     <div class="place-card" onclick="editPlace('${cat.id}', ${idx})">
-                                        <div class="place-name">${place.name}</div>
+                                        <div class="place-name">
+                                            <div class="place-name-indicator"></div>
+                                            <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${place.name}</span>
+                                        </div>
                                         <div class="place-footer">
                                             <div class="place-rating">
                                                 ${Array(avgRating).fill(0).map((_, i) =>
@@ -969,13 +983,9 @@
 
                     ctx.shadowBlur = 0;
 
-                    // Синий квадрат перед названием
-                    ctx.fillStyle = '#0a84ff';
-                    ctx.fillRect(place.x + 20, place.y - 4, 8, 8);
-
                     ctx.fillStyle = 'white';
                     ctx.font = 'bold 12px -apple-system';
-                    ctx.fillText(place.name, place.x + 32, place.y + 5);
+                    ctx.fillText(place.name, place.x + 20, place.y + 5);
                 });
             });
 
