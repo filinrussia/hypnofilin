@@ -1220,6 +1220,7 @@
         let touchStartX = 0;
         let touchStartY = 0;
         let isDragging = false;
+        let selectedPlaceForMenu = null;
 
         canvas.addEventListener('touchstart', handleTouchStart);
         canvas.addEventListener('touchmove', handleTouchMove);
@@ -1479,9 +1480,6 @@
         function hideInfoPanel() {
             document.getElementById('infoPanel').classList.remove('show');
         }
-
-        // Переменная для хранения выбранного места для меню
-        let selectedPlaceForMenu = null;
 
         // Показать меню действий
         function showActionMenu(result) {
