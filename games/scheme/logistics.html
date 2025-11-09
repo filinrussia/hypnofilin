@@ -273,17 +273,10 @@
             background: #0a84ff;
         }
 
-        .place-name {
+        .place-name-text {
             font-size: 12px;
             font-weight: 600;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .place-name-text {
-            flex: 1;
+            margin-bottom: 8px;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -294,7 +287,8 @@
         .place-footer {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 6px;
         }
 
         .place-rating {
@@ -758,11 +752,9 @@
                                     : 3;
                                 return `
                                     <div class="place-card" onclick="editPlace('${cat.id}', ${idx})">
-                                        <div class="place-name">
-                                            <div class="place-checkbox ${place.selected ? 'checked' : ''}" onclick="event.stopPropagation(); togglePlaceSelection('${cat.id}', ${idx})"></div>
-                                            <div class="place-name-text">${place.name}</div>
-                                        </div>
+                                        <div class="place-name-text">${place.name}</div>
                                         <div class="place-footer">
+                                            <div class="place-checkbox ${place.selected ? 'checked' : ''}" onclick="event.stopPropagation(); togglePlaceSelection('${cat.id}', ${idx})"></div>
                                             <div class="place-rating">
                                                 ${Array(avgRating).fill(0).map((_, i) =>
                                                     `<div class="rating-square" style="background: ${ratingColors[i] || ratingColors[4]};"></div>`
