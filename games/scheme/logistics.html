@@ -754,7 +754,7 @@
                             ${cat.places.map((place, idx) => {
                                 const numericRatings = Object.values(place.ratings).filter(v => typeof v === 'number');
                                 const avgRating = numericRatings.length > 0
-                                    ? Math.round(numericRatings.reduce((a, b) => a + b, 0) / numericRatings.length)
+                                    ? Math.min(5, Math.round(numericRatings.reduce((a, b) => a + b, 0) / numericRatings.length))
                                     : 3;
                                 return `
                                     <div class="place-card" onclick="editPlace('${cat.id}', ${idx})">
@@ -897,9 +897,32 @@
                 category.places[editingPlace].ratings = ratings;
             } else {
                 // Добавляем новое место
+                // Зоны генерации: Знакомства слева 25%, Свидания центр 50%, Секс справа 25%
+                let xMin, xMax;
+                const padding = 100;
+                const usableWidth = canvas.width - padding * 2;
+
+                if (category.name === 'Знакомства') {
+                    // Слева 25%
+                    xMin = padding;
+                    xMax = padding + usableWidth * 0.25;
+                } else if (category.name === 'Свидания') {
+                    // Центр 50%
+                    xMin = padding + usableWidth * 0.25;
+                    xMax = padding + usableWidth * 0.75;
+                } else if (category.name === 'Секс') {
+                    // Справа 25%
+                    xMin = padding + usableWidth * 0.75;
+                    xMax = canvas.width - padding;
+                } else {
+                    // Для других категорий - по всей ширине
+                    xMin = padding;
+                    xMax = canvas.width - padding;
+                }
+
                 const place = {
                     name,
-                    x: 100 + Math.random() * (canvas.width - 200),
+                    x: xMin + Math.random() * (xMax - xMin),
                     y: 100 + Math.random() * (canvas.height - 200),
                     ratings,
                     selected: false
@@ -968,10 +991,10 @@
                     // Свечение для точек в маршруте
                     if (isInRoute) {
                         ctx.shadowColor = categoryColor;
-                        ctx.shadowBlur = 20;
+                        ctx.shadowBlur = 25;
                         ctx.fillStyle = categoryColor;
                         ctx.beginPath();
-                        ctx.arc(place.x, place.y, 15, 0, Math.PI * 2);
+                        ctx.arc(place.x, place.y, 20, 0, Math.PI * 2);
                         ctx.fill();
                     }
 
@@ -983,7 +1006,7 @@
 
                     ctx.fillStyle = categoryColor;
                     ctx.beginPath();
-                    ctx.arc(place.x, place.y, 15, 0, Math.PI * 2);
+                    ctx.arc(place.x, place.y, 20, 0, Math.PI * 2);
                     ctx.fill();
 
                     ctx.shadowBlur = 0;
@@ -1062,7 +1085,7 @@
                     if (!place.selected) continue; // Только выбранные места
                     const dx = x - place.x;
                     const dy = y - place.y;
-                    if (dx * dx + dy * dy < 225) { // 15 * 15 = 225
+                    if (dx * dx + dy * dy < 400) { // 20 * 20 = 400
                         return { category, place };
                     }
                 }
@@ -1073,8 +1096,8 @@
         function handleTouchStart(e) {
             const rect = canvas.getBoundingClientRect();
             const touch = e.touches[0];
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
+            const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
 
             touchStartTime = Date.now();
             touchStartX = x;
@@ -1091,8 +1114,8 @@
             if (draggedPlace) {
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.touches[0];
-                const x = touch.clientX - rect.left;
-                const y = touch.clientY - rect.top;
+                const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
 
                 // Если пользователь подвинул палец больше чем на 10px - это драг
                 const dx = x - touchStartX;
@@ -1112,8 +1135,8 @@
                 // Короткий тап - добавляем в маршрут
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.changedTouches[0];
-                const x = touch.clientX - rect.left;
-                const y = touch.clientY - rect.top;
+                const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
 
                 const result = getPlaceAt(x, y);
                 if (result) {
@@ -1129,8 +1152,8 @@
 
         function handleMouseDown(e) {
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
             touchStartX = x;
             touchStartY = y;
@@ -1145,8 +1168,8 @@
         function handleMouseMove(e) {
             if (draggedPlace) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
                 const dx = x - touchStartX;
                 const dy = y - touchStartY;
@@ -1163,8 +1186,8 @@
             if (draggedPlace && !isDragging) {
                 // Клик без драга - добавляем в маршрут
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
                 const result = getPlaceAt(x, y);
                 if (result) {
