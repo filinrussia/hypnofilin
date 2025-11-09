@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Логистика • ГипноФилин</title>
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png">
-    <link rel="stylesheet" href="global.css">
-    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="../../navbar.css">
     <style>
         .logistics-container {
             max-width: 1200px;
@@ -31,7 +31,7 @@
 
         .main-layout {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 30px;
             margin-bottom: 40px;
         }
@@ -70,43 +70,18 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
-        .add-place-form {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .add-place-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.95);
-            font-family: inherit;
-        }
-
-        .add-place-input::placeholder {
-            color: rgba(255, 255, 255, 0.35);
-        }
-
-        .add-place-input:focus {
-            outline: none;
-            border-color: #0a84ff;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
         .add-place-btn {
+            width: 100%;
             background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
             border: none;
             border-radius: 8px;
-            padding: 8px 16px;
+            padding: 10px 16px;
             color: white;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            margin-bottom: 12px;
         }
 
         .add-place-btn:hover {
@@ -118,6 +93,8 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .place-item {
@@ -125,7 +102,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             padding: 10px 12px;
-            font-size: 14px;
+            font-size: 13px;
             color: rgba(255, 255, 255, 0.85);
             cursor: pointer;
             transition: all 0.2s ease;
@@ -145,6 +122,19 @@
             border-color: rgba(10, 132, 255, 0.4);
         }
 
+        .place-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .place-rating {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-left: 8px;
+        }
+
         .remove-place-btn {
             color: rgba(255, 255, 255, 0.4);
             background: none;
@@ -152,6 +142,7 @@
             cursor: pointer;
             font-size: 16px;
             padding: 0 4px;
+            margin-left: 8px;
             transition: color 0.2s ease;
         }
 
@@ -210,10 +201,6 @@
             border: none;
         }
 
-        .control-btn.primary:hover {
-            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
-        }
-
         .canvas-wrapper {
             position: relative;
             background: rgba(0, 0, 0, 0.2);
@@ -255,6 +242,230 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
+        /* Модальное окно */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(13, 13, 16, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.95);
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #0a84ff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .rating-group {
+            margin-bottom: 20px;
+        }
+
+        .rating-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .rating-scale {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .rating-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .rating-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .rating-btn.active {
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            border-color: #0a84ff;
+            color: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .modal-btn-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .modal-btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .modal-btn-submit {
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            color: white;
+        }
+
+        .modal-btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+        }
+
+        /* Информационная панель */
+        .info-panel {
+            position: absolute;
+            top: 80px;
+            right: 24px;
+            background: rgba(13, 13, 16, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 280px;
+            display: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .info-panel.show {
+            display: block;
+        }
+
+        .info-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 12px;
+        }
+
+        .info-criteria {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-criterion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .info-criterion-name {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .info-criterion-value {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
+        .info-stars {
+            color: #0a84ff;
+        }
+
+        .info-description {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.5;
+        }
+
         /* Адаптивность */
         @media (max-width: 1024px) {
             .main-layout {
@@ -269,6 +480,16 @@
 
             .category-block {
                 margin-bottom: 0;
+            }
+
+            .info-panel {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                top: auto;
+                max-width: 100%;
+                border-radius: 16px 16px 0 0;
             }
         }
 
@@ -288,6 +509,14 @@
             #mapCanvas {
                 height: 400px;
             }
+
+            .map-controls {
+                flex-direction: column;
+            }
+
+            .control-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -296,10 +525,10 @@
     <nav class="navbar center-menu">
         <div class="container">
             <ul class="nav-menu">
-                <li><a href="index.html" class="nav-link" data-page="index">Главная</a></li>
-                <li><a href="courses.html" class="nav-link" data-page="courses">Курсы</a></li>
-                <li><a href="games.html" class="nav-link" data-page="games">Игры</a></li>
-                <li><a href="about.html" class="nav-link" data-page="about">Обо мне</a></li>
+                <li><a href="../../index.html" class="nav-link" data-page="index">Главная</a></li>
+                <li><a href="../../courses.html" class="nav-link" data-page="courses">Курсы</a></li>
+                <li><a href="../../games.html" class="nav-link" data-page="games">Игры</a></li>
+                <li><a href="../../about.html" class="nav-link" data-page="about">Обо мне</a></li>
             </ul>
         </div>
     </nav>
@@ -317,16 +546,7 @@
                         <span class="category-emoji">👋</span>
                         <h3 class="category-title">Места знакомства</h3>
                     </div>
-                    <div class="add-place-form">
-                        <input
-                            type="text"
-                            class="add-place-input"
-                            placeholder="Добавить место..."
-                            id="meetInput"
-                            maxlength="30"
-                        >
-                        <button class="add-place-btn" onclick="addPlace('meet')">+</button>
-                    </div>
+                    <button class="add-place-btn" onclick="openAddModal('meet')">+ Добавить место</button>
                     <div class="places-list" id="meetPlaces"></div>
                 </div>
 
@@ -336,16 +556,7 @@
                         <span class="category-emoji">💬</span>
                         <h3 class="category-title">Места общения</h3>
                     </div>
-                    <div class="add-place-form">
-                        <input
-                            type="text"
-                            class="add-place-input"
-                            placeholder="Добавить место..."
-                            id="talkInput"
-                            maxlength="30"
-                        >
-                        <button class="add-place-btn" onclick="addPlace('talk')">+</button>
-                    </div>
+                    <button class="add-place-btn" onclick="openAddModal('talk')">+ Добавить место</button>
                     <div class="places-list" id="talkPlaces"></div>
                 </div>
 
@@ -355,16 +566,7 @@
                         <span class="category-emoji">🔥</span>
                         <h3 class="category-title">Места секса</h3>
                     </div>
-                    <div class="add-place-form">
-                        <input
-                            type="text"
-                            class="add-place-input"
-                            placeholder="Добавить место..."
-                            id="sexInput"
-                            maxlength="30"
-                        >
-                        <button class="add-place-btn" onclick="addPlace('sex')">+</button>
-                    </div>
+                    <button class="add-place-btn" onclick="openAddModal('sex')">+ Добавить место</button>
                     <div class="places-list" id="sexPlaces"></div>
                 </div>
             </div>
@@ -380,6 +582,8 @@
                 </div>
                 <div class="canvas-wrapper">
                     <canvas id="mapCanvas"></canvas>
+                    <!-- Информационная панель -->
+                    <div class="info-panel" id="infoPanel"></div>
                 </div>
                 <div class="legend">
                     <div class="legend-item">
@@ -399,19 +603,94 @@
         </div>
     </div>
 
+    <!-- Модальное окно добавления места -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Добавить место</h2>
+                <p class="modal-subtitle" id="modalSubtitle"></p>
+            </div>
+
+            <form id="addPlaceForm">
+                <div class="form-group">
+                    <label class="form-label">Название места *</label>
+                    <input type="text" class="form-input" id="placeName" required maxlength="30" placeholder="Например: Большая Покровская">
+                </div>
+
+                <div id="criteriaContainer"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+                    <button type="submit" class="modal-btn modal-btn-submit">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // === Критерии для каждой категории ===
+        const criteria = {
+            meet: [
+                { id: 'capacity', label: 'Ёмкость', description: 'Сколько потенциально интересных людей' },
+                { id: 'openness', label: 'Лёгкость открытия', description: 'Насколько просто начать разговор' },
+                { id: 'context', label: 'Контекст общения', description: 'Насколько понятно, о чём говорить' }
+            ],
+            talk: [
+                { id: 'atmosphere', label: 'Атмосфера', description: 'Насколько романтично/уютно' },
+                { id: 'activity', label: 'Активность', description: 'Что там можно делать' },
+                { id: 'price', label: 'Средний чек', description: 'Сколько денег уйдёт' }
+            ],
+            sex: [
+                { id: 'privacy', label: 'Приватность', description: 'Насколько не спалят' },
+                { id: 'comfort', label: 'Комфорт', description: 'Есть ли нормальные условия' },
+                { id: 'availability', label: 'Доступность', description: 'Легко ли туда попасть быстро' }
+            ]
+        };
+
         // === Данные ===
         const places = {
             meet: [
-                { name: 'Большая Покровская', x: 150, y: 100 },
-                { name: 'Парк Швейцария', x: 200, y: 150 }
+                {
+                    name: 'Большая Покровская',
+                    x: 150,
+                    y: 100,
+                    ratings: { capacity: 4, openness: 3, context: 4 },
+                    description: 'Центральная улица, много людей'
+                },
+                {
+                    name: 'Парк Швейцария',
+                    x: 200,
+                    y: 150,
+                    ratings: { capacity: 3, openness: 4, context: 5 },
+                    description: 'Спокойная атмосфера для прогулок'
+                }
             ],
             talk: [
-                { name: 'Бар Койот', x: 400, y: 200 },
-                { name: 'Бар Искры', x: 450, y: 250 }
+                {
+                    name: 'Бар Койот',
+                    x: 400,
+                    y: 200,
+                    ratings: { atmosphere: 4, activity: 3, price: 3 },
+                    description: 'Живая музыка, танцы',
+                    averageCheck: 2000
+                },
+                {
+                    name: 'Бар Искры',
+                    x: 450,
+                    y: 250,
+                    ratings: { atmosphere: 5, activity: 2, price: 4 },
+                    description: 'Уютный бар для разговоров',
+                    averageCheck: 3000
+                }
             ],
             sex: [
-                { name: 'Дома', x: 700, y: 300 }
+                {
+                    name: 'Дома',
+                    x: 700,
+                    y: 300,
+                    ratings: { privacy: 5, comfort: 5, availability: 4 },
+                    description: 'Классика'
+                }
             ]
         };
 
@@ -427,7 +706,9 @@
             sex: '#FF5722'
         };
 
+        let currentCategory = null;
         let draggedPoint = null;
+        let hoveredPoint = null;
         let canvas, ctx;
 
         // === Инициализация ===
@@ -445,21 +726,15 @@
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mouseup', handleMouseUp);
+            canvas.addEventListener('click', handleClick);
 
             // События тач
             canvas.addEventListener('touchstart', handleTouchStart);
             canvas.addEventListener('touchmove', handleTouchMove);
             canvas.addEventListener('touchend', handleTouchEnd);
 
-            // Enter для добавления
-            ['meetInput', 'talkInput', 'sexInput'].forEach(id => {
-                document.getElementById(id).addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        const category = id.replace('Input', '');
-                        addPlace(category);
-                    }
-                });
-            });
+            // Форма
+            document.getElementById('addPlaceForm').addEventListener('submit', handleFormSubmit);
         });
 
         function resizeCanvas() {
@@ -469,19 +744,109 @@
             drawMap();
         }
 
-        // === Добавление мест ===
-        function addPlace(category) {
-            const input = document.getElementById(category + 'Input');
-            const name = input.value.trim();
+        // === Модальное окно ===
+        function openAddModal(category) {
+            currentCategory = category;
+            const modal = document.getElementById('addModal');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const criteriaContainer = document.getElementById('criteriaContainer');
 
+            // Заголовки
+            const titles = {
+                meet: 'Добавить место знакомства',
+                talk: 'Добавить место общения',
+                sex: 'Добавить место секса'
+            };
+            title.textContent = titles[category];
+            subtitle.textContent = 'Оцените место по критериям от 1 до 5';
+
+            // Очистка формы
+            document.getElementById('placeName').value = '';
+            criteriaContainer.innerHTML = '';
+
+            // Генерация критериев
+            criteria[category].forEach(criterion => {
+                const ratingGroup = document.createElement('div');
+                ratingGroup.className = 'rating-group';
+
+                const label = document.createElement('label');
+                label.className = 'rating-label';
+                label.textContent = `${criterion.label} — ${criterion.description}`;
+
+                const scale = document.createElement('div');
+                scale.className = 'rating-scale';
+
+                for (let i = 1; i <= 5; i++) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'rating-btn';
+                    btn.textContent = i;
+                    btn.dataset.criterion = criterion.id;
+                    btn.dataset.value = i;
+                    btn.onclick = () => selectRating(criterion.id, i);
+                    scale.appendChild(btn);
+                }
+
+                ratingGroup.appendChild(label);
+                ratingGroup.appendChild(scale);
+                criteriaContainer.appendChild(ratingGroup);
+            });
+
+            // Дополнительные поля
+            if (category === 'meet' || category === 'talk') {
+                const descGroup = document.createElement('div');
+                descGroup.className = 'form-group';
+                descGroup.innerHTML = `
+                    <label class="form-label">${category === 'meet' ? 'Описание контекста' : 'Что можно делать'}</label>
+                    <textarea class="form-textarea" id="placeDescription" placeholder="Например: ${category === 'meet' ? 'Люди гуляют с собаками' : 'Гулять, смотреть закат'}"></textarea>
+                `;
+                criteriaContainer.appendChild(descGroup);
+            }
+
+            if (category === 'talk') {
+                const priceGroup = document.createElement('div');
+                priceGroup.className = 'form-group';
+                priceGroup.innerHTML = `
+                    <label class="form-label">Средний чек (₽)</label>
+                    <input type="number" class="form-input" id="averageCheck" placeholder="2000" min="0" step="100">
+                `;
+                criteriaContainer.appendChild(priceGroup);
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').classList.remove('show');
+        }
+
+        function selectRating(criterionId, value) {
+            const buttons = document.querySelectorAll(`[data-criterion="${criterionId}"]`);
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.value) === value);
+            });
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('placeName').value.trim();
             if (!name) return;
+
+            // Собираем оценки
+            const ratings = {};
+            criteria[currentCategory].forEach(criterion => {
+                const activeBtn = document.querySelector(`[data-criterion="${criterion.id}"].active`);
+                ratings[criterion.id] = activeBtn ? parseInt(activeBtn.dataset.value) : 3;
+            });
 
             // Случайная позиция в зависимости от категории
             let x, y;
-            if (category === 'meet') {
+            if (currentCategory === 'meet') {
                 x = 100 + Math.random() * 200;
                 y = 100 + Math.random() * 200;
-            } else if (category === 'talk') {
+            } else if (currentCategory === 'talk') {
                 x = 350 + Math.random() * 200;
                 y = 150 + Math.random() * 200;
             } else {
@@ -489,13 +854,27 @@
                 y = 200 + Math.random() * 200;
             }
 
-            places[category].push({ name, x, y });
-            input.value = '';
+            const place = { name, x, y, ratings };
 
+            // Дополнительные поля
+            const descField = document.getElementById('placeDescription');
+            if (descField) {
+                place.description = descField.value.trim();
+            }
+
+            const checkField = document.getElementById('averageCheck');
+            if (checkField) {
+                place.averageCheck = parseInt(checkField.value) || 0;
+            }
+
+            places[currentCategory].push(place);
+
+            closeModal();
             renderPlacesLists();
             drawMap();
         }
 
+        // === Работа с местами ===
         function removePlace(category, index) {
             places[category].splice(index, 1);
             if (selectedPlaces[category] && selectedPlaces[category].index === index) {
@@ -524,7 +903,14 @@
                     }
 
                     const nameSpan = document.createElement('span');
+                    nameSpan.className = 'place-name';
                     nameSpan.textContent = place.name;
+
+                    // Средний рейтинг
+                    const avgRating = Object.values(place.ratings).reduce((a, b) => a + b, 0) / Object.values(place.ratings).length;
+                    const ratingSpan = document.createElement('span');
+                    ratingSpan.className = 'place-rating';
+                    ratingSpan.textContent = '★'.repeat(Math.round(avgRating));
 
                     const removeBtn = document.createElement('button');
                     removeBtn.className = 'remove-place-btn';
@@ -535,6 +921,7 @@
                     };
 
                     item.appendChild(nameSpan);
+                    item.appendChild(ratingSpan);
                     item.appendChild(removeBtn);
                     item.onclick = () => selectPlace(category, index);
 
@@ -547,13 +934,8 @@
         function drawMap() {
             if (!ctx) return;
 
-            // Очистка
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Маршрут (если построен)
             drawRoute();
-
-            // Точки
             drawPoints();
         }
 
@@ -570,7 +952,6 @@
 
             if (route.length < 2) return;
 
-            // Линии
             ctx.strokeStyle = 'rgba(10, 132, 255, 0.6)';
             ctx.lineWidth = 3;
             ctx.setLineDash([10, 5]);
@@ -585,7 +966,6 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Стрелки
             for (let i = 1; i < route.length; i++) {
                 drawArrow(
                     route[i - 1].place.x,
@@ -599,8 +979,6 @@
         function drawArrow(x1, y1, x2, y2) {
             const angle = Math.atan2(y2 - y1, x2 - x1);
             const arrowSize = 12;
-
-            // Позиция стрелки (в середине линии)
             const mx = (x1 + x2) / 2;
             const my = (y1 + y2) / 2;
 
@@ -623,22 +1001,20 @@
             ['meet', 'talk', 'sex'].forEach(category => {
                 places[category].forEach((place, index) => {
                     const isSelected = selectedPlaces[category] && selectedPlaces[category].index === index;
-                    const radius = isSelected ? 14 : 10;
+                    const isHovered = hoveredPoint && hoveredPoint.category === category && hoveredPoint.index === index;
+                    const radius = isSelected ? 14 : (isHovered ? 12 : 10);
 
-                    // Тень
                     ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
                     ctx.shadowBlur = 8;
                     ctx.shadowOffsetX = 0;
                     ctx.shadowOffsetY = 2;
 
-                    // Круг
                     ctx.fillStyle = colors[category];
                     ctx.beginPath();
                     ctx.arc(place.x, place.y, radius, 0, Math.PI * 2);
                     ctx.fill();
 
-                    // Обводка для выбранных
-                    if (isSelected) {
+                    if (isSelected || isHovered) {
                         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
                         ctx.lineWidth = 3;
                         ctx.stroke();
@@ -647,7 +1023,6 @@
                     ctx.shadowColor = 'transparent';
                     ctx.shadowBlur = 0;
 
-                    // Текст
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
                     ctx.font = '600 13px -apple-system, BlinkMacSystemFont, sans-serif';
                     ctx.textAlign = 'center';
@@ -670,6 +1045,43 @@
             return null;
         }
 
+        function showInfoPanel(point) {
+            const panel = document.getElementById('infoPanel');
+            const place = point.place;
+
+            let html = `<div class="info-title">${place.name}</div><div class="info-criteria">`;
+
+            // Критерии
+            const categoryCriteria = criteria[point.category];
+            categoryCriteria.forEach(criterion => {
+                const value = place.ratings[criterion.id] || 0;
+                const stars = '★'.repeat(value) + '☆'.repeat(5 - value);
+                html += `
+                    <div class="info-criterion">
+                        <span class="info-criterion-name">${criterion.label}</span>
+                        <span class="info-criterion-value info-stars">${stars}</span>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+
+            // Доп поля
+            if (place.averageCheck) {
+                html += `<div class="info-description">Средний чек: ${place.averageCheck} ₽</div>`;
+            }
+            if (place.description) {
+                html += `<div class="info-description">${place.description}</div>`;
+            }
+
+            panel.innerHTML = html;
+            panel.classList.add('show');
+        }
+
+        function hideInfoPanel() {
+            document.getElementById('infoPanel').classList.remove('show');
+        }
+
         function handleMouseDown(e) {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -679,23 +1091,44 @@
         }
 
         function handleMouseMove(e) {
-            if (!draggedPoint) return;
-
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
-            draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
-
-            drawMap();
+            if (draggedPoint) {
+                draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
+                draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
+                drawMap();
+            } else {
+                const point = getPointAt(x, y);
+                if (point) {
+                    canvas.style.cursor = 'pointer';
+                    hoveredPoint = point;
+                    showInfoPanel(point);
+                } else {
+                    canvas.style.cursor = 'grab';
+                    hoveredPoint = null;
+                    hideInfoPanel();
+                }
+                drawMap();
+            }
         }
 
         function handleMouseUp() {
             draggedPoint = null;
         }
 
-        // Тач-события
+        function handleClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const point = getPointAt(x, y);
+            if (point && !draggedPoint) {
+                selectPlace(point.category, point.index);
+            }
+        }
+
         function handleTouchStart(e) {
             e.preventDefault();
             const rect = canvas.getBoundingClientRect();
@@ -704,6 +1137,9 @@
             const y = touch.clientY - rect.top;
 
             draggedPoint = getPointAt(x, y);
+            if (draggedPoint) {
+                showInfoPanel(draggedPoint);
+            }
         }
 
         function handleTouchMove(e) {
@@ -728,8 +1164,6 @@
 
         // === Управление маршрутом ===
         function buildRoute() {
-            // Маршрут автоматически строится при выборе мест
-            // Эта кнопка просто перерисовывает
             drawMap();
         }
 
@@ -741,13 +1175,10 @@
             drawMap();
         }
 
-        // === Навигация ===
-        const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
-        const links = document.querySelectorAll('.nav-link');
-        links.forEach(link => {
-            const page = link.getAttribute('data-page');
-            if (page === currentPage) {
-                link.classList.add('active');
+        // Закрытие модалки по клику вне
+        document.getElementById('addModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addModal') {
+                closeModal();
             }
         });
     </script>
