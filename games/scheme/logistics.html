@@ -953,7 +953,16 @@
 
         function togglePlaceSelection(categoryId, placeIdx) {
             const category = categories.find(c => c.id === categoryId);
-            category.places[placeIdx].selected = !category.places[placeIdx].selected;
+            const place = category.places[placeIdx];
+            place.selected = !place.selected;
+
+            // Если место скрыли, удаляем все его связи
+            if (!place.selected) {
+                connections = connections.filter(conn =>
+                    conn.from !== place && conn.to !== place
+                );
+            }
+
             saveData();
             renderCategories();
             drawMap();
