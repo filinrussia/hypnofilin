@@ -649,14 +649,8 @@
         const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-
-            ctx.scale(dpr, dpr);
-
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             drawMap();
         }
 
@@ -832,11 +826,10 @@
                 category.places[editingPlace].ratings = ratings;
             } else {
                 // Добавляем новое место
-                const rect = canvas.getBoundingClientRect();
                 const place = {
                     name,
-                    x: 100 + Math.random() * (rect.width - 200),
-                    y: 100 + Math.random() * (rect.height - 200),
+                    x: 100 + Math.random() * (canvas.width - 200),
+                    y: 100 + Math.random() * (canvas.height - 200),
                     ratings,
                     selected: false
                 };
@@ -868,8 +861,7 @@
 
         // Карта
         function drawMap() {
-            const rect = canvas.getBoundingClientRect();
-            ctx.clearRect(0, 0, rect.width, rect.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Рисуем маршрут
             if (route.length > 1) {
@@ -896,14 +888,22 @@
                 category.places.forEach(place => {
                     if (!place.selected) return; // Показываем только выбранные
 
+                    // Тень для лучшей видимости
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                    ctx.shadowBlur = 8;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 2;
+
                     ctx.fillStyle = categoryColor;
                     ctx.beginPath();
-                    ctx.arc(place.x, place.y, 10, 0, Math.PI * 2);
+                    ctx.arc(place.x, place.y, 15, 0, Math.PI * 2);
                     ctx.fill();
 
+                    ctx.shadowBlur = 0;
+
                     ctx.fillStyle = 'white';
-                    ctx.font = '10px -apple-system';
-                    ctx.fillText(place.name, place.x + 15, place.y + 5);
+                    ctx.font = 'bold 12px -apple-system';
+                    ctx.fillText(place.name, place.x + 20, place.y + 5);
                 });
             });
 
@@ -927,7 +927,7 @@
                     if (!place.selected) continue; // Только выбранные места
                     const dx = x - place.x;
                     const dy = y - place.y;
-                    if (dx * dx + dy * dy < 100) {
+                    if (dx * dx + dy * dy < 225) { // 15 * 15 = 225
                         return { category, place };
                     }
                 }
