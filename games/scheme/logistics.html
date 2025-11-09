@@ -76,6 +76,27 @@
             touch-action: none;
         }
 
+        /* Подсказка */
+        .map-hint {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .map-hint.hidden {
+            opacity: 0;
+        }
+
         /* Кнопка очистки маршрута */
         .clear-route-btn {
             position: fixed;
@@ -496,6 +517,9 @@
         </div>
     </div>
 
+    <!-- Подсказка -->
+    <div class="map-hint" id="mapHint">Нажми на точку чтобы добавить в маршрут</div>
+
     <!-- Кнопка очистки маршрута -->
     <button class="clear-route-btn" id="clearRouteBtn" onclick="clearRoute()">Очистить маршрут</button>
 
@@ -912,6 +936,10 @@
 
         // Взаимодействие с картой
         let draggedPlace = null;
+        let touchStartTime = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isDragging = false;
 
         canvas.addEventListener('touchstart', handleTouchStart);
         canvas.addEventListener('touchmove', handleTouchMove);
@@ -920,6 +948,12 @@
         canvas.addEventListener('mousedown', handleMouseDown);
         canvas.addEventListener('mousemove', handleMouseMove);
         canvas.addEventListener('mouseup', handleMouseUp);
+
+        // Скрыть подсказку через 5 секунд
+        setTimeout(() => {
+            const hint = document.getElementById('mapHint');
+            if (hint) hint.classList.add('hidden');
+        }, 5000);
 
         function getPlaceAt(x, y) {
             for (let category of categories) {
@@ -941,6 +975,11 @@
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
 
+            touchStartTime = Date.now();
+            touchStartX = x;
+            touchStartY = y;
+            isDragging = false;
+
             const result = getPlaceAt(x, y);
             if (result) {
                 draggedPlace = result.place;
@@ -949,19 +988,27 @@
 
         function handleTouchMove(e) {
             if (draggedPlace) {
-                e.preventDefault();
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.touches[0];
-                draggedPlace.x = touch.clientX - rect.left;
-                draggedPlace.y = touch.clientY - rect.top;
-                drawMap();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+
+                // Если пользователь подвинул палец больше чем на 10px - это драг
+                const dx = x - touchStartX;
+                const dy = y - touchStartY;
+                if (dx * dx + dy * dy > 100) {
+                    isDragging = true;
+                    e.preventDefault();
+                    draggedPlace.x = x;
+                    draggedPlace.y = y;
+                    drawMap();
+                }
             }
         }
 
         function handleTouchEnd(e) {
-            if (draggedPlace) {
-                draggedPlace = null;
-            } else if (e.changedTouches.length > 0) {
+            if (draggedPlace && !isDragging) {
+                // Короткий тап - добавляем в маршрут
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.changedTouches[0];
                 const x = touch.clientX - rect.left;
@@ -970,14 +1017,23 @@
                 const result = getPlaceAt(x, y);
                 if (result) {
                     addToRoute(result);
+                    // Скрыть подсказку после первого использования
+                    const hint = document.getElementById('mapHint');
+                    if (hint) hint.classList.add('hidden');
                 }
             }
+            draggedPlace = null;
+            isDragging = false;
         }
 
         function handleMouseDown(e) {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
+
+            touchStartX = x;
+            touchStartY = y;
+            isDragging = false;
 
             const result = getPlaceAt(x, y);
             if (result) {
@@ -988,16 +1044,23 @@
         function handleMouseMove(e) {
             if (draggedPlace) {
                 const rect = canvas.getBoundingClientRect();
-                draggedPlace.x = e.clientX - rect.left;
-                draggedPlace.y = e.clientY - rect.top;
-                drawMap();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const dx = x - touchStartX;
+                const dy = y - touchStartY;
+                if (dx * dx + dy * dy > 25) {
+                    isDragging = true;
+                    draggedPlace.x = x;
+                    draggedPlace.y = y;
+                    drawMap();
+                }
             }
         }
 
         function handleMouseUp(e) {
-            if (draggedPlace) {
-                draggedPlace = null;
-            } else {
+            if (draggedPlace && !isDragging) {
+                // Клик без драга - добавляем в маршрут
                 const rect = canvas.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -1005,8 +1068,12 @@
                 const result = getPlaceAt(x, y);
                 if (result) {
                     addToRoute(result);
+                    const hint = document.getElementById('mapHint');
+                    if (hint) hint.classList.add('hidden');
                 }
             }
+            draggedPlace = null;
+            isDragging = false;
         }
 
         function addToRoute(result) {
