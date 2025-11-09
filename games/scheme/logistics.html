@@ -570,6 +570,11 @@
 
     <!-- Переключатель вкладок -->
     <div class="tab-switcher">
+        <div class="tab-btn" id="syncBtn" onclick="forceSyncFromCloud()" title="Синхронизация">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+            </svg>
+        </div>
         <div class="tab-btn active" data-tab="map" onclick="switchTab('map')">
             <svg viewBox="0 0 24 24">
                 <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
@@ -865,6 +870,72 @@
             }
         }
 
+        // Принудительная синхронизация из облака
+        function forceSyncFromCloud() {
+            if (!hasCloudStorage) {
+                alert('❌ Облачное хранилище недоступно.\n\nОткройте приложение через Telegram (не браузер) для синхронизации между устройствами.');
+                return;
+            }
+
+            const syncBtn = document.getElementById('syncBtn');
+            syncBtn.style.opacity = '0.5';
+
+            window.Telegram.WebApp.CloudStorage.getItem('logistics_data', (error, result) => {
+                syncBtn.style.opacity = '1';
+
+                if (error) {
+                    alert('❌ Ошибка загрузки из облака: ' + error);
+                } else if (result) {
+                    // Очищаем localStorage и загружаем из облака
+                    localStorage.removeItem('logistics_data');
+
+                    try {
+                        const data = JSON.parse(result);
+                        categories = data.categories || categories;
+                        route = data.route || [];
+
+                        // Восстанавливаем connections
+                        if (data.connections) {
+                            connections = data.connections.map(conn => {
+                                const fromPlace = categories[conn.fromCat]?.places[conn.fromPlace];
+                                const toPlace = categories[conn.toCat]?.places[conn.toPlace];
+                                if (fromPlace && toPlace) {
+                                    return { from: fromPlace, to: toPlace };
+                                }
+                                return null;
+                            }).filter(c => c !== null);
+                        }
+
+                        // Сохраняем в localStorage и перерисовываем
+                        localStorage.setItem('logistics_data', result);
+                        renderCategories();
+                        drawMap();
+
+                        alert('✅ Данные синхронизированы из облака');
+                    } catch (e) {
+                        alert('❌ Ошибка обработки данных: ' + e.message);
+                    }
+                } else {
+                    alert('⚠️ В облаке нет данных.\n\nТекущие данные на этом устройстве будут сохранены в облако.');
+                    saveData();
+                }
+            });
+        }
+
+        // Обновление индикатора синхронизации
+        function updateSyncIndicator() {
+            const syncBtn = document.getElementById('syncBtn');
+            if (syncBtn) {
+                if (hasCloudStorage) {
+                    syncBtn.style.color = '#4CAF50'; // Зеленый = облако работает
+                    syncBtn.title = 'Синхронизация: облако доступно (нажмите для обновления)';
+                } else {
+                    syncBtn.style.color = 'rgba(255, 255, 255, 0.3)'; // Серый = облако недоступно
+                    syncBtn.title = 'Синхронизация недоступна (откройте через Telegram)';
+                }
+            }
+        }
+
         // Экспорт данных в файл
         function exportData() {
             const data = {
@@ -914,6 +985,7 @@
 
         // Загружаем данные при старте
         loadData();
+        updateSyncIndicator();
 
         // Canvas
         const canvas = document.getElementById('mapCanvas');
