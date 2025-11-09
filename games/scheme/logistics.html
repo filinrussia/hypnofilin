@@ -717,6 +717,9 @@
             ]
         };
 
+        // Флаг загрузки данных
+        let dataLoaded = false;
+
         // Данные
         let categories = [
             {
@@ -868,6 +871,9 @@
                     console.log('Нет сохраненных данных, используем дефолтные');
                 }
 
+                // Помечаем что данные загружены
+                dataLoaded = true;
+
                 // Рендерим UI после загрузки данных
                 renderCategories();
                 drawMap();
@@ -958,7 +964,10 @@
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            drawMap();
+            // Перерисовываем только если данные уже загружены
+            if (dataLoaded) {
+                drawMap();
+            }
         }
 
         window.addEventListener('resize', resizeCanvas);
@@ -1243,6 +1252,9 @@
 
         // Карта
         function drawMap() {
+            // Не рисуем пока данные не загружены
+            if (!dataLoaded) return;
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Рисуем связи (connections)
