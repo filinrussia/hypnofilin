@@ -653,8 +653,6 @@
                 const tg = window.Telegram.WebApp;
                 tg.ready();
                 tg.expand();
-                // Дополнительные настройки для Telegram
-                tg.enableClosingConfirmation();
             }
         } catch (e) {
             console.log('Telegram WebApp не доступен:', e);
@@ -754,7 +752,10 @@
         let linkingMode = false;
         let linkingFromPlace = null;
 
-        // Функции для работы с localStorage
+        // Проверка доступности Telegram Cloud Storage
+        const hasCloudStorage = window.Telegram?.WebApp?.CloudStorage;
+
+        // Функции для работы с хранилищем
         function saveData() {
             // Сохраняем connections как индексы
             const connectionsData = connections.map(conn => {
@@ -770,52 +771,91 @@
                 route: route,
                 connections: connectionsData
             };
-            localStorage.setItem('logistics_data', JSON.stringify(data));
+
+            const jsonData = JSON.stringify(data);
+
+            // Всегда сохраняем в localStorage
+            localStorage.setItem('logistics_data', jsonData);
+
+            // Если доступен CloudStorage - сохраняем и туда
+            if (hasCloudStorage) {
+                window.Telegram.WebApp.CloudStorage.setItem('logistics_data', jsonData, (error) => {
+                    if (error) {
+                        console.error('Ошибка синхронизации с облаком:', error);
+                    }
+                });
+            }
         }
 
         function loadData() {
-            const saved = localStorage.getItem('logistics_data');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    console.log('Загружены данные:', data);
-                    if (data.categories) categories = data.categories;
-                    if (data.route) {
-                        // Проверяем формат route - если старый формат (массив {place}), просто очищаем
-                        if (data.route.length > 0 && data.route[0].place !== undefined) {
-                            // Старый формат - очищаем маршруты
-                            console.log('Обнаружен старый формат маршрута, очищаем');
-                            route = [];
-                        } else {
-                            // Новый формат или пустой массив
-                            route = data.route;
-                        }
-                    }
-                    // Восстанавливаем connections из индексов
-                    if (data.connections) {
-                        connections = data.connections.map(conn => {
-                            const fromPlace = categories[conn.fromCat]?.places[conn.fromPlace];
-                            const toPlace = categories[conn.toCat]?.places[conn.toPlace];
-                            if (fromPlace && toPlace) {
-                                return { from: fromPlace, to: toPlace };
+            function processData(saved) {
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        console.log('Загружены данные:', data);
+                        if (data.categories) categories = data.categories;
+                        if (data.route) {
+                            // Проверяем формат route - если старый формат (массив {place}), просто очищаем
+                            if (data.route.length > 0 && data.route[0].place !== undefined) {
+                                // Старый формат - очищаем маршруты
+                                console.log('Обнаружен старый формат маршрута, очищаем');
+                                route = [];
+                            } else {
+                                // Новый формат или пустой массив
+                                route = data.route;
                             }
-                            return null;
-                        }).filter(c => c !== null);
-                    }
-                    console.log('Категорий:', categories.length, 'Маршрут:', route.length, 'Связей:', connections.length);
-                    // Проверим сколько мест выбрано
-                    let selectedCount = 0;
-                    categories.forEach(cat => {
-                        cat.places.forEach(p => {
-                            if (p.selected) selectedCount++;
+                        }
+                        // Восстанавливаем connections из индексов
+                        if (data.connections) {
+                            connections = data.connections.map(conn => {
+                                const fromPlace = categories[conn.fromCat]?.places[conn.fromPlace];
+                                const toPlace = categories[conn.toCat]?.places[conn.toPlace];
+                                if (fromPlace && toPlace) {
+                                    return { from: fromPlace, to: toPlace };
+                                }
+                                return null;
+                            }).filter(c => c !== null);
+                        }
+                        console.log('Категорий:', categories.length, 'Маршрут:', route.length, 'Связей:', connections.length);
+                        // Проверим сколько мест выбрано
+                        let selectedCount = 0;
+                        categories.forEach(cat => {
+                            cat.places.forEach(p => {
+                                if (p.selected) selectedCount++;
+                            });
                         });
-                    });
-                    console.log('Выбрано мест:', selectedCount);
-                } catch (e) {
-                    console.error('Ошибка загрузки данных:', e);
+                        console.log('Выбрано мест:', selectedCount);
+                        renderCategories();
+                        drawMap();
+                    } catch (e) {
+                        console.error('Ошибка загрузки данных:', e);
+                    }
+                } else {
+                    console.log('Нет сохраненных данных, используем дефолтные');
                 }
+            }
+
+            // Если CloudStorage доступен - загружаем из него
+            if (hasCloudStorage) {
+                window.Telegram.WebApp.CloudStorage.getItem('logistics_data', (error, cloudData) => {
+                    if (error) {
+                        console.error('Ошибка загрузки из облака:', error);
+                        // При ошибке загружаем из localStorage
+                        const saved = localStorage.getItem('logistics_data');
+                        processData(saved);
+                    } else if (cloudData) {
+                        console.log('Данные загружены из облака');
+                        processData(cloudData);
+                    } else {
+                        // Нет данных в облаке, загружаем из localStorage
+                        const saved = localStorage.getItem('logistics_data');
+                        processData(saved);
+                    }
+                });
             } else {
-                console.log('Нет сохраненных данных, используем дефолтные');
+                // CloudStorage недоступен, загружаем из localStorage
+                const saved = localStorage.getItem('logistics_data');
+                processData(saved);
             }
         }
 
@@ -881,9 +921,6 @@
 
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
-
-        // Отрисовываем загруженные данные
-        renderCategories();
 
         // Переключение вкладок
         function switchTab(tab) {
