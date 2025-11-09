@@ -34,7 +34,7 @@
             width: 44px;
             height: 44px;
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: none;
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -45,7 +45,6 @@
 
         .tab-btn.active {
             background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
-            border-color: #0a84ff;
         }
 
         .tab-btn svg {
@@ -113,6 +112,23 @@
             padding: 12px 0;
             cursor: pointer;
             user-select: none;
+        }
+
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .category-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: rgba(255, 255, 255, 0.8);
         }
 
         .category-name {
@@ -485,7 +501,6 @@
     <div class="modal" id="categoryModal">
         <div class="modal-content">
             <div class="modal-title">Новая категория</div>
-            <div class="modal-subtitle">Создайте свою категорию мест</div>
             <form id="categoryForm" onsubmit="handleCategorySubmit(event)">
                 <div class="form-group">
                     <label class="form-label">Название категории</label>
@@ -500,8 +515,8 @@
     </div>
 
     <script>
-        // Цвета для оценок
-        const ratingColors = ['#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#FF5722'];
+        // Цвета для оценок (от красного к зеленому)
+        const ratingColors = ['#FF5722', '#FF9800', '#FFC107', '#8BC34A', '#4CAF50'];
 
         // Критерии для стандартных категорий
         const standardCriteria = {
@@ -524,13 +539,59 @@
 
         // Данные
         let categories = [
-            { id: 'cat_1', name: 'Знакомства', places: [] },
-            { id: 'cat_2', name: 'Свидания', places: [] },
-            { id: 'cat_3', name: 'Секс', places: [] }
+            {
+                id: 'cat_1',
+                name: 'Знакомства',
+                places: [
+                    {
+                        name: 'Большая Покровская',
+                        x: 150,
+                        y: 100,
+                        ratings: { capacity: 2, openness: 3, context: 2 }
+                    },
+                    {
+                        name: 'Парк Швейцария',
+                        x: 200,
+                        y: 150,
+                        ratings: { capacity: 3, openness: 2, context: 1 }
+                    }
+                ]
+            },
+            {
+                id: 'cat_2',
+                name: 'Свидания',
+                places: [
+                    {
+                        name: 'Бар Койот',
+                        x: 400,
+                        y: 200,
+                        ratings: { atmosphere: 2, activity: 3, price: 3 }
+                    },
+                    {
+                        name: 'Бар Искры',
+                        x: 450,
+                        y: 250,
+                        ratings: { atmosphere: 1, activity: 4, price: 2 }
+                    }
+                ]
+            },
+            {
+                id: 'cat_3',
+                name: 'Секс',
+                places: [
+                    {
+                        name: 'Дома',
+                        x: 700,
+                        y: 300,
+                        ratings: { privacy: 1, comfort: 1, availability: 2 }
+                    }
+                ]
+            }
         ];
 
         let route = [];
         let currentCategory = null;
+        let editingPlace = null;
 
         // Canvas
         const canvas = document.getElementById('mapCanvas');
@@ -555,12 +616,23 @@
             });
         }
 
+        // Иконки категорий
+        function getCategoryIcon(categoryName) {
+            const icons = {
+                'Знакомства': '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>',
+                'Свидания': '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+                'Секс': '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="8" rx="7" ry="4" fill="currentColor"/><path d="M12 10c-3.866 0-7 1.343-7 3v2c0 1.657 3.134 3 7 3s7-1.343 7-3v-2c0-1.657-3.134-3-7-3z" fill="currentColor"/></svg>'
+            };
+            return icons[categoryName] || '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>';
+        }
+
         // Рендер категорий
         function renderCategories() {
             const container = document.getElementById('categoriesContainer');
             container.innerHTML = categories.map(cat => `
                 <div class="category-item ${cat.places.length > 0 ? 'open' : ''}" id="${cat.id}">
                     <div class="category-header" onclick="toggleCategory('${cat.id}')">
+                        <div class="category-icon">${getCategoryIcon(cat.name)}</div>
                         <div class="category-name">${cat.name}</div>
                         <svg class="category-arrow" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)">
                             <path d="M7 10l5 5 5-5z"/>
@@ -572,7 +644,7 @@
                             ${cat.places.map((place, idx) => {
                                 const avgRating = Math.round(Object.values(place.ratings).reduce((a, b) => a + b, 0) / Object.values(place.ratings).length);
                                 return `
-                                    <div class="place-card" onclick="showPlaceInfo('${cat.id}', ${idx})">
+                                    <div class="place-card" onclick="editPlace('${cat.id}', ${idx})">
                                         <div class="place-name">${place.name}</div>
                                         <div class="place-rating">
                                             ${Array(avgRating).fill(0).map((_, i) =>
@@ -593,13 +665,13 @@
         }
 
         // Модальные окна
-        function openPlaceModal(categoryId) {
+        function openPlaceModal(categoryId, placeIdx = null) {
             currentCategory = categoryId;
+            editingPlace = placeIdx;
             const category = categories.find(c => c.id === categoryId);
 
-            document.getElementById('placeModalTitle').textContent = `Добавить место: ${category.name}`;
-            document.getElementById('placeModalSubtitle').textContent = 'Оцените место по критериям';
-            document.getElementById('placeName').value = '';
+            document.getElementById('placeModalTitle').textContent = category.name;
+            document.getElementById('placeModalSubtitle').style.display = 'none';
 
             const criteriaContainer = document.getElementById('criteriaContainer');
             const criteria = standardCriteria[category.name] || [
@@ -608,24 +680,38 @@
                 { id: 'comfort', label: 'Комфорт', description: 'Удобство и условия' }
             ];
 
-            criteriaContainer.innerHTML = criteria.map(criterion => `
-                <div class="criterion-group">
-                    <label class="criterion-label">${criterion.label}</label>
-                    <div class="criterion-description">${criterion.description}</div>
-                    <div class="color-checkboxes">
-                        ${ratingColors.map((color, idx) => `
-                            <div class="color-checkbox"
-                                 style="background: ${color};"
-                                 data-criterion="${criterion.id}"
-                                 data-value="${idx + 1}"
-                                 onclick="selectRating('${criterion.id}', ${idx + 1})">
-                            </div>
-                        `).join('')}
+            // Если редактируем место
+            if (placeIdx !== null) {
+                const place = category.places[placeIdx];
+                document.getElementById('placeName').value = place.name;
+            } else {
+                document.getElementById('placeName').value = '';
+            }
+
+            criteriaContainer.innerHTML = criteria.map(criterion => {
+                const currentValue = (placeIdx !== null) ? category.places[placeIdx].ratings[criterion.id] : null;
+                return `
+                    <div class="criterion-group">
+                        <label class="criterion-label">${criterion.label}</label>
+                        <div class="color-checkboxes">
+                            ${ratingColors.map((color, idx) => `
+                                <div class="color-checkbox ${currentValue === (idx + 1) ? 'selected' : ''}"
+                                     style="background: ${color};"
+                                     data-criterion="${criterion.id}"
+                                     data-value="${idx + 1}"
+                                     onclick="selectRating('${criterion.id}', ${idx + 1})">
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             document.getElementById('placeModal').classList.add('show');
+        }
+
+        function editPlace(categoryId, placeIdx) {
+            openPlaceModal(categoryId, placeIdx);
         }
 
         function closePlaceModal() {
@@ -655,14 +741,21 @@
                 ratings[criterion.id] = selected ? parseInt(selected.dataset.value) : 3;
             });
 
-            const place = {
-                name,
-                x: 100 + Math.random() * (canvas.width - 200),
-                y: 100 + Math.random() * (canvas.height - 200),
-                ratings
-            };
+            if (editingPlace !== null) {
+                // Редактируем существующее место
+                category.places[editingPlace].name = name;
+                category.places[editingPlace].ratings = ratings;
+            } else {
+                // Добавляем новое место
+                const place = {
+                    name,
+                    x: 100 + Math.random() * (canvas.width - 200),
+                    y: 100 + Math.random() * (canvas.height - 200),
+                    ratings
+                };
+                category.places.push(place);
+            }
 
-            category.places.push(place);
             closePlaceModal();
             renderCategories();
             drawMap();
