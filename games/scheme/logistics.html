@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0d0d10">
     <meta name="color-scheme" content="dark">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="telegram-web-app-expand" content="true">
     <title>Логистика</title>
     <style>
         * {
@@ -143,29 +145,30 @@
             bottom: max(24px, env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
-            display: none;
+            display: flex;
             gap: 12px;
             z-index: 100;
         }
 
-        .action-menu.show {
-            display: flex;
-        }
-
         .action-btn {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.5);
-            background: transparent;
-            transition: transform 0.2s ease;
+            color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn.active {
+            color: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .action-btn:active {
@@ -650,6 +653,12 @@
     </div>
 
     <script>
+        // Telegram WebApp expansion
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+
         // Цвета для оценок (от красного к зеленому)
         const ratingColors = ['#FF5722', '#FF9800', '#FFC107', '#8BC34A', '#4CAF50'];
 
@@ -1473,14 +1482,20 @@
         // Показать меню действий
         function showActionMenu(result) {
             selectedPlaceForMenu = result;
-            document.getElementById('actionMenu').classList.add('show');
+            // Активируем кнопки
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.classList.add('active');
+            });
             drawMap(); // Перерисовываем карту для подсветки
         }
 
         // Скрыть меню действий
         function hideActionMenu() {
             selectedPlaceForMenu = null;
-            document.getElementById('actionMenu').classList.remove('show');
+            // Деактивируем кнопки
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
             drawMap(); // Перерисовываем карту чтобы убрать подсветку
         }
 
@@ -1502,11 +1517,13 @@
         }
 
         function handleActionLink() {
+            if (!selectedPlaceForMenu) return;
             // Временная заглушка
             hideActionMenu();
         }
 
         function handleActionDelete() {
+            if (!selectedPlaceForMenu) return;
             // Временная заглушка
             hideActionMenu();
         }
