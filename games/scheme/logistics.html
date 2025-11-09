@@ -816,7 +816,17 @@
                     try {
                         const data = JSON.parse(saved);
                         console.log('Загружены данные:', data);
-                        if (data.categories) categories = data.categories;
+                        if (data.categories) {
+                            categories = data.categories;
+                            // Проверяем, что у всех мест есть свойство selected
+                            categories.forEach(cat => {
+                                cat.places.forEach(place => {
+                                    if (place.selected === undefined) {
+                                        place.selected = true;
+                                    }
+                                });
+                            });
+                        }
                         if (data.route) {
                             // Проверяем формат route - если старый формат (массив {place}), просто очищаем
                             if (data.route.length > 0 && data.route[0].place !== undefined) {
@@ -938,9 +948,6 @@
             event.target.value = '';
         }
 
-        // Загружаем данные при старте
-        loadData();
-
         // Canvas
         const canvas = document.getElementById('mapCanvas');
         const ctx = canvas.getContext('2d');
@@ -953,6 +960,9 @@
 
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
+
+        // Загружаем данные при старте (ПОСЛЕ инициализации canvas)
+        loadData();
 
         // Переключение вкладок
         function switchTab(tab) {
