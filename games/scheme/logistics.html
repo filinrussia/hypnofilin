@@ -1165,7 +1165,7 @@
                 const toCoords = getAbsoluteCoords(conn.to);
 
                 // Пунктирная серая линия
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.strokeStyle = '#888888';
                 ctx.lineWidth = 4;
                 ctx.setLineDash([10, 10]);
                 ctx.beginPath();
@@ -1180,7 +1180,7 @@
                 const angle = Math.atan2(toCoords.y - fromCoords.y, toCoords.x - fromCoords.x);
                 const headlen = 15;
 
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fillStyle = '#888888';
                 ctx.beginPath();
                 ctx.moveTo(midX, midY);
                 ctx.lineTo(
