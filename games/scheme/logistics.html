@@ -260,9 +260,9 @@
         }
 
         .place-checkbox {
-            width: 14px;
-            height: 14px;
-            border-radius: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
             background: rgba(255, 255, 255, 0.3);
             transition: background 0.2s ease;
             flex-shrink: 0;
@@ -531,18 +531,7 @@
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
             </svg>
         </div>
-        <div class="tab-btn" onclick="exportData()">
-            <svg viewBox="0 0 24 24">
-                <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
-            </svg>
-        </div>
-        <div class="tab-btn" onclick="document.getElementById('importFileInput').click();">
-            <svg viewBox="0 0 24 24">
-                <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6-.67l2.59 2.58L17 12.5l-5-5-5 5 1.41 1.41L11 11.33V21h2z"/>
-            </svg>
-        </div>
     </div>
-    <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importData(event)">
 
     <!-- Переключатель вкладок -->
     <div class="tab-switcher">
@@ -656,15 +645,15 @@
                 places: [
                     {
                         name: 'Большая Покровская',
-                        x: 150,
-                        y: 100,
+                        xPercent: 0.15,
+                        yPercent: 0.25,
                         ratings: { capacity: 2, openness: 3, activities: 'Гуляют, сидят в кафе' },
                         selected: true
                     },
                     {
                         name: 'Парк Швейцария',
-                        x: 200,
-                        y: 150,
+                        xPercent: 0.22,
+                        yPercent: 0.4,
                         ratings: { capacity: 3, openness: 2, activities: 'Спорт, прогулки с собаками' },
                         selected: false
                     }
@@ -676,15 +665,15 @@
                 places: [
                     {
                         name: 'Бар Койот',
-                        x: 400,
-                        y: 200,
+                        xPercent: 0.45,
+                        yPercent: 0.3,
                         ratings: { atmosphere: 2, activities: 'Танцы, коктейли, караоке', price: 3 },
                         selected: true
                     },
                     {
                         name: 'Бар Искры',
-                        x: 450,
-                        y: 250,
+                        xPercent: 0.55,
+                        yPercent: 0.5,
                         ratings: { atmosphere: 1, activities: 'Концерты, бар', price: 2 },
                         selected: false
                     }
@@ -696,8 +685,8 @@
                 places: [
                     {
                         name: 'Дома',
-                        x: 700,
-                        y: 300,
+                        xPercent: 0.75,
+                        yPercent: 0.4,
                         ratings: { privacy: 1, comfort: 1, pretext: 'Посмотреть фильм' },
                         selected: true
                     }
