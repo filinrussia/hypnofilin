@@ -153,34 +153,23 @@
         }
 
         .action-btn {
-            width: 56px;
-            height: 56px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
-            color: white;
+            color: rgba(255, 255, 255, 0.5);
+            background: transparent;
             transition: transform 0.2s ease;
         }
 
         .action-btn:active {
             transform: scale(0.9);
-        }
-
-        .action-btn.info {
-            background: #0a84ff;
-        }
-
-        .action-btn.link {
-            background: #30d158;
-        }
-
-        .action-btn.delete {
-            background: #ff453a;
         }
 
         /* Панель мест */
@@ -601,9 +590,9 @@
 
     <!-- Меню действий -->
     <div class="action-menu" id="actionMenu">
-        <button class="action-btn info" onclick="handleActionInfo()">i</button>
-        <button class="action-btn link" onclick="handleActionLink()">+</button>
-        <button class="action-btn delete" onclick="handleActionDelete()">×</button>
+        <button class="action-btn" onclick="handleActionInfo()">i</button>
+        <button class="action-btn" onclick="handleActionLink()">+</button>
+        <button class="action-btn" onclick="handleActionDelete()">×</button>
     </div>
 
     <!-- Экран карты -->
