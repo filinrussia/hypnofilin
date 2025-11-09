@@ -1,0 +1,22 @@
+# Claude Development Branch Configuration
+
+MAIN DEVELOPMENT BRANCH: claude/dev-011CUwxydaYtdhLkuyqzbD5D
+
+## Instructions for Claude in all sessions:
+- Always checkout and work in: claude/dev-011CUwxydaYtdhLkuyqzbD5D
+- All changes should be committed and pushed to this branch
+- Never create new branches unless explicitly requested
+- This is the single source of truth for all development work
+
+## Branch Structure:
+- claude/dev-011CUwxydaYtdhLkuyqzbD5D - Main development branch (USE THIS)
+- main - Production branch (requires manual merge via PR)
+
+## Files in this branch:
+- games/scheme/logistics.html - Interactive logistics map with rating criteria
+- games/scheme/index.html - Interactive seduction map guide
+
+## Workflow:
+1. Claude works in claude/dev-011CUwxydaYtdhLkuyqzbD5D
+2. User manually creates PR to merge to main when ready
+3. GitHub Pages publishes from main branch
