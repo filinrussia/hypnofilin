@@ -765,20 +765,33 @@
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
+                    console.log('Загружены данные:', data);
                     if (data.categories) categories = data.categories;
                     if (data.route) {
                         // Проверяем формат route - если старый формат (массив {place}), просто очищаем
                         if (data.route.length > 0 && data.route[0].place !== undefined) {
                             // Старый формат - очищаем маршруты
+                            console.log('Обнаружен старый формат маршрута, очищаем');
                             route = [];
                         } else {
                             // Новый формат или пустой массив
                             route = data.route;
                         }
                     }
+                    console.log('Категорий:', categories.length, 'Маршрут:', route.length);
+                    // Проверим сколько мест выбрано
+                    let selectedCount = 0;
+                    categories.forEach(cat => {
+                        cat.places.forEach(p => {
+                            if (p.selected) selectedCount++;
+                        });
+                    });
+                    console.log('Выбрано мест:', selectedCount);
                 } catch (e) {
                     console.error('Ошибка загрузки данных:', e);
                 }
+            } else {
+                console.log('Нет сохраненных данных, используем дефолтные');
             }
         }
 
