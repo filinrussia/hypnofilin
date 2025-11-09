@@ -750,6 +750,7 @@
         let route = [];
         let currentCategory = null;
         let editingPlace = null;
+        let selectedPlaceForMenu = null;
 
         // Функции для работы с localStorage
         function saveData() {
@@ -1220,7 +1221,6 @@
         let touchStartX = 0;
         let touchStartY = 0;
         let isDragging = false;
-        let selectedPlaceForMenu = null;
 
         canvas.addEventListener('touchstart', handleTouchStart);
         canvas.addEventListener('touchmove', handleTouchMove);
