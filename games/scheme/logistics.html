@@ -2,293 +2,361 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Логистика • ГипноФилин</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Логистика • ГипноФилін</title>
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png">
-    <link rel="stylesheet" href="../../global.css">
-    <link rel="stylesheet" href="../../navbar.css">
     <style>
-        .logistics-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #0d0d10;
+            color: rgba(255, 255, 255, 0.95);
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .page-title {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 700;
-            text-align: center;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            margin-bottom: 6px;
         }
 
         .page-subtitle {
-            font-size: 16px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            padding: 12px 16px;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
             color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
             text-align: center;
-            margin-bottom: 40px;
         }
 
-        .main-layout {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
+        .tab.active {
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            color: white;
+            border-color: #0a84ff;
         }
 
-        /* Панель категорий */
-        .categories-panel {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 24px;
-            height: fit-content;
+        /* Контент вкладок */
+        .tab-content {
+            display: none;
+            padding: 16px;
         }
 
-        .category-block {
-            margin-bottom: 30px;
+        .tab-content.active {
+            display: block;
         }
 
-        .category-block:last-child {
-            margin-bottom: 0;
+        /* Категория */
+        .category-section {
+            margin-bottom: 24px;
         }
 
         .category-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
         .category-emoji {
-            font-size: 20px;
+            font-size: 24px;
         }
 
         .category-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            flex: 1;
         }
 
-        .add-place-btn {
-            width: 100%;
+        .add-btn {
+            padding: 8px 16px;
             background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
             border: none;
             border-radius: 8px;
-            padding: 10px 16px;
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 12px;
         }
 
-        .add-place-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+        /* Список мест */
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
         }
 
-        .places-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .place-item {
+        .place-card {
             background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .place-card.in-route {
+            border-color: #0a84ff;
+            background: rgba(10, 132, 255, 0.15);
+        }
+
+        .place-card.in-route::after {
+            content: attr(data-route-number);
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            background: #0a84ff;
+            border-radius: 50%;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-
-        .place-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateX(4px);
-        }
-
-        .place-item.selected {
-            background: linear-gradient(135deg, rgba(10, 132, 255, 0.2) 0%, rgba(0, 102, 204, 0.2) 100%);
-            border-color: rgba(10, 132, 255, 0.4);
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
         }
 
         .place-name {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .place-rating {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-left: 8px;
+            font-size: 12px;
+            color: #0a84ff;
         }
 
-        .remove-place-btn {
-            color: rgba(255, 255, 255, 0.4);
-            background: none;
+        .place-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 50, 50, 0.2);
             border: none;
-            cursor: pointer;
+            border-radius: 50%;
+            color: rgba(255, 100, 100, 0.9);
             font-size: 16px;
-            padding: 0 4px;
-            margin-left: 8px;
-            transition: color 0.2s ease;
+            cursor: pointer;
+            display: none;
         }
 
-        .remove-place-btn:hover {
-            color: rgba(255, 100, 100, 0.9);
+        .place-card:active {
+            transform: scale(0.95);
         }
 
         /* Карта */
         .map-container {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 16px;
-            padding: 24px;
-            min-height: 600px;
-            position: relative;
-        }
-
-        .map-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .map-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .map-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .control-btn {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
-            padding: 8px 16px;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .control-btn.primary {
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
-            color: white;
-            border: none;
-        }
-
-        .canvas-wrapper {
-            position: relative;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
             overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
         }
 
         #mapCanvas {
             display: block;
             width: 100%;
-            height: 550px;
-            cursor: grab;
+            height: 400px;
+            touch-action: none;
         }
 
-        #mapCanvas:active {
-            cursor: grabbing;
-        }
-
-        .legend {
+        .map-legend {
             display: flex;
-            gap: 20px;
+            gap: 16px;
+            padding: 12px 16px;
             justify-content: center;
-            margin-top: 16px;
             flex-wrap: wrap;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.65);
+            gap: 6px;
         }
 
-        .legend-color {
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Нижняя панель маршрута */
+        .route-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 13, 16, 0.98);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .route-panel.active {
+            transform: translateY(0);
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .route-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .route-clear {
+            padding: 6px 12px;
+            background: rgba(255, 50, 50, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: rgba(255, 100, 100, 0.9);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .route-list {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .route-item {
+            min-width: 120px;
+            padding: 10px;
+            background: rgba(10, 132, 255, 0.15);
+            border: 1px solid rgba(10, 132, 255, 0.3);
+            border-radius: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .route-item-number {
             width: 20px;
             height: 20px;
+            background: #0a84ff;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .route-item-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .route-item-remove {
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 50, 50, 0.3);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         /* Модальное окно */
-        .modal-overlay {
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.2s ease;
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 20px;
         }
 
-        .modal-overlay.show {
+        .modal.show {
             display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 40px;
         }
 
         .modal-content {
             background: rgba(13, 13, 16, 0.98);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            padding: 32px;
+            padding: 24px;
+            width: 100%;
             max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .modal-header {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .modal-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .modal-subtitle {
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.55);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .form-group {
@@ -307,23 +375,22 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 14px;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
             color: rgba(255, 255, 255, 0.95);
             font-family: inherit;
-            transition: all 0.2s ease;
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 80px;
         }
 
         .form-input:focus, .form-textarea:focus {
             outline: none;
             border-color: #0a84ff;
             background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
         .rating-group {
@@ -335,32 +402,24 @@
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 10px;
-            color: rgba(255, 255, 255, 0.85);
         }
 
         .rating-scale {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 8px;
-            justify-content: space-between;
         }
 
         .rating-btn {
-            flex: 1;
+            padding: 14px;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px 8px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 18px;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.5);
             cursor: pointer;
             transition: all 0.2s ease;
-            text-align: center;
-        }
-
-        .rating-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .rating-btn.active {
@@ -370,30 +429,24 @@
         }
 
         .modal-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 28px;
+            margin-top: 24px;
         }
 
         .modal-btn {
-            flex: 1;
-            padding: 14px 24px;
-            border-radius: 10px;
-            font-size: 15px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
             border: none;
         }
 
         .modal-btn-cancel {
             background: rgba(255, 255, 255, 0.08);
             color: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        .modal-btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.12);
         }
 
         .modal-btn-submit {
@@ -401,23 +454,34 @@
             color: white;
         }
 
-        .modal-btn-submit:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+        /* Режим построения маршрута */
+        .route-mode-banner {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
         }
 
-        /* Информационная панель */
+        .route-mode-banner.active {
+            display: block;
+        }
+
         .info-panel {
-            position: absolute;
-            top: 80px;
-            right: 24px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: rgba(13, 13, 16, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
-            max-width: 280px;
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 300px;
             display: none;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 1500;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         }
 
         .info-panel.show {
@@ -427,7 +491,6 @@
         .info-title {
             font-size: 16px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 12px;
         }
 
@@ -440,17 +503,11 @@
         .info-criterion {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             font-size: 13px;
         }
 
         .info-criterion-name {
             color: rgba(255, 255, 255, 0.65);
-        }
-
-        .info-criterion-value {
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 600;
         }
 
         .info-stars {
@@ -466,159 +523,121 @@
             line-height: 1.5;
         }
 
-        /* Адаптивность */
-        @media (max-width: 1024px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .categories-panel {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-            }
-
-            .category-block {
-                margin-bottom: 0;
-            }
-
-            .info-panel {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                left: 0;
-                top: auto;
-                max-width: 100%;
-                border-radius: 16px 16px 0 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .categories-panel {
-                grid-template-columns: 1fr;
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 0;
             }
 
             .page-title {
-                font-size: 28px;
-            }
-
-            .logistics-container {
-                padding: 20px 15px;
+                font-size: 32px;
             }
 
             #mapCanvas {
-                height: 400px;
+                height: 500px;
             }
 
-            .map-controls {
-                flex-direction: column;
-            }
-
-            .control-btn {
-                width: 100%;
+            .route-panel {
+                position: static;
+                transform: none;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 16px;
+                margin: 16px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar center-menu">
-        <div class="container">
-            <ul class="nav-menu">
-                <li><a href="../../index.html" class="nav-link" data-page="index">Главная</a></li>
-                <li><a href="../../courses.html" class="nav-link" data-page="courses">Курсы</a></li>
-                <li><a href="../../games.html" class="nav-link" data-page="games">Игры</a></li>
-                <li><a href="../../about.html" class="nav-link" data-page="about">Обо мне</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="logistics-container">
+    <div class="header">
         <h1 class="page-title">Карта логистики</h1>
-        <p class="page-subtitle">Планируйте свой маршрут: от знакомства до финала</p>
+        <p class="page-subtitle">Планируй свой маршрут</p>
+    </div>
 
-        <div class="main-layout">
-            <!-- Панель категорий -->
-            <div class="categories-panel">
-                <!-- Места знакомства -->
-                <div class="category-block">
-                    <div class="category-header">
-                        <span class="category-emoji">👋</span>
-                        <h3 class="category-title">Места знакомства</h3>
-                    </div>
-                    <button class="add-place-btn" onclick="openAddModal('meet')">+ Добавить место</button>
-                    <div class="places-list" id="meetPlaces"></div>
-                </div>
+    <div class="route-mode-banner" id="routeModeBanner">
+        📍 Режим построения маршрута • Тапай по местам
+    </div>
 
-                <!-- Места общения -->
-                <div class="category-block">
-                    <div class="category-header">
-                        <span class="category-emoji">💬</span>
-                        <h3 class="category-title">Места общения</h3>
-                    </div>
-                    <button class="add-place-btn" onclick="openAddModal('talk')">+ Добавить место</button>
-                    <div class="places-list" id="talkPlaces"></div>
-                </div>
+    <div class="tabs">
+        <div class="tab active" data-tab="map">🗺️ Карта</div>
+        <div class="tab" data-tab="places">📍 Места</div>
+    </div>
 
-                <!-- Места секса -->
-                <div class="category-block">
-                    <div class="category-header">
-                        <span class="category-emoji">🔥</span>
-                        <h3 class="category-title">Места секса</h3>
-                    </div>
-                    <button class="add-place-btn" onclick="openAddModal('sex')">+ Добавить место</button>
-                    <div class="places-list" id="sexPlaces"></div>
-                </div>
+    <!-- Вкладка: Карта -->
+    <div class="tab-content active" id="mapTab">
+        <div class="map-container">
+            <canvas id="mapCanvas"></canvas>
+        </div>
+        <div class="map-legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #4CAF50;"></div>
+                <span>Знакомство</span>
             </div>
-
-            <!-- Карта -->
-            <div class="map-container">
-                <div class="map-header">
-                    <h2 class="map-title">Интерактивная карта</h2>
-                    <div class="map-controls">
-                        <button class="control-btn" onclick="clearRoute()">Очистить маршрут</button>
-                        <button class="control-btn primary" onclick="buildRoute()">Построить маршрут</button>
-                    </div>
-                </div>
-                <div class="canvas-wrapper">
-                    <canvas id="mapCanvas"></canvas>
-                    <!-- Информационная панель -->
-                    <div class="info-panel" id="infoPanel"></div>
-                </div>
-                <div class="legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #4CAF50;"></div>
-                        <span>Знакомство</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #2196F3;"></div>
-                        <span>Общение</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #FF5722;"></div>
-                        <span>Секс</span>
-                    </div>
-                </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #2196F3;"></div>
+                <span>Общение</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #FF5722;"></div>
+                <span>Секс</span>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно добавления места -->
-    <div class="modal-overlay" id="addModal">
+    <!-- Вкладка: Места -->
+    <div class="tab-content" id="placesTab">
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-emoji">👋</span>
+                <h2 class="category-title">Знакомство</h2>
+                <button class="add-btn" onclick="openAddModal('meet')">+ Добавить</button>
+            </div>
+            <div class="places-grid" id="meetPlaces"></div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-emoji">💬</span>
+                <h2 class="category-title">Общение</h2>
+                <button class="add-btn" onclick="openAddModal('talk')">+ Добавить</button>
+            </div>
+            <div class="places-grid" id="talkPlaces"></div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-emoji">🔥</span>
+                <h2 class="category-title">Секс</h2>
+                <button class="add-btn" onclick="openAddModal('sex')">+ Добавить</button>
+            </div>
+            <div class="places-grid" id="sexPlaces"></div>
+        </div>
+    </div>
+
+    <!-- Панель маршрута -->
+    <div class="route-panel" id="routePanel">
+        <div class="route-header">
+            <div class="route-title">Маршрут</div>
+            <button class="route-clear" onclick="clearRoute()">Очистить</button>
+        </div>
+        <div class="route-list" id="routeList"></div>
+    </div>
+
+    <!-- Информационная панель -->
+    <div class="info-panel" id="infoPanel"></div>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">Добавить место</h2>
-                <p class="modal-subtitle" id="modalSubtitle"></p>
+                <p class="modal-subtitle" id="modalSubtitle">Оцените по критериям</p>
             </div>
-
             <form id="addPlaceForm">
                 <div class="form-group">
                     <label class="form-label">Название места *</label>
-                    <input type="text" class="form-input" id="placeName" required maxlength="30" placeholder="Например: Большая Покровская">
+                    <input type="text" class="form-input" id="placeName" required maxlength="30" placeholder="Большая Покровская">
                 </div>
-
                 <div id="criteriaContainer"></div>
-
                 <div class="modal-actions">
                     <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
                     <button type="submit" class="modal-btn modal-btn-submit">Добавить</button>
@@ -628,76 +647,38 @@
     </div>
 
     <script>
-        // === Критерии для каждой категории ===
+        // === Критерии ===
         const criteria = {
             meet: [
-                { id: 'capacity', label: 'Ёмкость', description: 'Сколько потенциально интересных людей' },
-                { id: 'openness', label: 'Лёгкость открытия', description: 'Насколько просто начать разговор' },
-                { id: 'context', label: 'Контекст общения', description: 'Насколько понятно, о чём говорить' }
+                { id: 'capacity', label: 'Ёмкость', description: 'Сколько людей' },
+                { id: 'openness', label: 'Лёгкость открытия', description: 'Легко начать разговор' },
+                { id: 'context', label: 'Контекст', description: 'О чём говорить' }
             ],
             talk: [
-                { id: 'atmosphere', label: 'Атмосфера', description: 'Насколько романтично/уютно' },
-                { id: 'activity', label: 'Активность', description: 'Что там можно делать' },
-                { id: 'price', label: 'Средний чек', description: 'Сколько денег уйдёт' }
+                { id: 'atmosphere', label: 'Атмосфера', description: 'Романтично/уютно' },
+                { id: 'activity', label: 'Активность', description: 'Что можно делать' },
+                { id: 'price', label: 'Средний чек', description: 'Цена' }
             ],
             sex: [
-                { id: 'privacy', label: 'Приватность', description: 'Насколько не спалят' },
-                { id: 'comfort', label: 'Комфорт', description: 'Есть ли нормальные условия' },
-                { id: 'availability', label: 'Доступность', description: 'Легко ли туда попасть быстро' }
+                { id: 'privacy', label: 'Приватность', description: 'Не спалят' },
+                { id: 'comfort', label: 'Комфорт', description: 'Условия' },
+                { id: 'availability', label: 'Доступность', description: 'Легко попасть' }
             ]
         };
 
         // === Данные ===
         const places = {
             meet: [
-                {
-                    name: 'Большая Покровская',
-                    x: 150,
-                    y: 100,
-                    ratings: { capacity: 4, openness: 3, context: 4 },
-                    description: 'Центральная улица, много людей'
-                },
-                {
-                    name: 'Парк Швейцария',
-                    x: 200,
-                    y: 150,
-                    ratings: { capacity: 3, openness: 4, context: 5 },
-                    description: 'Спокойная атмосфера для прогулок'
-                }
+                { name: 'Большая Покровская', x: 150, y: 100, ratings: { capacity: 4, openness: 3, context: 4 }, description: 'Центральная улица' },
+                { name: 'Парк Швейцария', x: 200, y: 150, ratings: { capacity: 3, openness: 4, context: 5 }, description: 'Спокойная атмосфера' }
             ],
             talk: [
-                {
-                    name: 'Бар Койот',
-                    x: 400,
-                    y: 200,
-                    ratings: { atmosphere: 4, activity: 3, price: 3 },
-                    description: 'Живая музыка, танцы',
-                    averageCheck: 2000
-                },
-                {
-                    name: 'Бар Искры',
-                    x: 450,
-                    y: 250,
-                    ratings: { atmosphere: 5, activity: 2, price: 4 },
-                    description: 'Уютный бар для разговоров',
-                    averageCheck: 3000
-                }
+                { name: 'Бар Койот', x: 400, y: 200, ratings: { atmosphere: 4, activity: 3, price: 3 }, description: 'Живая музыка, танцы', averageCheck: 2000 },
+                { name: 'Бар Искры', x: 450, y: 250, ratings: { atmosphere: 5, activity: 2, price: 4 }, description: 'Уютный бар', averageCheck: 3000 }
             ],
             sex: [
-                {
-                    name: 'Дома',
-                    x: 700,
-                    y: 300,
-                    ratings: { privacy: 5, comfort: 5, availability: 4 },
-                    description: 'Классика'
-                }
+                { name: 'Дома', x: 700, y: 300, ratings: { privacy: 5, comfort: 5, availability: 4 }, description: 'Классика' }
             ]
-        };
-
-        const selectedPlaces = {
-            meet: null,
-            talk: null,
-            sex: null
         };
 
         const colors = {
@@ -706,9 +687,9 @@
             sex: '#FF5722'
         };
 
+        let route = []; // Массив мест в маршруте
         let currentCategory = null;
         let draggedPoint = null;
-        let hoveredPoint = null;
         let canvas, ctx;
 
         // === Инициализация ===
@@ -719,89 +700,90 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            renderPlacesLists();
+            renderPlaces();
             drawMap();
 
-            // События мыши
+            // События canvas
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mouseup', handleMouseUp);
-            canvas.addEventListener('click', handleClick);
 
-            // События тач
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
-            canvas.addEventListener('touchend', handleTouchEnd);
+            // Вкладки
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
 
             // Форма
             document.getElementById('addPlaceForm').addEventListener('submit', handleFormSubmit);
+
+            // Клик по модалке для закрытия
+            document.getElementById('addModal').addEventListener('click', (e) => {
+                if (e.target.id === 'addModal') closeModal();
+            });
+
+            // Клик вне инфо панели
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.info-panel') && !e.target.closest('canvas')) {
+                    hideInfoPanel();
+                }
+            });
         });
 
         function resizeCanvas() {
             const wrapper = canvas.parentElement;
             canvas.width = wrapper.offsetWidth;
-            canvas.height = 550;
+            canvas.height = window.innerWidth < 768 ? 400 : 500;
             drawMap();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
         }
 
         // === Модальное окно ===
         function openAddModal(category) {
             currentCategory = category;
-            const modal = document.getElementById('addModal');
-            const title = document.getElementById('modalTitle');
-            const subtitle = document.getElementById('modalSubtitle');
-            const criteriaContainer = document.getElementById('criteriaContainer');
-
-            // Заголовки
             const titles = {
-                meet: 'Добавить место знакомства',
-                talk: 'Добавить место общения',
-                sex: 'Добавить место секса'
+                meet: 'Место знакомства',
+                talk: 'Место общения',
+                sex: 'Место секса'
             };
-            title.textContent = titles[category];
-            subtitle.textContent = 'Оцените место по критериям от 1 до 5';
 
-            // Очистка формы
+            document.getElementById('modalTitle').textContent = titles[category];
+            document.getElementById('modalSubtitle').textContent = 'Оцените по критериям от 1 до 5';
             document.getElementById('placeName').value = '';
-            criteriaContainer.innerHTML = '';
 
-            // Генерация критериев
+            const container = document.getElementById('criteriaContainer');
+            container.innerHTML = '';
+
             criteria[category].forEach(criterion => {
-                const ratingGroup = document.createElement('div');
-                ratingGroup.className = 'rating-group';
-
-                const label = document.createElement('label');
-                label.className = 'rating-label';
-                label.textContent = `${criterion.label} — ${criterion.description}`;
-
-                const scale = document.createElement('div');
-                scale.className = 'rating-scale';
-
-                for (let i = 1; i <= 5; i++) {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'rating-btn';
-                    btn.textContent = i;
-                    btn.dataset.criterion = criterion.id;
-                    btn.dataset.value = i;
-                    btn.onclick = () => selectRating(criterion.id, i);
-                    scale.appendChild(btn);
-                }
-
-                ratingGroup.appendChild(label);
-                ratingGroup.appendChild(scale);
-                criteriaContainer.appendChild(ratingGroup);
+                const group = document.createElement('div');
+                group.className = 'rating-group';
+                group.innerHTML = `
+                    <label class="rating-label">${criterion.label} — ${criterion.description}</label>
+                    <div class="rating-scale">
+                        ${[1,2,3,4,5].map(i => `
+                            <button type="button" class="rating-btn" data-criterion="${criterion.id}" data-value="${i}" onclick="selectRating('${criterion.id}', ${i})">${i}</button>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(group);
             });
 
-            // Дополнительные поля
             if (category === 'meet' || category === 'talk') {
                 const descGroup = document.createElement('div');
                 descGroup.className = 'form-group';
                 descGroup.innerHTML = `
                     <label class="form-label">${category === 'meet' ? 'Описание контекста' : 'Что можно делать'}</label>
-                    <textarea class="form-textarea" id="placeDescription" placeholder="Например: ${category === 'meet' ? 'Люди гуляют с собаками' : 'Гулять, смотреть закат'}"></textarea>
+                    <textarea class="form-textarea" id="placeDescription" placeholder="${category === 'meet' ? 'Люди гуляют с собаками' : 'Гулять, смотреть закат'}"></textarea>
                 `;
-                criteriaContainer.appendChild(descGroup);
+                container.appendChild(descGroup);
             }
 
             if (category === 'talk') {
@@ -811,10 +793,10 @@
                     <label class="form-label">Средний чек (₽)</label>
                     <input type="number" class="form-input" id="averageCheck" placeholder="2000" min="0" step="100">
                 `;
-                criteriaContainer.appendChild(priceGroup);
+                container.appendChild(priceGroup);
             }
 
-            modal.classList.add('show');
+            document.getElementById('addModal').classList.add('show');
         }
 
         function closeModal() {
@@ -822,26 +804,22 @@
         }
 
         function selectRating(criterionId, value) {
-            const buttons = document.querySelectorAll(`[data-criterion="${criterionId}"]`);
-            buttons.forEach(btn => {
+            document.querySelectorAll(`[data-criterion="${criterionId}"]`).forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.value) === value);
             });
         }
 
         function handleFormSubmit(e) {
             e.preventDefault();
-
             const name = document.getElementById('placeName').value.trim();
             if (!name) return;
 
-            // Собираем оценки
             const ratings = {};
             criteria[currentCategory].forEach(criterion => {
                 const activeBtn = document.querySelector(`[data-criterion="${criterion.id}"].active`);
                 ratings[criterion.id] = activeBtn ? parseInt(activeBtn.dataset.value) : 3;
             });
 
-            // Случайная позиция в зависимости от категории
             let x, y;
             if (currentCategory === 'meet') {
                 x = 100 + Math.random() * 200;
@@ -856,143 +834,152 @@
 
             const place = { name, x, y, ratings };
 
-            // Дополнительные поля
             const descField = document.getElementById('placeDescription');
-            if (descField) {
-                place.description = descField.value.trim();
-            }
+            if (descField) place.description = descField.value.trim();
 
             const checkField = document.getElementById('averageCheck');
-            if (checkField) {
-                place.averageCheck = parseInt(checkField.value) || 0;
-            }
+            if (checkField) place.averageCheck = parseInt(checkField.value) || 0;
 
             places[currentCategory].push(place);
 
             closeModal();
-            renderPlacesLists();
+            renderPlaces();
             drawMap();
         }
 
-        // === Работа с местами ===
-        function removePlace(category, index) {
-            places[category].splice(index, 1);
-            if (selectedPlaces[category] && selectedPlaces[category].index === index) {
-                selectedPlaces[category] = null;
-            }
-            renderPlacesLists();
-            drawMap();
-        }
-
-        function selectPlace(category, index) {
-            selectedPlaces[category] = { index, place: places[category][index] };
-            renderPlacesLists();
-            drawMap();
-        }
-
-        function renderPlacesLists() {
+        // === Рендер мест ===
+        function renderPlaces() {
             ['meet', 'talk', 'sex'].forEach(category => {
                 const container = document.getElementById(category + 'Places');
                 container.innerHTML = '';
 
                 places[category].forEach((place, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'place-item';
-                    if (selectedPlaces[category] && selectedPlaces[category].index === index) {
-                        item.classList.add('selected');
+                    const routeIndex = route.findIndex(r => r.category === category && r.index === index);
+                    const inRoute = routeIndex !== -1;
+
+                    const card = document.createElement('div');
+                    card.className = 'place-card';
+                    if (inRoute) {
+                        card.classList.add('in-route');
+                        card.dataset.routeNumber = routeIndex + 1;
                     }
 
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'place-name';
-                    nameSpan.textContent = place.name;
-
-                    // Средний рейтинг
                     const avgRating = Object.values(place.ratings).reduce((a, b) => a + b, 0) / Object.values(place.ratings).length;
-                    const ratingSpan = document.createElement('span');
-                    ratingSpan.className = 'place-rating';
-                    ratingSpan.textContent = '★'.repeat(Math.round(avgRating));
 
-                    const removeBtn = document.createElement('button');
-                    removeBtn.className = 'remove-place-btn';
-                    removeBtn.innerHTML = '×';
-                    removeBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        removePlace(category, index);
-                    };
+                    card.innerHTML = `
+                        <div class="place-name">${place.name}</div>
+                        <div class="place-rating">${'★'.repeat(Math.round(avgRating))}</div>
+                        <button class="place-remove" onclick="removePlace('${category}', ${index})">×</button>
+                    `;
 
-                    item.appendChild(nameSpan);
-                    item.appendChild(ratingSpan);
-                    item.appendChild(removeBtn);
-                    item.onclick = () => selectPlace(category, index);
+                    card.addEventListener('click', () => togglePlaceInRoute(category, index));
+                    card.addEventListener('touchstart', (e) => {
+                        const touch = e.touches[0];
+                        const rect = card.getBoundingClientRect();
+                        if (touch.clientX > rect.right - 40 && touch.clientY < rect.top + 40) {
+                            e.stopPropagation();
+                            card.querySelector('.place-remove').style.display = 'block';
+                        }
+                    });
 
-                    container.appendChild(item);
+                    container.appendChild(card);
                 });
             });
+
+            renderRoutePanel();
+        }
+
+        function togglePlaceInRoute(category, index) {
+            const existingIndex = route.findIndex(r => r.category === category && r.index === index);
+
+            if (existingIndex !== -1) {
+                route.splice(existingIndex, 1);
+            } else {
+                route.push({ category, index, place: places[category][index] });
+            }
+
+            renderPlaces();
+            drawMap();
+        }
+
+        function removePlace(category, index) {
+            places[category].splice(index, 1);
+            route = route.filter(r => !(r.category === category && r.index === index));
+            renderPlaces();
+            drawMap();
+        }
+
+        function renderRoutePanel() {
+            const panel = document.getElementById('routePanel');
+            const list = document.getElementById('routeList');
+            const banner = document.getElementById('routeModeBanner');
+
+            if (route.length > 0) {
+                panel.classList.add('active');
+                banner.classList.add('active');
+            } else {
+                panel.classList.remove('active');
+                banner.classList.remove('active');
+            }
+
+            list.innerHTML = route.map((r, i) => `
+                <div class="route-item">
+                    <div class="route-item-number">${i + 1}</div>
+                    <div class="route-item-name">${r.place.name}</div>
+                    <button class="route-item-remove" onclick="removeFromRoute(${i})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromRoute(index) {
+            route.splice(index, 1);
+            renderPlaces();
+            drawMap();
+        }
+
+        function clearRoute() {
+            route = [];
+            renderPlaces();
+            drawMap();
         }
 
         // === Отрисовка карты ===
         function drawMap() {
             if (!ctx) return;
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawRoute();
+
+            if (route.length > 1) drawRoute();
             drawPoints();
         }
 
         function drawRoute() {
-            const route = [];
-            ['meet', 'talk', 'sex'].forEach(category => {
-                if (selectedPlaces[category]) {
-                    route.push({
-                        category,
-                        place: selectedPlaces[category].place
-                    });
-                }
-            });
-
-            if (route.length < 2) return;
-
             ctx.strokeStyle = 'rgba(10, 132, 255, 0.6)';
             ctx.lineWidth = 3;
             ctx.setLineDash([10, 5]);
-
             ctx.beginPath();
             ctx.moveTo(route[0].place.x, route[0].place.y);
-
             for (let i = 1; i < route.length; i++) {
                 ctx.lineTo(route[i].place.x, route[i].place.y);
             }
-
             ctx.stroke();
             ctx.setLineDash([]);
 
             for (let i = 1; i < route.length; i++) {
-                drawArrow(
-                    route[i - 1].place.x,
-                    route[i - 1].place.y,
-                    route[i].place.x,
-                    route[i].place.y
-                );
+                drawArrow(route[i-1].place.x, route[i-1].place.y, route[i].place.x, route[i].place.y);
             }
         }
 
         function drawArrow(x1, y1, x2, y2) {
             const angle = Math.atan2(y2 - y1, x2 - x1);
-            const arrowSize = 12;
+            const size = 12;
             const mx = (x1 + x2) / 2;
             const my = (y1 + y2) / 2;
 
             ctx.fillStyle = 'rgba(10, 132, 255, 0.8)';
             ctx.beginPath();
             ctx.moveTo(mx, my);
-            ctx.lineTo(
-                mx - arrowSize * Math.cos(angle - Math.PI / 6),
-                my - arrowSize * Math.sin(angle - Math.PI / 6)
-            );
-            ctx.lineTo(
-                mx - arrowSize * Math.cos(angle + Math.PI / 6),
-                my - arrowSize * Math.sin(angle + Math.PI / 6)
-            );
+            ctx.lineTo(mx - size * Math.cos(angle - Math.PI / 6), my - size * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(mx - size * Math.cos(angle + Math.PI / 6), my - size * Math.sin(angle + Math.PI / 6));
             ctx.closePath();
             ctx.fill();
         }
@@ -1000,9 +987,9 @@
         function drawPoints() {
             ['meet', 'talk', 'sex'].forEach(category => {
                 places[category].forEach((place, index) => {
-                    const isSelected = selectedPlaces[category] && selectedPlaces[category].index === index;
-                    const isHovered = hoveredPoint && hoveredPoint.category === category && hoveredPoint.index === index;
-                    const radius = isSelected ? 14 : (isHovered ? 12 : 10);
+                    const routeIndex = route.findIndex(r => r.category === category && r.index === index);
+                    const inRoute = routeIndex !== -1;
+                    const radius = inRoute ? 16 : 12;
 
                     ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
                     ctx.shadowBlur = 8;
@@ -1014,119 +1001,43 @@
                     ctx.arc(place.x, place.y, radius, 0, Math.PI * 2);
                     ctx.fill();
 
-                    if (isSelected || isHovered) {
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                    if (inRoute) {
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
                         ctx.lineWidth = 3;
                         ctx.stroke();
+
+                        // Номер
+                        ctx.shadowColor = 'transparent';
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 14px -apple-system';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(routeIndex + 1, place.x, place.y);
                     }
 
                     ctx.shadowColor = 'transparent';
                     ctx.shadowBlur = 0;
 
+                    // Название
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                    ctx.font = '600 13px -apple-system, BlinkMacSystemFont, sans-serif';
+                    ctx.font = '600 13px -apple-system';
                     ctx.textAlign = 'center';
-                    ctx.fillText(place.name, place.x, place.y - 20);
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(place.name, place.x, place.y - radius - 8);
                 });
             });
         }
 
-        // === Взаимодействие с точками ===
+        // === Взаимодействие ===
         function getPointAt(x, y) {
             for (const category in places) {
                 for (let i = 0; i < places[category].length; i++) {
                     const place = places[category][i];
                     const dist = Math.sqrt((x - place.x) ** 2 + (y - place.y) ** 2);
-                    if (dist < 15) {
-                        return { category, index: i, place };
-                    }
+                    if (dist < 20) return { category, index: i, place };
                 }
             }
             return null;
-        }
-
-        function showInfoPanel(point) {
-            const panel = document.getElementById('infoPanel');
-            const place = point.place;
-
-            let html = `<div class="info-title">${place.name}</div><div class="info-criteria">`;
-
-            // Критерии
-            const categoryCriteria = criteria[point.category];
-            categoryCriteria.forEach(criterion => {
-                const value = place.ratings[criterion.id] || 0;
-                const stars = '★'.repeat(value) + '☆'.repeat(5 - value);
-                html += `
-                    <div class="info-criterion">
-                        <span class="info-criterion-name">${criterion.label}</span>
-                        <span class="info-criterion-value info-stars">${stars}</span>
-                    </div>
-                `;
-            });
-
-            html += '</div>';
-
-            // Доп поля
-            if (place.averageCheck) {
-                html += `<div class="info-description">Средний чек: ${place.averageCheck} ₽</div>`;
-            }
-            if (place.description) {
-                html += `<div class="info-description">${place.description}</div>`;
-            }
-
-            panel.innerHTML = html;
-            panel.classList.add('show');
-        }
-
-        function hideInfoPanel() {
-            document.getElementById('infoPanel').classList.remove('show');
-        }
-
-        function handleMouseDown(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            draggedPoint = getPointAt(x, y);
-        }
-
-        function handleMouseMove(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            if (draggedPoint) {
-                draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
-                draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
-                drawMap();
-            } else {
-                const point = getPointAt(x, y);
-                if (point) {
-                    canvas.style.cursor = 'pointer';
-                    hoveredPoint = point;
-                    showInfoPanel(point);
-                } else {
-                    canvas.style.cursor = 'grab';
-                    hoveredPoint = null;
-                    hideInfoPanel();
-                }
-                drawMap();
-            }
-        }
-
-        function handleMouseUp() {
-            draggedPoint = null;
-        }
-
-        function handleClick(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            const point = getPointAt(x, y);
-            if (point && !draggedPoint) {
-                selectPlace(point.category, point.index);
-            }
         }
 
         function handleTouchStart(e) {
@@ -1136,9 +1047,10 @@
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
 
-            draggedPoint = getPointAt(x, y);
-            if (draggedPoint) {
-                showInfoPanel(draggedPoint);
+            const point = getPointAt(x, y);
+            if (point) {
+                showInfoPanel(point);
+                draggedPoint = point;
             }
         }
 
@@ -1153,34 +1065,76 @@
 
             draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
             draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
-
             drawMap();
         }
 
         function handleTouchEnd(e) {
             e.preventDefault();
+            if (draggedPoint && e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                const rect = canvas.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                const dist = Math.sqrt((x - draggedPoint.place.x) ** 2 + (y - draggedPoint.place.y) ** 2);
+
+                if (dist < 5) {
+                    togglePlaceInRoute(draggedPoint.category, draggedPoint.index);
+                }
+            }
             draggedPoint = null;
         }
 
-        // === Управление маршрутом ===
-        function buildRoute() {
+        function handleMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            draggedPoint = getPointAt(x, y);
+            if (draggedPoint) showInfoPanel(draggedPoint);
+        }
+
+        function handleMouseMove(e) {
+            if (!draggedPoint) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
+            draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
             drawMap();
         }
 
-        function clearRoute() {
-            selectedPlaces.meet = null;
-            selectedPlaces.talk = null;
-            selectedPlaces.sex = null;
-            renderPlacesLists();
-            drawMap();
+        function handleMouseUp() {
+            draggedPoint = null;
         }
 
-        // Закрытие модалки по клику вне
-        document.getElementById('addModal').addEventListener('click', (e) => {
-            if (e.target.id === 'addModal') {
-                closeModal();
-            }
-        });
+        function showInfoPanel(point) {
+            const panel = document.getElementById('infoPanel');
+            const place = point.place;
+
+            let html = `<div class="info-title">${place.name}</div><div class="info-criteria">`;
+
+            criteria[point.category].forEach(criterion => {
+                const value = place.ratings[criterion.id] || 0;
+                const stars = '★'.repeat(value) + '☆'.repeat(5 - value);
+                html += `
+                    <div class="info-criterion">
+                        <span class="info-criterion-name">${criterion.label}</span>
+                        <span class="info-stars">${stars}</span>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+
+            if (place.averageCheck) html += `<div class="info-description">Средний чек: ${place.averageCheck} ₽</div>`;
+            if (place.description) html += `<div class="info-description">${place.description}</div>`;
+
+            panel.innerHTML = html;
+            panel.classList.add('show');
+        }
+
+        function hideInfoPanel() {
+            document.getElementById('infoPanel').classList.remove('show');
+        }
     </script>
 </body>
 </html>
