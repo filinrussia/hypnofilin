@@ -266,7 +266,7 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background: rgba(255, 59, 48, 0.8);
+            background: rgba(255, 59, 48, 0.9);
             border: none;
             color: white;
             font-size: 14px;
@@ -275,17 +275,14 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            opacity: 0;
+            opacity: 1;
             transition: all 0.2s ease;
             z-index: 10;
         }
 
-        .place-card:hover .place-delete-btn {
-            opacity: 1;
-        }
-
         .place-delete-btn:active {
             transform: scale(0.9);
+            background: rgba(255, 59, 48, 1);
         }
 
         .place-card.selected {
