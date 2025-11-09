@@ -618,6 +618,7 @@
     <div class="action-menu" id="actionMenu">
         <button class="action-btn" onclick="handleActionInfo()">i</button>
         <button class="action-btn" onclick="handleActionLink()">+</button>
+        <button class="action-btn" onclick="handleActionDelete()">×</button>
     </div>
 
     <!-- Экран карты -->
@@ -1754,6 +1755,21 @@
                 hint.classList.remove('hidden');
             }
 
+            hideActionMenu();
+        }
+
+        function handleActionDelete() {
+            if (!selectedPlaceForMenu) return;
+
+            const place = selectedPlaceForMenu.place;
+
+            // Удаляем все связи этого места
+            connections = connections.filter(conn =>
+                conn.from !== place && conn.to !== place
+            );
+
+            saveData();
+            drawMap();
             hideActionMenu();
         }
 
