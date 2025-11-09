@@ -576,6 +576,7 @@
                 <div class="map-header">
                     <h2 class="map-title">Интерактивная карта</h2>
                     <div class="map-controls">
+                        <button class="control-btn" onclick="resetToDefaults()">Сбросить к примерам</button>
                         <button class="control-btn" onclick="clearRoute()">Очистить маршрут</button>
                         <button class="control-btn primary" onclick="buildRoute()">Построить маршрут</button>
                     </div>
@@ -648,7 +649,8 @@
         };
 
         // === Данные ===
-        const places = {
+        // Дефолтные данные для первой загрузки
+        const defaultPlaces = {
             meet: [
                 {
                     name: 'Большая Покровская',
@@ -693,6 +695,31 @@
                 }
             ]
         };
+
+        // Загрузка данных из localStorage или использование дефолтных
+        function loadPlaces() {
+            const saved = localStorage.getItem('logistics-places');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    console.error('Ошибка загрузки данных:', e);
+                    return JSON.parse(JSON.stringify(defaultPlaces));
+                }
+            }
+            return JSON.parse(JSON.stringify(defaultPlaces));
+        }
+
+        // Сохранение данных в localStorage
+        function savePlaces() {
+            try {
+                localStorage.setItem('logistics-places', JSON.stringify(places));
+            } catch (e) {
+                console.error('Ошибка сохранения данных:', e);
+            }
+        }
+
+        const places = loadPlaces();
 
         const selectedPlaces = {
             meet: null,
@@ -869,6 +896,7 @@
 
             places[currentCategory].push(place);
 
+            savePlaces();
             closeModal();
             renderPlacesLists();
             drawMap();
@@ -880,6 +908,7 @@
             if (selectedPlaces[category] && selectedPlaces[category].index === index) {
                 selectedPlaces[category] = null;
             }
+            savePlaces();
             renderPlacesLists();
             drawMap();
         }
@@ -1115,6 +1144,9 @@
         }
 
         function handleMouseUp() {
+            if (draggedPoint) {
+                savePlaces();
+            }
             draggedPoint = null;
         }
 
@@ -1159,6 +1191,9 @@
 
         function handleTouchEnd(e) {
             e.preventDefault();
+            if (draggedPoint) {
+                savePlaces();
+            }
             draggedPoint = null;
         }
 
@@ -1173,6 +1208,21 @@
             selectedPlaces.sex = null;
             renderPlacesLists();
             drawMap();
+        }
+
+        // === Сброс к дефолтным данным ===
+        function resetToDefaults() {
+            if (confirm('Вы уверены? Все ваши места будут удалены и заменены примерами.')) {
+                Object.keys(places).forEach(category => {
+                    places[category] = JSON.parse(JSON.stringify(defaultPlaces[category]));
+                });
+                selectedPlaces.meet = null;
+                selectedPlaces.talk = null;
+                selectedPlaces.sex = null;
+                savePlaces();
+                renderPlacesLists();
+                drawMap();
+            }
         }
 
         // Закрытие модалки по клику вне
