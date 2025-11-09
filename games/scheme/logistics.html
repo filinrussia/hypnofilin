@@ -137,6 +137,52 @@
             display: block;
         }
 
+        /* Меню действий внизу */
+        .action-menu {
+            position: fixed;
+            bottom: max(24px, env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .action-menu.show {
+            display: flex;
+        }
+
+        .action-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            transition: transform 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        .action-btn.info {
+            background: #0a84ff;
+        }
+
+        .action-btn.link {
+            background: #30d158;
+        }
+
+        .action-btn.delete {
+            background: #ff453a;
+        }
+
         /* Панель мест */
         .places-screen {
             padding: calc(max(16px, env(safe-area-inset-top)) + 60px) 16px 16px;
@@ -548,10 +594,17 @@
     </div>
 
     <!-- Подсказка -->
-    <div class="map-hint" id="mapHint">Нажми на точку чтобы добавить в маршрут</div>
+    <div class="map-hint" id="mapHint">Нажми на точку чтобы открыть меню действий</div>
 
     <!-- Кнопка очистки маршрута -->
     <button class="clear-route-btn" id="clearRouteBtn" onclick="clearRoute()">Очистить маршрут</button>
+
+    <!-- Меню действий -->
+    <div class="action-menu" id="actionMenu">
+        <button class="action-btn info" onclick="handleActionInfo()">i</button>
+        <button class="action-btn link" onclick="handleActionLink()">+</button>
+        <button class="action-btn delete" onclick="handleActionDelete()">×</button>
+    </div>
 
     <!-- Экран карты -->
     <div class="screen active" id="mapScreen">
@@ -1247,7 +1300,7 @@
 
         function handleTouchEnd(e) {
             if (draggedPlace && !isDragging) {
-                // Короткий тап - добавляем в маршрут
+                // Короткий тап - показываем меню действий
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.changedTouches[0];
                 const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
@@ -1255,7 +1308,7 @@
 
                 const result = getPlaceAt(x, y);
                 if (result) {
-                    addToRoute(result);
+                    showActionMenu(result);
                     // Скрыть подсказку после первого использования
                     const hint = document.getElementById('mapHint');
                     if (hint) hint.classList.add('hidden');
@@ -1300,14 +1353,14 @@
 
         function handleMouseUp(e) {
             if (draggedPlace && !isDragging) {
-                // Клик без драга - добавляем в маршрут
+                // Клик без драга - показываем меню действий
                 const rect = canvas.getBoundingClientRect();
                 const x = (e.clientX - rect.left) * (canvas.width / rect.width);
                 const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
                 const result = getPlaceAt(x, y);
                 if (result) {
-                    addToRoute(result);
+                    showActionMenu(result);
                     const hint = document.getElementById('mapHint');
                     if (hint) hint.classList.add('hidden');
                 }
@@ -1385,6 +1438,48 @@
 
         function hideInfoPanel() {
             document.getElementById('infoPanel').classList.remove('show');
+        }
+
+        // Переменная для хранения выбранного места для меню
+        let selectedPlaceForMenu = null;
+
+        // Показать меню действий
+        function showActionMenu(result) {
+            selectedPlaceForMenu = result;
+            document.getElementById('actionMenu').classList.add('show');
+        }
+
+        // Скрыть меню действий
+        function hideActionMenu() {
+            selectedPlaceForMenu = null;
+            document.getElementById('actionMenu').classList.remove('show');
+        }
+
+        // Обработчики кнопок меню
+        function handleActionInfo() {
+            if (!selectedPlaceForMenu) return;
+
+            const categoryId = categories.find(cat =>
+                cat.places.some(p => p === selectedPlaceForMenu.place)
+            )?.id;
+
+            if (categoryId) {
+                const placeIdx = categories.find(c => c.id === categoryId)
+                    .places.indexOf(selectedPlaceForMenu.place);
+                openPlaceModal(categoryId, placeIdx);
+            }
+
+            hideActionMenu();
+        }
+
+        function handleActionLink() {
+            // Временная заглушка
+            hideActionMenu();
+        }
+
+        function handleActionDelete() {
+            // Временная заглушка
+            hideActionMenu();
         }
 
         // Инициализация
