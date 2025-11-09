@@ -739,7 +739,13 @@
         let linkingFromPlace = null;
 
         // Проверка доступности Telegram Cloud Storage
-        const hasCloudStorage = window.Telegram?.WebApp?.CloudStorage;
+        let hasCloudStorage = false;
+        try {
+            hasCloudStorage = window.Telegram?.WebApp?.CloudStorage &&
+                             typeof window.Telegram.WebApp.CloudStorage.setItem === 'function';
+        } catch (e) {
+            hasCloudStorage = false;
+        }
 
         // Функции для работы с хранилищем
         function saveData() {
@@ -765,11 +771,15 @@
 
             // Если доступен CloudStorage - сохраняем и туда
             if (hasCloudStorage) {
-                window.Telegram.WebApp.CloudStorage.setItem('logistics_data', jsonData, (error) => {
-                    if (error) {
-                        console.error('Ошибка синхронизации с облаком:', error);
-                    }
-                });
+                try {
+                    window.Telegram.WebApp.CloudStorage.setItem('logistics_data', jsonData, (error) => {
+                        if (error) {
+                            console.error('Ошибка синхронизации с облаком:', error);
+                        }
+                    });
+                } catch (e) {
+                    console.error('CloudStorage не поддерживается:', e);
+                }
             }
         }
 
@@ -823,21 +833,28 @@
 
             // Если CloudStorage доступен - загружаем из него
             if (hasCloudStorage) {
-                window.Telegram.WebApp.CloudStorage.getItem('logistics_data', (error, cloudData) => {
-                    if (error) {
-                        console.error('Ошибка загрузки из облака:', error);
-                        // При ошибке загружаем из localStorage
-                        const saved = localStorage.getItem('logistics_data');
-                        processData(saved);
-                    } else if (cloudData) {
-                        console.log('Данные загружены из облака');
-                        processData(cloudData);
-                    } else {
-                        // Нет данных в облаке, загружаем из localStorage
-                        const saved = localStorage.getItem('logistics_data');
-                        processData(saved);
-                    }
-                });
+                try {
+                    window.Telegram.WebApp.CloudStorage.getItem('logistics_data', (error, cloudData) => {
+                        if (error) {
+                            console.error('Ошибка загрузки из облака:', error);
+                            // При ошибке загружаем из localStorage
+                            const saved = localStorage.getItem('logistics_data');
+                            processData(saved);
+                        } else if (cloudData) {
+                            console.log('Данные загружены из облака');
+                            processData(cloudData);
+                        } else {
+                            // Нет данных в облаке, загружаем из localStorage
+                            const saved = localStorage.getItem('logistics_data');
+                            processData(saved);
+                        }
+                    });
+                } catch (e) {
+                    console.error('CloudStorage не поддерживается:', e);
+                    // При ошибке загружаем из localStorage
+                    const saved = localStorage.getItem('logistics_data');
+                    processData(saved);
+                }
             } else {
                 // CloudStorage недоступен, загружаем из localStorage
                 const saved = localStorage.getItem('logistics_data');
