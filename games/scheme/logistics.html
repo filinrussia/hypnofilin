@@ -31,26 +31,27 @@
         }
 
         .tab-btn {
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.08);
+            width: 32px;
+            height: 32px;
+            background: transparent;
             border: none;
-            border-radius: 12px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .tab-btn svg {
-            width: 22px;
-            height: 22px;
-            fill: rgba(255, 255, 255, 0.8);
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
         }
 
         /* Экраны */
@@ -67,8 +68,11 @@
         /* Карта */
         #mapCanvas {
             display: block;
-            width: 100%;
+            width: 100vw;
             height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
             touch-action: none;
         }
 
@@ -216,29 +220,15 @@
         }
 
         .place-checkbox {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            transition: background 0.2s ease;
         }
 
         .place-checkbox.checked {
             background: #0a84ff;
-            border-color: #0a84ff;
-        }
-
-        .place-checkbox.checked::after {
-            content: '✓';
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
         }
 
         .place-name {
@@ -252,9 +242,16 @@
             -webkit-box-orient: vertical;
         }
 
+        .place-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .place-rating {
             display: flex;
             gap: 3px;
+            flex: 1;
         }
 
         .rating-square {
@@ -510,7 +507,6 @@
     <div class="screen" id="placesScreen">
         <div class="places-screen">
             <div id="categoriesContainer"></div>
-            <button class="add-category-btn" onclick="openCategoryModal()">+ Добавить категорию</button>
         </div>
     </div>
 
@@ -570,19 +566,19 @@
         // Критерии для стандартных категорий
         const standardCriteria = {
             'Знакомства': [
-                { id: 'capacity', label: 'Ёмкость', description: 'Сколько потенциально интересных людей' },
-                { id: 'openness', label: 'Лёгкость открытия', description: 'Насколько просто начать разговор' },
-                { id: 'context', label: 'Контекст общения', description: 'Насколько понятно, о чём говорить' }
+                { id: 'capacity', label: 'Ёмкость', description: 'Сколько потенциально интересных людей', type: 'rating' },
+                { id: 'openness', label: 'Лёгкость открытия', description: 'Насколько просто начать разговор', type: 'rating' },
+                { id: 'activities', label: 'Чем тут люди занимаются?', description: '', type: 'text' }
             ],
             'Свидания': [
-                { id: 'atmosphere', label: 'Атмосфера', description: 'Насколько романтично/уютно' },
-                { id: 'activity', label: 'Активность', description: 'Что там можно делать' },
-                { id: 'price', label: 'Средний чек', description: 'Сколько денег уйдёт' }
+                { id: 'atmosphere', label: 'Атмосфера', description: 'Насколько романтично/уютно', type: 'rating' },
+                { id: 'activities', label: 'Чем в этом месте можно заняться?', description: '', type: 'text' },
+                { id: 'price', label: 'Средний чек', description: 'Сколько денег уйдёт', type: 'rating' }
             ],
             'Секс': [
-                { id: 'privacy', label: 'Приватность', description: 'Насколько не спалят' },
-                { id: 'comfort', label: 'Комфорт', description: 'Есть ли нормальные условия' },
-                { id: 'availability', label: 'Доступность', description: 'Легко ли туда попасть быстро' }
+                { id: 'privacy', label: 'Приватность', description: 'Насколько не спалят', type: 'rating' },
+                { id: 'comfort', label: 'Комфорт', description: 'Есть ли нормальные условия', type: 'rating' },
+                { id: 'pretext', label: 'Какой предлог для посещения', description: '', type: 'text' }
             ]
         };
 
@@ -596,14 +592,14 @@
                         name: 'Большая Покровская',
                         x: 150,
                         y: 100,
-                        ratings: { capacity: 2, openness: 3, context: 2 },
+                        ratings: { capacity: 2, openness: 3, activities: 'Гуляют, сидят в кафе' },
                         selected: true
                     },
                     {
                         name: 'Парк Швейцария',
                         x: 200,
                         y: 150,
-                        ratings: { capacity: 3, openness: 2, context: 1 },
+                        ratings: { capacity: 3, openness: 2, activities: 'Спорт, прогулки с собаками' },
                         selected: false
                     }
                 ]
@@ -616,14 +612,14 @@
                         name: 'Бар Койот',
                         x: 400,
                         y: 200,
-                        ratings: { atmosphere: 2, activity: 3, price: 3 },
+                        ratings: { atmosphere: 2, activities: 'Танцы, коктейли, караоке', price: 3 },
                         selected: true
                     },
                     {
                         name: 'Бар Искры',
                         x: 450,
                         y: 250,
-                        ratings: { atmosphere: 1, activity: 4, price: 2 },
+                        ratings: { atmosphere: 1, activities: 'Концерты, бар', price: 2 },
                         selected: false
                     }
                 ]
@@ -636,7 +632,7 @@
                         name: 'Дома',
                         x: 700,
                         y: 300,
-                        ratings: { privacy: 1, comfort: 1, availability: 2 },
+                        ratings: { privacy: 1, comfort: 1, pretext: 'Посмотреть фильм' },
                         selected: true
                     }
                 ]
@@ -652,8 +648,14 @@
         const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+
+            ctx.scale(dpr, dpr);
+
             drawMap();
         }
 
@@ -670,15 +672,10 @@
             });
         }
 
-        // Иконки категорий
+        // Иконки категорий - цветные круги
         function getCategoryIcon(categoryName) {
             const color = categoryColors[categoryName] || 'rgba(255,255,255,0.8)';
-            const icons = {
-                'Знакомства': `<svg viewBox="0 0 24 24" fill="${color}"><circle cx="12" cy="12" r="10" fill="none" stroke="${color}" stroke-width="2"/><circle cx="12" cy="16" r="1.5"/><path d="M12 6v6" stroke="${color}" stroke-width="2" stroke-linecap="round"/></svg>`,
-                'Свидания': `<svg viewBox="0 0 24 24" fill="${color}"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
-                'Секс': `<svg viewBox="0 0 24 24" fill="${color}"><path d="M12 2C8 2 4 4 4 7c0 2 2 4 8 4s8-2 8-4c0-3-4-5-8-5z"/><path d="M4 7v3c0 2.5 3.5 4.5 8 4.5s8-2 8-4.5V7"/><ellipse cx="12" cy="17" rx="6" ry="3"/></svg>`
-            };
-            return icons[categoryName] || `<svg viewBox="0 0 24 24" fill="${color}"><circle cx="12" cy="12" r="10"/></svg>`;
+            return `<div style="width: 16px; height: 16px; border-radius: 50%; background: ${color};"></div>`;
         }
 
         // Рендер категорий
@@ -700,17 +697,20 @@
                                 <div class="add-text">Добавить</div>
                             </div>
                             ${cat.places.map((place, idx) => {
-                                const avgRating = Math.round(Object.values(place.ratings).reduce((a, b) => a + b, 0) / Object.values(place.ratings).length);
+                                const numericRatings = Object.values(place.ratings).filter(v => typeof v === 'number');
+                                const avgRating = numericRatings.length > 0
+                                    ? Math.round(numericRatings.reduce((a, b) => a + b, 0) / numericRatings.length)
+                                    : 3;
                                 return `
-                                    <div class="place-card">
-                                        <div class="place-checkbox ${place.selected ? 'checked' : ''}" onclick="event.stopPropagation(); togglePlaceSelection('${cat.id}', ${idx})"></div>
-                                        <div onclick="editPlace('${cat.id}', ${idx})" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
-                                            <div class="place-name">${place.name}</div>
+                                    <div class="place-card" onclick="editPlace('${cat.id}', ${idx})">
+                                        <div class="place-name">${place.name}</div>
+                                        <div class="place-footer">
                                             <div class="place-rating">
                                                 ${Array(avgRating).fill(0).map((_, i) =>
                                                     `<div class="rating-square" style="background: ${ratingColors[i] || ratingColors[4]};"></div>`
                                                 ).join('')}
                                             </div>
+                                            <div class="place-checkbox ${place.selected ? 'checked' : ''}" onclick="event.stopPropagation(); togglePlaceSelection('${cat.id}', ${idx})"></div>
                                         </div>
                                     </div>
                                 `;
@@ -758,21 +758,32 @@
 
             criteriaContainer.innerHTML = criteria.map(criterion => {
                 const currentValue = (placeIdx !== null) ? category.places[placeIdx].ratings[criterion.id] : null;
-                return `
-                    <div class="criterion-group">
-                        <label class="criterion-label">${criterion.label}</label>
-                        <div class="color-checkboxes">
-                            ${ratingColors.map((color, idx) => `
-                                <div class="color-checkbox ${currentValue === (idx + 1) ? 'selected' : ''}"
-                                     style="background: ${color};"
-                                     data-criterion="${criterion.id}"
-                                     data-value="${idx + 1}"
-                                     onclick="selectRating('${criterion.id}', ${idx + 1})">
-                                </div>
-                            `).join('')}
+
+                if (criterion.type === 'text') {
+                    return `
+                        <div class="form-group">
+                            <label class="form-label">${criterion.label}</label>
+                            <input type="text" class="form-input" id="criterion_${criterion.id}"
+                                   value="${currentValue || ''}" placeholder="Введите текст...">
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    return `
+                        <div class="criterion-group">
+                            <label class="criterion-label">${criterion.label}</label>
+                            <div class="color-checkboxes">
+                                ${ratingColors.map((color, idx) => `
+                                    <div class="color-checkbox ${currentValue === (idx + 1) ? 'selected' : ''}"
+                                         style="background: ${color};"
+                                         data-criterion="${criterion.id}"
+                                         data-value="${idx + 1}"
+                                         onclick="selectRating('${criterion.id}', ${idx + 1})">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
             }).join('');
 
             document.getElementById('placeModal').classList.add('show');
@@ -805,8 +816,13 @@
 
             const ratings = {};
             criteria.forEach(criterion => {
-                const selected = document.querySelector(`[data-criterion="${criterion.id}"].selected`);
-                ratings[criterion.id] = selected ? parseInt(selected.dataset.value) : 3;
+                if (criterion.type === 'text') {
+                    const input = document.getElementById(`criterion_${criterion.id}`);
+                    ratings[criterion.id] = input ? input.value : '';
+                } else {
+                    const selected = document.querySelector(`[data-criterion="${criterion.id}"].selected`);
+                    ratings[criterion.id] = selected ? parseInt(selected.dataset.value) : 3;
+                }
             });
 
             if (editingPlace !== null) {
@@ -815,10 +831,11 @@
                 category.places[editingPlace].ratings = ratings;
             } else {
                 // Добавляем новое место
+                const rect = canvas.getBoundingClientRect();
                 const place = {
                     name,
-                    x: 100 + Math.random() * (canvas.width - 200),
-                    y: 100 + Math.random() * (canvas.height - 200),
+                    x: 100 + Math.random() * (rect.width - 200),
+                    y: 100 + Math.random() * (rect.height - 200),
                     ratings,
                     selected: false
                 };
@@ -850,7 +867,8 @@
 
         // Карта
         function drawMap() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const rect = canvas.getBoundingClientRect();
+            ctx.clearRect(0, 0, rect.width, rect.height);
 
             // Рисуем маршрут
             if (route.length > 1) {
@@ -1014,17 +1032,27 @@
             let html = `<div class="info-title">${place.name}</div><div class="info-criteria">`;
 
             criteria.forEach(criterion => {
-                const value = place.ratings[criterion.id] || 3;
-                html += `
-                    <div class="info-criterion">
-                        <div class="info-criterion-name">${criterion.label}</div>
-                        <div class="info-criterion-rating">
-                            ${Array(value).fill(0).map((_, i) =>
-                                `<div class="info-rating-square" style="background: ${ratingColors[i]};"></div>`
-                            ).join('')}
+                const value = place.ratings[criterion.id];
+                if (criterion.type === 'text') {
+                    html += `
+                        <div class="info-criterion">
+                            <div class="info-criterion-name">${criterion.label}</div>
+                            <div style="font-size: 14px; color: rgba(255, 255, 255, 0.8);">${value || 'Не указано'}</div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    const rating = value || 3;
+                    html += `
+                        <div class="info-criterion">
+                            <div class="info-criterion-name">${criterion.label}</div>
+                            <div class="info-criterion-rating">
+                                ${Array(rating).fill(0).map((_, i) =>
+                                    `<div class="info-rating-square" style="background: ${ratingColors[i]};"></div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
             });
 
             html += '</div>';
