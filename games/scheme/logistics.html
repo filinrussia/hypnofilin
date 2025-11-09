@@ -73,6 +73,21 @@
             fill: currentColor;
         }
 
+        #syncBtn {
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+        }
+
+        #syncBtn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        #syncBtn:active {
+            transform: rotate(180deg);
+        }
+
         /* Экраны */
         .screen {
             display: none;
@@ -928,9 +943,11 @@
             if (syncBtn) {
                 if (hasCloudStorage) {
                     syncBtn.style.color = '#4CAF50'; // Зеленый = облако работает
+                    syncBtn.style.background = 'rgba(76, 175, 80, 0.2)';
                     syncBtn.title = 'Синхронизация: облако доступно (нажмите для обновления)';
                 } else {
-                    syncBtn.style.color = 'rgba(255, 255, 255, 0.3)'; // Серый = облако недоступно
+                    syncBtn.style.color = '#FF9800'; // Оранжевый = облако недоступно
+                    syncBtn.style.background = 'rgba(255, 152, 0, 0.15)';
                     syncBtn.title = 'Синхронизация недоступна (откройте через Telegram)';
                 }
             }
