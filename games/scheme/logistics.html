@@ -887,6 +887,11 @@
 
         // Переключение вкладок
         function switchTab(tab) {
+            // Скрываем меню действий при переходе между вкладками
+            if (selectedPlaceForMenu) {
+                hideActionMenu();
+            }
+
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.tab === tab);
             });
