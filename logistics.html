@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Логистика • ГипноФилин</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="navbar.css">
+    <style>
+        .logistics-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Панель категорий */
+        .categories-panel {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .category-block {
+            margin-bottom: 30px;
+        }
+
+        .category-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .category-emoji {
+            font-size: 20px;
+        }
+
+        .category-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .add-place-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .add-place-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.95);
+            font-family: inherit;
+        }
+
+        .add-place-input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .add-place-input:focus {
+            outline: none;
+            border-color: #0a84ff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .add-place-btn {
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-place-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+        }
+
+        .places-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .place-item {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .place-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(4px);
+        }
+
+        .place-item.selected {
+            background: linear-gradient(135deg, rgba(10, 132, 255, 0.2) 0%, rgba(0, 102, 204, 0.2) 100%);
+            border-color: rgba(10, 132, 255, 0.4);
+        }
+
+        .remove-place-btn {
+            color: rgba(255, 255, 255, 0.4);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 4px;
+            transition: color 0.2s ease;
+        }
+
+        .remove-place-btn:hover {
+            color: rgba(255, 100, 100, 0.9);
+        }
+
+        /* Карта */
+        .map-container {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .map-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .control-btn.primary {
+            background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+            color: white;
+            border: none;
+        }
+
+        .control-btn.primary:hover {
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #mapCanvas {
+            display: block;
+            width: 100%;
+            height: 550px;
+            cursor: grab;
+        }
+
+        #mapCanvas:active {
+            cursor: grabbing;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .categories-panel {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .category-block {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .categories-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .logistics-container {
+                padding: 20px 15px;
+            }
+
+            #mapCanvas {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar center-menu">
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link" data-page="index">Главная</a></li>
+                <li><a href="courses.html" class="nav-link" data-page="courses">Курсы</a></li>
+                <li><a href="games.html" class="nav-link" data-page="games">Игры</a></li>
+                <li><a href="about.html" class="nav-link" data-page="about">Обо мне</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="logistics-container">
+        <h1 class="page-title">Карта логистики</h1>
+        <p class="page-subtitle">Планируйте свой маршрут: от знакомства до финала</p>
+
+        <div class="main-layout">
+            <!-- Панель категорий -->
+            <div class="categories-panel">
+                <!-- Места знакомства -->
+                <div class="category-block">
+                    <div class="category-header">
+                        <span class="category-emoji">👋</span>
+                        <h3 class="category-title">Места знакомства</h3>
+                    </div>
+                    <div class="add-place-form">
+                        <input
+                            type="text"
+                            class="add-place-input"
+                            placeholder="Добавить место..."
+                            id="meetInput"
+                            maxlength="30"
+                        >
+                        <button class="add-place-btn" onclick="addPlace('meet')">+</button>
+                    </div>
+                    <div class="places-list" id="meetPlaces"></div>
+                </div>
+
+                <!-- Места общения -->
+                <div class="category-block">
+                    <div class="category-header">
+                        <span class="category-emoji">💬</span>
+                        <h3 class="category-title">Места общения</h3>
+                    </div>
+                    <div class="add-place-form">
+                        <input
+                            type="text"
+                            class="add-place-input"
+                            placeholder="Добавить место..."
+                            id="talkInput"
+                            maxlength="30"
+                        >
+                        <button class="add-place-btn" onclick="addPlace('talk')">+</button>
+                    </div>
+                    <div class="places-list" id="talkPlaces"></div>
+                </div>
+
+                <!-- Места секса -->
+                <div class="category-block">
+                    <div class="category-header">
+                        <span class="category-emoji">🔥</span>
+                        <h3 class="category-title">Места секса</h3>
+                    </div>
+                    <div class="add-place-form">
+                        <input
+                            type="text"
+                            class="add-place-input"
+                            placeholder="Добавить место..."
+                            id="sexInput"
+                            maxlength="30"
+                        >
+                        <button class="add-place-btn" onclick="addPlace('sex')">+</button>
+                    </div>
+                    <div class="places-list" id="sexPlaces"></div>
+                </div>
+            </div>
+
+            <!-- Карта -->
+            <div class="map-container">
+                <div class="map-header">
+                    <h2 class="map-title">Интерактивная карта</h2>
+                    <div class="map-controls">
+                        <button class="control-btn" onclick="clearRoute()">Очистить маршрут</button>
+                        <button class="control-btn primary" onclick="buildRoute()">Построить маршрут</button>
+                    </div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="mapCanvas"></canvas>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4CAF50;"></div>
+                        <span>Знакомство</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2196F3;"></div>
+                        <span>Общение</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #FF5722;"></div>
+                        <span>Секс</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === Данные ===
+        const places = {
+            meet: [
+                { name: 'Большая Покровская', x: 150, y: 100 },
+                { name: 'Парк Швейцария', x: 200, y: 150 }
+            ],
+            talk: [
+                { name: 'Бар Койот', x: 400, y: 200 },
+                { name: 'Бар Искры', x: 450, y: 250 }
+            ],
+            sex: [
+                { name: 'Дома', x: 700, y: 300 }
+            ]
+        };
+
+        const selectedPlaces = {
+            meet: null,
+            talk: null,
+            sex: null
+        };
+
+        const colors = {
+            meet: '#4CAF50',
+            talk: '#2196F3',
+            sex: '#FF5722'
+        };
+
+        let draggedPoint = null;
+        let canvas, ctx;
+
+        // === Инициализация ===
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('mapCanvas');
+            ctx = canvas.getContext('2d');
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            renderPlacesLists();
+            drawMap();
+
+            // События мыши
+            canvas.addEventListener('mousedown', handleMouseDown);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseup', handleMouseUp);
+
+            // События тач
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', handleTouchEnd);
+
+            // Enter для добавления
+            ['meetInput', 'talkInput', 'sexInput'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const category = id.replace('Input', '');
+                        addPlace(category);
+                    }
+                });
+            });
+        });
+
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            canvas.width = wrapper.offsetWidth;
+            canvas.height = 550;
+            drawMap();
+        }
+
+        // === Добавление мест ===
+        function addPlace(category) {
+            const input = document.getElementById(category + 'Input');
+            const name = input.value.trim();
+
+            if (!name) return;
+
+            // Случайная позиция в зависимости от категории
+            let x, y;
+            if (category === 'meet') {
+                x = 100 + Math.random() * 200;
+                y = 100 + Math.random() * 200;
+            } else if (category === 'talk') {
+                x = 350 + Math.random() * 200;
+                y = 150 + Math.random() * 200;
+            } else {
+                x = 600 + Math.random() * 150;
+                y = 200 + Math.random() * 200;
+            }
+
+            places[category].push({ name, x, y });
+            input.value = '';
+
+            renderPlacesLists();
+            drawMap();
+        }
+
+        function removePlace(category, index) {
+            places[category].splice(index, 1);
+            if (selectedPlaces[category] && selectedPlaces[category].index === index) {
+                selectedPlaces[category] = null;
+            }
+            renderPlacesLists();
+            drawMap();
+        }
+
+        function selectPlace(category, index) {
+            selectedPlaces[category] = { index, place: places[category][index] };
+            renderPlacesLists();
+            drawMap();
+        }
+
+        function renderPlacesLists() {
+            ['meet', 'talk', 'sex'].forEach(category => {
+                const container = document.getElementById(category + 'Places');
+                container.innerHTML = '';
+
+                places[category].forEach((place, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'place-item';
+                    if (selectedPlaces[category] && selectedPlaces[category].index === index) {
+                        item.classList.add('selected');
+                    }
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = place.name;
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-place-btn';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        removePlace(category, index);
+                    };
+
+                    item.appendChild(nameSpan);
+                    item.appendChild(removeBtn);
+                    item.onclick = () => selectPlace(category, index);
+
+                    container.appendChild(item);
+                });
+            });
+        }
+
+        // === Отрисовка карты ===
+        function drawMap() {
+            if (!ctx) return;
+
+            // Очистка
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Маршрут (если построен)
+            drawRoute();
+
+            // Точки
+            drawPoints();
+        }
+
+        function drawRoute() {
+            const route = [];
+            ['meet', 'talk', 'sex'].forEach(category => {
+                if (selectedPlaces[category]) {
+                    route.push({
+                        category,
+                        place: selectedPlaces[category].place
+                    });
+                }
+            });
+
+            if (route.length < 2) return;
+
+            // Линии
+            ctx.strokeStyle = 'rgba(10, 132, 255, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([10, 5]);
+
+            ctx.beginPath();
+            ctx.moveTo(route[0].place.x, route[0].place.y);
+
+            for (let i = 1; i < route.length; i++) {
+                ctx.lineTo(route[i].place.x, route[i].place.y);
+            }
+
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Стрелки
+            for (let i = 1; i < route.length; i++) {
+                drawArrow(
+                    route[i - 1].place.x,
+                    route[i - 1].place.y,
+                    route[i].place.x,
+                    route[i].place.y
+                );
+            }
+        }
+
+        function drawArrow(x1, y1, x2, y2) {
+            const angle = Math.atan2(y2 - y1, x2 - x1);
+            const arrowSize = 12;
+
+            // Позиция стрелки (в середине линии)
+            const mx = (x1 + x2) / 2;
+            const my = (y1 + y2) / 2;
+
+            ctx.fillStyle = 'rgba(10, 132, 255, 0.8)';
+            ctx.beginPath();
+            ctx.moveTo(mx, my);
+            ctx.lineTo(
+                mx - arrowSize * Math.cos(angle - Math.PI / 6),
+                my - arrowSize * Math.sin(angle - Math.PI / 6)
+            );
+            ctx.lineTo(
+                mx - arrowSize * Math.cos(angle + Math.PI / 6),
+                my - arrowSize * Math.sin(angle + Math.PI / 6)
+            );
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawPoints() {
+            ['meet', 'talk', 'sex'].forEach(category => {
+                places[category].forEach((place, index) => {
+                    const isSelected = selectedPlaces[category] && selectedPlaces[category].index === index;
+                    const radius = isSelected ? 14 : 10;
+
+                    // Тень
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                    ctx.shadowBlur = 8;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 2;
+
+                    // Круг
+                    ctx.fillStyle = colors[category];
+                    ctx.beginPath();
+                    ctx.arc(place.x, place.y, radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Обводка для выбранных
+                    if (isSelected) {
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                    }
+
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
+
+                    // Текст
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.font = '600 13px -apple-system, BlinkMacSystemFont, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(place.name, place.x, place.y - 20);
+                });
+            });
+        }
+
+        // === Взаимодействие с точками ===
+        function getPointAt(x, y) {
+            for (const category in places) {
+                for (let i = 0; i < places[category].length; i++) {
+                    const place = places[category][i];
+                    const dist = Math.sqrt((x - place.x) ** 2 + (y - place.y) ** 2);
+                    if (dist < 15) {
+                        return { category, index: i, place };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function handleMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            draggedPoint = getPointAt(x, y);
+        }
+
+        function handleMouseMove(e) {
+            if (!draggedPoint) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
+            draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
+
+            drawMap();
+        }
+
+        function handleMouseUp() {
+            draggedPoint = null;
+        }
+
+        // Тач-события
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+
+            draggedPoint = getPointAt(x, y);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!draggedPoint) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+
+            draggedPoint.place.x = Math.max(20, Math.min(canvas.width - 20, x));
+            draggedPoint.place.y = Math.max(20, Math.min(canvas.height - 20, y));
+
+            drawMap();
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            draggedPoint = null;
+        }
+
+        // === Управление маршрутом ===
+        function buildRoute() {
+            // Маршрут автоматически строится при выборе мест
+            // Эта кнопка просто перерисовывает
+            drawMap();
+        }
+
+        function clearRoute() {
+            selectedPlaces.meet = null;
+            selectedPlaces.talk = null;
+            selectedPlaces.sex = null;
+            renderPlacesLists();
+            drawMap();
+        }
+
+        // === Навигация ===
+        const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+        const links = document.querySelectorAll('.nav-link');
+        links.forEach(link => {
+            const page = link.getAttribute('data-page');
+            if (page === currentPage) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
